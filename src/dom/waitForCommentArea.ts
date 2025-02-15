@@ -27,5 +27,7 @@
 import { waitForElement } from './waitForElement'
 
 export function waitForCommentArea() {
-  return waitForElement('textarea')
+  return waitForElement<HTMLTextAreaElement>(
+    '[class^="MarkdownEditor-module__container"] textarea',
+  )
 }

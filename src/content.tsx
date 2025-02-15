@@ -1,16 +1,21 @@
 import { render } from 'solid-js/web'
 import { waitForCommentArea } from './dom/waitForCommentArea'
+import { Editor } from './editor/editor'
 
-export function App() {
-  return <div>My app</div>
-}
+import styles from './content.module.css'
+import './styles.css'
 
 waitForCommentArea().then((textarea) => {
-  console.log('my text area', textarea)
+  const parent = textarea.parentElement!.parentElement
+  if (parent) {
+    const root = document.createElement('div')
+    root.id = 'github-better-comment'
+    root.className = styles.injectedEditorContent
+    parent.appendChild(root)
+
+    render(
+      () => <Editor textarea={textarea} initialValue={textarea.value} />,
+      root,
+    )
+  }
 })
-
-const root = document.createElement('div')
-root.id = 'crx-root'
-document.body.append(root)
-
-render(() => <App />, root)

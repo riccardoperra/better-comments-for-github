@@ -1,13 +1,13 @@
-export function waitForElement(
+export function waitForElement<T extends Element = Element>(
   selector: string,
   parentNode: HTMLElement | null = null,
   timeout: number | null = null,
-): Promise<Element> {
+): Promise<T> {
   return new Promise((resolve, reject) => {
     if (!selector) reject('no selector')
     if (!parentNode) parentNode = globalThis.document.body
     for (const res = parentNode.querySelector(selector); ; ) {
-      if (res) return resolve(res)
+      if (res) return resolve(res as T)
       break
     }
     let timeoutId: number | null = null
@@ -18,7 +18,7 @@ export function waitForElement(
       if (res) {
         if (timeoutId) clearTimeout(timeoutId)
         observer.disconnect()
-        resolve(res)
+        resolve(res as T)
       }
     })
     timeoutId = timeout

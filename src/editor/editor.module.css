@@ -1,0 +1,10 @@
+.editor {
+    margin: 0;
+    padding: var(--base-size-8);
+
+    &:focus,
+    &:focus-visible {
+        border: none;
+        outline: none;
+    }
+}
