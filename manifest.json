@@ -31,7 +31,8 @@
       "matches": [
         "https://github.com/*"
       ],
-      "run_at": "document_end"
+      "run_at": "document_end",
+      "world": "MAIN"
     }
   ]
 }

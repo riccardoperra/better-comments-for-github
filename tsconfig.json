@@ -18,6 +18,7 @@
   },
   "include": [
     "src",
+    "playground-editor",
     "prettier.config.js",
     "scripts",
     "eslint.config.js",

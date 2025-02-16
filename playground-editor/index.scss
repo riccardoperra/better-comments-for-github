@@ -1,0 +1,14 @@
+@import '@primer/css/index.scss';
+
+@import "@primer/css/forms/index";
+
+.App {
+  margin: 0 auto;
+  padding-top: var(--base-size-32);
+  padding-bottom: var(--base-size-8);
+  width: clamp(320px, 100vw, 720px);
+}
+
+.EditorContent {
+  margin-top: var(--base-size-12);
+}
