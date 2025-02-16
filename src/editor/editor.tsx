@@ -2,15 +2,13 @@ import { createEffect, createSignal } from 'solid-js'
 import { EditorView } from 'prosemirror-view'
 import { EditorState } from 'prosemirror-state'
 import { exampleSetup } from 'prosemirror-example-setup'
-import {
-  defaultMarkdownParser,
-  defaultMarkdownSerializer,
-  schema,
-} from 'prosemirror-markdown'
+import { defaultMarkdownParser, schema } from 'prosemirror-markdown'
 import styles from './editor.module.css'
 import { forceGithubTextAreaSync } from './utils/forceGithubTextAreaSync'
 
 import 'prosemirror-example-setup/style/style.css'
+import { setEditorContent } from './utils/setContent'
+import { proseMirrorToMarkdown } from './utils/markdownParser'
 import type { SuggestionData } from './utils/loadSuggestionData'
 
 export interface EditorProps {
@@ -41,6 +39,11 @@ export function Editor(props: EditorProps) {
         }),
         doc: defaultMarkdownParser.parse(props.initialValue),
       }),
+      handleDOMEvents: {
+        keydown: (view, event) => {
+          event.stopPropagation()
+        },
+      },
       dispatchTransaction(tr) {
         const newState = view.state.apply(tr)
         view.updateState(newState)
@@ -50,26 +53,31 @@ export function Editor(props: EditorProps) {
         }
 
         if (tr.docChanged) {
-          props.textarea.value = defaultMarkdownSerializer.serialize(
-            newState.doc,
-          )
-          forceGithubTextAreaSync(props.textarea)
+          const content = proseMirrorToMarkdown(tr.doc, schema)
+          async function fn() {
+            const blob = new Blob([content], { type: 'text/html' })
+            return await blob
+              .text()
+              .then((text) => text.replaceAll('&#x20;', ' '))
+          }
+          fn().then((sanitizedContent) => {
+            console.log(sanitizedContent)
+            props.textarea.value = sanitizedContent
+            forceGithubTextAreaSync(props.textarea)
+          })
         }
       },
     })
 
-    let skipInput = false
+    setEditorContent(props.initialValue, view, {
+      isFromTextarea: true,
+      isInitialValue: true,
+    })
+
     props.textarea.addEventListener('input', ({ target }) => {
-      if (skipInput) {
-        skipInput = false
-        return
-      }
-      const tr = view.state.tr
-      const content = props.textarea.value
-      const doc = defaultMarkdownParser.parse(content)
-      tr.replaceWith(0, tr.doc.content.size, doc)
-      tr.setMeta('from-textarea', true)
-      view.dispatch(tr)
+      setEditorContent(props.textarea.value, view, {
+        isFromTextarea: true,
+      })
     })
 
     setView(view)

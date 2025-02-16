@@ -16,13 +16,22 @@
   "content_scripts": [
     {
       "js": [
-        "src/content.tsx"
+        "src/inject/index.ts"
       ],
       "matches": [
         "https://github.com/*"
       ],
       "run_at": "document_start",
       "world": "MAIN"
+    },
+    {
+      "js": [
+        "src/content.tsx"
+      ],
+      "matches": [
+        "https://github.com/*"
+      ],
+      "run_at": "document_end"
     }
   ]
 }

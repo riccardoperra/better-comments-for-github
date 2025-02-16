@@ -27,6 +27,7 @@
     "vite-plugin-web-extension": "^4.4.3"
   },
   "dependencies": {
+    "@handlewithcare/remark-prosemirror": "^0.1.5",
     "@types/chrome": "^0.0.304",
     "bippy": "^0.3.3",
     "prosemirror-example-setup": "^1.2.3",
@@ -34,7 +35,11 @@
     "prosemirror-markdown": "^1.13.1",
     "prosemirror-model": "^1.24.1",
     "prosemirror-state": "^1.4.3",
+    "prosemirror-transformer-markdown": "link:/Users/riccardoperra/WebstormProjects/prosemirror-markdown-transformer",
     "prosemirror-view": "^1.38.0",
-    "solid-js": "^1.9.4"
+    "remark-parse": "^11.0.0",
+    "remark-stringify": "^11.0.0",
+    "solid-js": "^1.9.4",
+    "unified": "^11.0.5"
   }
 }
