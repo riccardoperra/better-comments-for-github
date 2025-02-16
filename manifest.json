@@ -2,9 +2,17 @@
   "manifest_version": 3,
   "name": "CRXJS Solid Vite Example",
   "version": "1.0.0",
+  "permissions": [
+    "scripting",
+    "tabs",
+    "activeTab"
+  ],
   "action": {
     "default_popup": "index.html"
   },
+  "host_permissions": [
+    "https://github.com/*"
+  ],
   "content_scripts": [
     {
       "js": [
@@ -12,7 +20,9 @@
       ],
       "matches": [
         "https://github.com/*"
-      ]
+      ],
+      "run_at": "document_start",
+      "world": "MAIN"
     }
   ]
 }

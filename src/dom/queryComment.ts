@@ -24,10 +24,8 @@
 //             Add your comment here...
 //         </p>
 //     </div>
-import { waitForElement } from './waitForElement'
+import { query } from './query'
 
-export function waitForCommentArea() {
-  return waitForElement<HTMLTextAreaElement>(
-    '[class^="MarkdownEditor-module__container"] textarea',
-  )
+export function queryComment() {
+  return query('slash-command-expander')
 }
