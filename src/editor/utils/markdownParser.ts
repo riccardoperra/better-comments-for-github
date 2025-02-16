@@ -9,6 +9,7 @@ import {
 import remarkParse from 'remark-parse'
 import { unified } from 'unified'
 import remarkStringify from 'remark-stringify'
+import { rehypeBlockquote } from './md/rehypeCustomBlockquote'
 import type { RemarkProseMirrorOptions } from '@handlewithcare/remark-prosemirror'
 import type { Node, Schema } from 'prosemirror-model'
 import type { VFileWithOutput } from 'unified/lib'
@@ -20,16 +21,23 @@ export async function markdownToProseMirror(
   const processor = unified()
     // Use remarkParse to parse the markdown string
     .use(remarkParse)
+    .use(rehypeBlockquote)
+
     // Convert to ProseMirror with the remarkProseMirror plugin.
     // It takes the schema and a set of handlers, each of which
     // maps an mdast node type to a ProseMirror node (or nodes)
     .use(remarkProseMirror, {
       schema: schema,
       handlers: {
+        blockquoteCallout(node, _, state) {
+          const children = state.all(node)
+          return schema.nodes.blockquote_callout.createChecked({}, children)
+        },
         heading: toPmNode(schema.nodes.heading),
         blockquote: toPmNode(schema.nodes.blockquote),
         paragraph: toPmNode(schema.nodes.paragraph),
         listItem: toPmNode(schema.nodes.list_item),
+        image: toPmNode(schema.nodes.image),
         list(node, _, state) {
           const children = state.all(node)
           const nodeType = node.ordered
@@ -62,6 +70,7 @@ export function proseMirrorToMarkdown(doc: Node, schema: Schema) {
       blockquote: fromPmNode('blockquote'),
       paragraph: fromPmNode('paragraph'),
       list_item: fromPmNode('listItem'),
+      image: fromPmNode('image'),
       ordered_list: fromPmNode('list', () => ({
         ordered: true,
       })),

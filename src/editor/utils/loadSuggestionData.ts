@@ -31,6 +31,18 @@ export interface SuggestionData {
   emojis: Array<EmojiSuggestion>
 }
 
+export function getGitHubEditorInstanceFiber(element: HTMLElement) {
+  let fiber = getFiberFromHostInstance(element)
+  traverseFiber(fiber, (node) => {
+    if (node.memoizedProps.mentionSuggestions) {
+      fiber = node
+      return true
+    }
+    return false
+  })
+  return fiber
+}
+
 export function loadSuggestionData(element: HTMLElement): SuggestionData {
   const data: SuggestionData = {
     mentions: [],

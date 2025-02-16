@@ -13,16 +13,31 @@ setTimeout(() => {
     onAdded((element) => {
       const suggestionData = loadSuggestionData(element)
 
-      element = element.querySelector(
+      const viewTabs = element.querySelector<HTMLElement>(
+        '[class*="ViewSwitch-module"]',
+      )
+
+      const moduleContainer = element.querySelector(
         '[class*="MarkdownEditor-module__container"]',
       )!
-      const textarea = element.querySelector('textarea')
+
+      const inputWrapper = moduleContainer.firstElementChild
+      const textarea = inputWrapper!.querySelector('textarea')
+      const container = document.createElement('div')
+
+      const switchButton = document.createElement('button')
+      switchButton.classList.add('btn')
+      switchButton.innerHTML = 'Back to default editor'
+
+      container.appendChild(switchButton)
+
+      moduleContainer.prepend(container)
 
       if (textarea) {
         const root = document.createElement('div')
         root.id = 'github-better-comment'
         root.className = styles.injectedEditorContent
-        element.appendChild(root)
+        container.appendChild(root)
 
         render(
           () => (

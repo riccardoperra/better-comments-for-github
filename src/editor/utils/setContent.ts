@@ -14,6 +14,7 @@ export function setEditorContent(
   return markdownToProseMirror(content, schema).then((vfile) => {
     const result = vfile.result
     const tr = view.state.tr
+
     tr.replaceWith(0, tr.doc.content.size, result)
     if (isInitialValue) {
       tr.setMeta('initial-value', true)
