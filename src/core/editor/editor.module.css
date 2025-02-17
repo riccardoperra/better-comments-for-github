@@ -30,8 +30,25 @@
 }
 
 .EditorTextarea {
+  display: block;
+  gap: 0;
+
   --control-medium-paddingBlock: var(--base-size-12);
   --control-medium-paddingInline-condensed: var(--base-size-12);
   width: 100%;
   min-height: 100px;
+  border-radius: var(--borderRadius-medium);
+  font-size: var(--text-body-size-medium);
+  line-height: var(--text-body-lineHeight-medium);
+  padding-block: calc(
+    var(--control-medium-paddingBlock) - var(--borderWidth-thin)
+  );
+  padding-inline: var(--control-medium-paddingInline-condensed);
+  transition: 80ms cubic-bezier(0.33, 1, 0.68, 1);
+  transition-property: color, background-color, box-shadow, border-color;
+  background-color: var(--bgColor-default);
+  border: var(--borderWidth-thin) solid
+    var(--control-borderColor-rest, var(--color-border-default));
+  box-shadow: var(--shadow-inset);
+  color: var(--fgColor-default);
 }

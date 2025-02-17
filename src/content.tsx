@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import './styles.css'
 import { createRoot } from 'solid-js'
 import { render } from 'solid-js/web'
 import { queryComment } from './dom/queryComment'
 import { loadSuggestionData } from './editor/utils/loadSuggestionData'
 import { Editor } from './editor/editor'
 import styles from './content.module.css'
+import './styles.css'
 
 setTimeout(() => {
   createRoot(() => {
@@ -56,7 +56,7 @@ setTimeout(() => {
         container.appendChild(root)
 
         root.addEventListener('keydown', (event) => {
-          // event.stopPropagation()
+          event.stopPropagation()
         })
 
         render(

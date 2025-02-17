@@ -44,6 +44,7 @@ import {
 } from '@prosedoc/markdown-schema'
 import { defineTextAlign } from 'prosekit/extensions/text-align'
 import { defineCodeBlock } from './code-block/code-block'
+import { defineHardbreak } from './hardbreak/hardbreak'
 import type { HeadingAttrs } from 'prosekit/extensions/heading'
 
 export function defineMarkdownExtension() {
@@ -66,6 +67,8 @@ export function defineMarkdownExtension() {
     defineLinkMarkdown(),
     defineImageMarkdown(),
     defineParagraphMarkdown(),
+
+    defineHardbreak(),
 
     defineDropCursor(),
     defineGapCursor(),

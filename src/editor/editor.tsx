@@ -15,11 +15,9 @@
  */
 
 import { createEffect, createSignal } from 'solid-js'
-import { EditorView } from 'prosemirror-view'
-import { EditorState } from 'prosemirror-state'
+import type { EditorView } from 'prosemirror-view'
 import { Schema } from 'prosemirror-model'
 import { marks, nodes } from 'prosemirror-schema-basic'
-import { exampleSetup } from 'prosemirror-example-setup'
 import { createEditor } from 'prosekit/core'
 import { useDocChange } from 'prosekit/solid'
 import {
@@ -32,11 +30,9 @@ import {
 } from 'prosemirror-transformer-markdown/prosemirror'
 import { ProsekitEditor } from '../core/editor/editor'
 import { defineExtension } from '../core/editor/extension'
-import styles from './editor.module.css'
 
 import 'prosemirror-example-setup/style/style.css'
 import { setEditorContent } from './utils/setContent'
-import { proseMirrorToMarkdown } from './utils/markdownParser'
 import { forceGithubTextAreaSync } from './utils/forceGithubTextAreaSync'
 import type { SuggestionData } from './utils/loadSuggestionData'
 
@@ -132,50 +128,6 @@ export function Editor(props: EditorProps) {
             return ['blockquote-callout', { class: 'test' }, 0]
           },
         },
-      },
-    })
-
-    const view = new EditorView($ref, {
-      attributes: {
-        class: `${styles.editor} ProseMirror-example-setup-style`,
-      },
-      state: EditorState.create({
-        schema: updatedSchema,
-        plugins: exampleSetup({
-          schema: updatedSchema,
-          menuBar: true,
-          floatingMenu: true,
-        }),
-      }),
-      handleDOMEvents: {
-        keydown: (view, event) => {
-          event.stopPropagation()
-        },
-      },
-      dispatchTransaction(tr) {
-        const newState = view.state.apply(tr)
-        view.updateState(newState)
-
-        if (tr.getMeta('from-textarea')) {
-          return
-        }
-
-        if (tr.docChanged) {
-          const content = proseMirrorToMarkdown(tr.doc, updatedSchema)
-
-          async function fn() {
-            const blob = new Blob([content], { type: 'text/html' })
-            return await blob
-              .text()
-              .then((text) => text.replaceAll('&#x20;', ' '))
-          }
-
-          fn().then((sanitizedContent) => {
-            console.log(sanitizedContent)
-            props.textarea.value = sanitizedContent
-            forceGithubTextAreaSync(props.textarea)
-          })
-        }
       },
     })
 

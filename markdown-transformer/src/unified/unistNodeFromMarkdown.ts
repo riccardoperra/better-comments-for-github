@@ -25,12 +25,6 @@ export function unistNodeFromMarkdown(
   content: string,
   options: UnistNodeFromMarkdownOptions = {},
 ): UnistNode {
-  if ("window" in globalThis) {
-    console.warn(
-      `[@prosekit/parser] 'unistNodeFromMarkdown' function should be invoked only on server`,
-    );
-  }
-
   const { vfile, transformers } = options;
   const processor = unified()
     .use(remarkParse)

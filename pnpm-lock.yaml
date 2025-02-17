@@ -127,8 +127,8 @@ importers:
         specifier: ^0.11.4
         version: 0.11.5(@types/hast@3.0.4)(prosemirror-model@1.24.1)(prosemirror-state@1.4.3)(prosemirror-transform@1.10.2)(prosemirror-view@1.38.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(solid-js@1.9.4)(svelte@5.20.1)(vue@3.5.13(typescript@5.7.3))
       prosemirror-transformer-markdown:
-        specifier: link:/Users/riccardoperra/WebstormProjects/prosemirror-markdown-transformer
-        version: link:../../prosemirror-markdown-transformer
+        specifier: workspace:*
+        version: link:../markdown-transformer
     devDependencies:
       '@types/mdast':
         specifier: ^4.0.4

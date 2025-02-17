@@ -11,15 +11,8 @@ import remarkMdx from "remark-mdx";
 export function markdownFromUnistNode(rootNode: Root): string {
   const processor = unified()
     .use(rehypeParse)
-    .use(remarkMdx, {})
     .use(remarkGfm)
-    .use(() => {
-      return (root) => {
-        visit(root, "html-raw", (node) => {});
-      };
-    })
     .use(remarkGfm)
-
     .use(remarkStringify, {
       fences: true,
       listItemIndent: "one",
@@ -27,7 +20,5 @@ export function markdownFromUnistNode(rootNode: Root): string {
       rule: "-",
     });
 
-  const processedNode = processor.runSync(rootNode);
-
-  return processor.stringify(processedNode);
+  return processor.stringify(rootNode);
 }

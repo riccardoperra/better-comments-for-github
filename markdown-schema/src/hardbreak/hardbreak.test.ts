@@ -28,45 +28,25 @@ import {
   sameMarkdown,
   sameNode,
 } from '../test-utils'
-import { defineHeadingMarkdown } from './heading'
+import { defineHardbreakMarkdown } from './hardbreak'
 
-const extension = getNodesBaseExtensions([defineHeadingMarkdown()])
+const extension = getNodesBaseExtensions([defineHardbreakMarkdown()])
 
-const { doc, p, h1, h2, h3, h4, h5, h6 } = builders(extension.schema!, {
+const { doc, p, hardbreak } = builders(extension.schema!, {
   p: { nodeType: 'paragraph' },
-  h1: { nodeType: 'heading', level: 1 },
-  h2: { nodeType: 'heading', level: 2 },
-  h3: { nodeType: 'heading', level: 3 },
-  h4: { nodeType: 'heading', level: 4 },
-  h5: { nodeType: 'heading', level: 5 },
-  h6: { nodeType: 'heading', level: 6 },
+  hardbreak: { nodeType: 'hardbreak' },
 })
 
 test('markdown -> prosemirror', () => {
   const editor = getEditorInstance(extension)
   const unist = unistNodeFromMarkdown(`
-    # Heading 1
-    
-    ## Heading 2
-    
-    ### Heading 3
-    
-    #### Heading 4
-    
-    #### Heading 5
-    
-    ##### Heading 6    
+    This is a text
   `)
 
   const result = convertUnistToProsemirror(unist, editor.schema)
 
   const expected = doc(
-    h1('Heading 1'),
-    h2('Heading 2'),
-    h3('Heading 3'),
-    h4('Heading 4'),
-    h5('Heading 5'),
-    h6('Heading 6'),
+    p('This is a text', hardbreak(), 'This is a text with hardbreak'),
   )
 
   sameNode(result, expected)
@@ -75,25 +55,10 @@ test('markdown -> prosemirror', () => {
 test('prosemirror -> markdown', () => {
   const editor = getEditorInstance(
     extension,
-    doc(
-      h1('Heading 1'),
-      h2('Heading 2'),
-      h3('Heading 3'),
-      h4('Heading 4'),
-      h5('Heading 5'),
-      h6('Heading 6'),
-    ),
+    doc(p('This is a text', hardbreak(), 'This is a text with hardbreak')),
   )
 
   const result = convertPmSchemaToUnist(editor.state.doc, editor.schema)
 
-  sameMarkdown(
-    result,
-    '# Heading 1\n\n' +
-      '## Heading 2\n\n' +
-      '### Heading 3\n\n' +
-      '#### Heading 4\n\n' +
-      '##### Heading 5\n\n' +
-      '###### Heading 6',
-  )
+  sameMarkdown(result, 'This is a text\\\nThis is a text with hardbreak')
 })

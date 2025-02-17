@@ -31,6 +31,7 @@ export function Toolbar() {
   return (
     <div class={styles.Toolbar}>
       <button
+        class={styles.ToolbarAction}
         data-pressed={editor().nodes.codeBlock.isActive}
         disabled={!editor().commands.setCodeBlock.canExec()}
         onClick={() => editor().commands.setCodeBlock()}
@@ -57,8 +58,8 @@ export function Toolbar() {
       <button
         data-pressed={editor().marks.strike.isActive()}
         class={styles.ToolbarAction}
-        disabled={!editor().commands.toggleBold.canExec()}
-        onClick={() => editor().commands.toggleBold()}
+        disabled={!editor().commands.toggleStrike.canExec()}
+        onClick={() => editor().commands.toggleStrike()}
       >
         Strikethrough
       </button>

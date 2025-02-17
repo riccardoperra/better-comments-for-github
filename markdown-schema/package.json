@@ -30,6 +30,6 @@
   "dependencies": {
     "hast-util-to-html": "^9.0.4",
     "prosekit": "^0.11.4",
-    "prosemirror-transformer-markdown": "link:/Users/riccardoperra/WebstormProjects/prosemirror-markdown-transformer"
+    "prosemirror-transformer-markdown": "workspace:*"
   }
 }
