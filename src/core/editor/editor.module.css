@@ -14,8 +14,24 @@
  * limitations under the License.
  */
 
-import { queryComment } from '../../dom/queryComment'
+.Editor {
+  /*padding: var(--base-size-4);*/
+  display: flex;
+  gap: var(--base-size-2);
+  background-color: var(--bgColor-muted, var(--color-canvas-subtle));
+  border-top-left-radius: var(--borderRadius-medium);
+  border-top-right-radius: var(--borderRadius-medium);
+  flex-direction: column-reverse;
+  border: 1px solid var(--borderColor-default);
+}
 
-export function handleEditorInstances() {
-  const [, onAdded] = queryComment()
+.EditorContent {
+  width: 100%;
+}
+
+.EditorTextarea {
+  --control-medium-paddingBlock: var(--base-size-12);
+  --control-medium-paddingInline-condensed: var(--base-size-12);
+  width: 100%;
+  min-height: 100px;
 }

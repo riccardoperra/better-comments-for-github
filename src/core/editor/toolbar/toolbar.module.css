@@ -1,0 +1,56 @@
+/*
+ * Copyright 2025 Riccardo Perra
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+.Toolbar {
+  display: flex;
+  padding-block: var(--base-size-2);
+  padding-inline: var(--base-size-4);
+  gap: var(--base-size-4);
+}
+
+.ToolbarAction {
+  appearance: none;
+  background-color: transparent;
+  border: var(--borderWidth-thin, max(1px, 0.0625rem)) solid;
+  border-radius: var(--borderRadius-medium, 0.375rem);
+  display: flex;
+  font-family: inherit;
+  font-weight: var(--base-text-weight-medium, 500);
+  justify-content: space-between;
+  min-width: max-content;
+  text-align: center;
+  align-items: center;
+  text-decoration: none;
+  transition: 80ms cubic-bezier(0.65, 0, 0.35, 1);
+  transition-property: color, fill, background-color, border-color;
+  -webkit-user-select: none;
+  user-select: none;
+  color: var(--fgColor-muted);
+  font-size: var(--text-body-size-small, 0.75rem);
+  gap: var(--control-small-gap, 0.25rem);
+  height: var(--control-small-size, 1.75rem);
+  padding: 0 var(--control-small-paddingInline-condensed, 0.5rem);
+  border-color: transparent;
+  box-shadow: none;
+
+  &:hover {
+    background: var(--button-invisible-bgColor-hover);
+  }
+
+  &[data-pressed='true'] {
+    border-color: var(--button-default-borderColor-active);
+  }
+}
