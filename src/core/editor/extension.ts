@@ -43,41 +43,56 @@ import {
   defineTextMarkdown,
 } from '@prosedoc/markdown-schema'
 import { defineTextAlign } from 'prosekit/extensions/text-align'
+import { defineCodeBlock } from './code-block/code-block'
+import type { HeadingAttrs } from 'prosekit/extensions/heading'
 
-export function defineExtension() {
-  return union([
+export function defineMarkdownExtension() {
+  return union(
     defineDocMarkdown(),
     defineTextMarkdown(),
-    defineHistory(),
-
-    // defineCodeBlockMarkdown(),
-
     defineHeadingMarkdown(),
+    defineHistory(),
     defineList(),
     defineBlockquoteMarkdown(),
 
     defineBaseKeymap(),
     defineBaseCommands(),
+
     defineItalicMarkdown(),
     defineBoldMarkdown(),
     defineStrikethroughMarkdown(),
     defineCodeMarkdown(),
+
     defineLinkMarkdown(),
     defineImageMarkdown(),
     defineParagraphMarkdown(),
+
     defineDropCursor(),
     defineGapCursor(),
     defineHorizontalRuleMarkdown(),
     defineVirtualSelection(),
     defineModClickPrevention(),
     defineTableMarkdown(),
+  )
+}
 
+export function defineExtension() {
+  return union(
+    defineMarkdownExtension(),
     defineTextAlign({ types: ['paragraph', 'heading'] }),
-
     definePlaceholder({
-      placeholder: "Write something, or press '/' for commands...",
+      placeholder: (state) => {
+        const node = state.selection.$from.node()
+        if (node.type.name === 'heading') {
+          const attrs = node.attrs as HeadingAttrs
+          return `Heading ${attrs.level}`
+        }
+
+        return `Write something, or press '/' for commands...`
+      },
     }),
-  ] as const)
+    defineCodeBlock(),
+  )
 }
 
 export function getExtensionSchema() {

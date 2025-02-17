@@ -41,6 +41,7 @@ import { forceGithubTextAreaSync } from './utils/forceGithubTextAreaSync'
 import type { SuggestionData } from './utils/loadSuggestionData'
 
 import 'prosekit/basic/style.css'
+import 'prosekit/basic/typography.css'
 
 export interface EditorProps {
   suggestions: SuggestionData

@@ -31,6 +31,14 @@ export function Toolbar() {
   return (
     <div class={styles.Toolbar}>
       <button
+        data-pressed={editor().nodes.codeBlock.isActive}
+        disabled={!editor().commands.setCodeBlock.canExec()}
+        onClick={() => editor().commands.setCodeBlock()}
+      >
+        Code block
+      </button>
+
+      <button
         class={styles.ToolbarAction}
         data-pressed={editor().marks.bold.isActive()}
         disabled={!editor().commands.toggleBold.canExec()}
