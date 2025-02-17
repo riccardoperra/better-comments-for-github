@@ -1,10 +1,10 @@
-import { defineConfig } from "tsup";
+import { defineConfig } from 'tsup'
 
 export default defineConfig({
-  name: "markdown-schema",
+  name: 'markdown-schema',
   clean: true,
-  entry: ["./src/index.ts"],
-  format: "esm",
-  platform: "neutral",
+  entry: ['./src/index.ts'],
+  format: 'esm',
+  platform: 'neutral',
   dts: true,
-});
+})
