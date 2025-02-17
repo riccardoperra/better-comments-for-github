@@ -141,17 +141,22 @@ export function Editor(props: EditorProps) {
 
   useDocChange(
     (node) => {
-      const unistNode = convertPmSchemaToUnist(node, editor.schema)
-      const markdown = markdownFromUnistNode(unistNode as any)
-      props.textarea.value = markdown
-      forceGithubTextAreaSync(props.textarea)
+      setTimeout(() => {
+        const unistNode = convertPmSchemaToUnist(
+          editor.state.doc,
+          editor.schema,
+        )
+        // This is a trick that automatically encode characters and sanitize the `value`
+        props.textarea.innerHTML = markdownFromUnistNode(unistNode as any)
+        forceGithubTextAreaSync(props.textarea)
+      }, 150)
     },
     { editor },
   )
 
   return (
     <div>
-      <ProsekitEditor editor={editor} />
+      <ProsekitEditor editor={editor} mentions={props.suggestions.mentions} />
     </div>
   )
 }

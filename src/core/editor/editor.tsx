@@ -17,10 +17,13 @@
 import { ProseKit } from 'prosekit/solid'
 import { Toolbar } from './toolbar/toolbar'
 import styles from './editor.module.css'
+import { UserMentionMenu } from './user-mention/UserMentionMenu'
 import type { Editor } from 'prosekit/core'
+import type { SuggestionData } from '../../editor/utils/loadSuggestionData'
 
 export interface ProsekitEditor {
   editor: Editor
+  mentions: SuggestionData['mentions']
 }
 
 export function ProsekitEditor(props: ProsekitEditor) {
@@ -34,6 +37,8 @@ export function ProsekitEditor(props: ProsekitEditor) {
             ref={props.editor.mount}
             class={`FormControl FormControl-textarea markdown-body ${styles.EditorTextarea}`}
           />
+
+          <UserMentionMenu users={props.mentions} />
         </div>
       </div>
     </ProseKit>
