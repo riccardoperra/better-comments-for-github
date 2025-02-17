@@ -1,0 +1,35 @@
+{
+  "name": "@prosedoc/markdown-schema",
+  "version": "1.0.0",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "dev": "tsup --watch",
+    "build": "tsup",
+    "lint": "eslint ./src",
+    "test": "vitest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "@types/mdast": "^4.0.4",
+    "@vitest/coverage-v8": "^2.1.6",
+    "@vitest/ui": "^2.1.6",
+    "prosemirror-test-builder": "^1.1.1",
+    "tsup": "^8.3.5",
+    "vfile": "^6.0.3",
+    "vitest": "^2.1.6"
+  },
+  "dependencies": {
+    "hast-util-to-html": "^9.0.4",
+    "prosekit": "^0.11.4",
+    "prosemirror-transformer-markdown": "link:/Users/riccardoperra/WebstormProjects/prosemirror-markdown-transformer"
+  }
+}
