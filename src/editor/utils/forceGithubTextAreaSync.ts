@@ -14,11 +14,35 @@
  * limitations under the License.
  */
 
-export function forceGithubTextAreaSync(textarea: HTMLTextAreaElement) {
-  const event = new Event('change', {
-    bubbles: true,
-    composed: true,
-  })
+export function forceGithubTextAreaSync(
+  textarea: HTMLTextAreaElement,
+  value: string,
+) {
+  // This is a trick that automatically encode characters and sanitize the `value`
+  const fakeTextarea = document.createElement('textarea')
+  fakeTextarea.innerHTML = value
+  const sanitizedValue = fakeTextarea.value
+  fakeTextarea.remove()
+
+  const event = new Event('input', { bubbles: true })
+
+  const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+    window.HTMLTextAreaElement.prototype,
+    'value',
+  )?.set
+
+  if (nativeInputValueSetter) {
+    nativeInputValueSetter.call(textarea, sanitizedValue)
+    textarea.dispatchEvent(event)
+  } else {
+    forceCallReactFiberOnChange(event, textarea)
+  }
+}
+
+function forceCallReactFiberOnChange(
+  event: Event,
+  textarea: HTMLTextAreaElement,
+): void {
   Object.assign(event, {
     isDefaultPrevented: () => false,
   })
@@ -31,7 +55,7 @@ export function forceGithubTextAreaSync(textarea: HTMLTextAreaElement) {
       const fiberProps = textarea[key as keyof typeof textarea] as Record<
         string,
         any
-      >
+      > | null
       if (
         fiberProps &&
         'onChange' in fiberProps &&

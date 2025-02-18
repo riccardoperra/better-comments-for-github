@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-import { createEffect, createSignal } from 'solid-js'
-import type { EditorView } from 'prosemirror-view'
-import { Schema } from 'prosemirror-model'
-import { marks, nodes } from 'prosemirror-schema-basic'
+import { createEffect, onMount } from 'solid-js'
 import { createEditor } from 'prosekit/core'
 import { useDocChange } from 'prosekit/solid'
 import {
@@ -46,9 +43,6 @@ export interface EditorProps {
 }
 
 export function Editor(props: EditorProps) {
-  const [ref, setRef] = createSignal<HTMLDivElement | null>(null)
-  const [view, setView] = createSignal<EditorView | null>(null)
-
   const extension = defineExtension()
   const editor = createEditor({
     extension,
@@ -59,84 +53,17 @@ export function Editor(props: EditorProps) {
       const value = props.textarea.value
 
       const unistNode = unistNodeFromMarkdown(value)
-      console.log(unistNode)
       const pmNode = convertUnistToProsemirror(unistNode, editor.schema)
 
       editor.setContent(pmNode)
     })
   })
 
-  createEffect(() => {
-    const $ref = ref()
-    if (!$ref) {
-      return
-    }
-
-    const updatedSchema = new Schema({
-      marks: marks,
-      nodes: {
-        ...nodes,
-        // image: {
-        //   name: 'image',
-        //   attrs: {
-        //     src: { default: null },
-        //     width: { default: null },
-        //     height: { default: null },
-        //   },
-        //   group: 'block',
-        //   defining: true,
-        //   draggable: true,
-        //   parseDOM: [
-        //     {
-        //       tag: 'img[src]',
-        //       getAttrs: (element) => {
-        //         if (typeof element === 'string') {
-        //           return { src: null }
-        //         }
-        //
-        //         const src = element.getAttribute('src') || null
-        //
-        //         let width: number | null = null
-        //         let height: number | null = null
-        //
-        //         const rect = element.getBoundingClientRect()
-        //         if (rect.width > 0 && rect.height > 0) {
-        //           width = rect.width
-        //           height = rect.height
-        //         } else if (
-        //           element instanceof HTMLImageElement &&
-        //           element.naturalWidth > 0 &&
-        //           element.naturalHeight > 0
-        //         ) {
-        //           width = element.naturalWidth
-        //           height = element.naturalHeight
-        //         }
-        //         return { src, width, height }
-        //       },
-        //     },
-        //   ],
-        //   toDOM(node) {
-        //     const attrs = node.attrs
-        //     return ['img', attrs]
-        //   },
-        // },
-        blockquote_callout: {
-          group: 'block',
-          content: 'block+',
-          parseDOM: [{ tag: 'blockquote-callout' }],
-          toDOM(node) {
-            return ['blockquote-callout', { class: 'test' }, 0]
-          },
-        },
-      },
-    })
-
-    setEditorContent(props.initialValue, view, {
+  onMount(() => {
+    setEditorContent(props.initialValue, editor.view, {
       isFromTextarea: true,
       isInitialValue: true,
     })
-
-    setView(view)
   })
 
   useDocChange(
@@ -146,9 +73,10 @@ export function Editor(props: EditorProps) {
           editor.state.doc,
           editor.schema,
         )
-        // This is a trick that automatically encode characters and sanitize the `value`
-        props.textarea.innerHTML = markdownFromUnistNode(unistNode as any)
-        forceGithubTextAreaSync(props.textarea)
+        forceGithubTextAreaSync(
+          props.textarea,
+          markdownFromUnistNode(unistNode as any),
+        )
       }, 150)
     },
     { editor },
