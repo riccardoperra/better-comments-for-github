@@ -24,4 +24,7 @@
   border-top-right-radius: 0;
   background: var(--overlay-backdrop-bgColor);
   text-wrap: pretty;
+  margin-top: calc(-1 * var(--base-size-8));
+  padding-top: var(--base-size-20);
+  z-index: 0;
 }

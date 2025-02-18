@@ -35,7 +35,7 @@ export function ProsekitEditor(props: ProsekitEditor) {
 
           <div
             ref={props.editor.mount}
-            class={`FormControl FormControl-textarea markdown-body ${styles.EditorTextarea}`}
+            class={`markdown-body ${styles.EditorTextarea}`}
           />
 
           <UserMentionMenu users={props.mentions} />

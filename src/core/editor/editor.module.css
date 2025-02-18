@@ -18,14 +18,22 @@
   /*padding: var(--base-size-4);*/
   display: flex;
   gap: var(--base-size-2);
-  background-color: var(--bgColor-muted, var(--color-canvas-subtle));
-  border-top-left-radius: var(--borderRadius-medium);
-  border-top-right-radius: var(--borderRadius-medium);
-  flex-direction: column-reverse;
+  /*border-top-left-radius: var(--borderRadius-medium);*/
+  /*border-top-right-radius: var(--borderRadius-medium);*/
+  /*flex-direction: column-reverse;*/
   border: 1px solid var(--borderColor-default);
+  border-radius: var(--borderRadius-large);
+  background-color: var(--bgColor-default);
 
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
+  &:focus-within {
+    border-color: var(--borderColor-accent-emphasis);
+  }
+
+  isolation: isolate;
+  padding: var(--base-size-4);
+
+  /*border-bottom-left-radius: 0;*/
+  /*border-bottom-right-radius: 0;*/
 }
 
 .EditorContent {
@@ -46,12 +54,12 @@
   padding-block: calc(
     var(--control-medium-paddingBlock) - var(--borderWidth-thin)
   );
+  outline: none;
   padding-inline: var(--control-medium-paddingInline-condensed);
   transition: 80ms cubic-bezier(0.33, 1, 0.68, 1);
   transition-property: color, background-color, box-shadow, border-color;
-  background-color: var(--bgColor-default);
-  border: var(--borderWidth-thin) solid
-    var(--control-borderColor-rest, var(--color-border-default));
-  box-shadow: var(--shadow-inset);
+  /*border: var(--borderWidth-thin) solid*/
+  /*  var(--control-borderColor-rest, var(--color-border-default));*/
+  /*box-shadow: var(--shadow-inset);*/
   color: var(--fgColor-default);
 }

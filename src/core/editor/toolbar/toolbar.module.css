@@ -46,11 +46,35 @@
   border-color: transparent;
   box-shadow: none;
 
+  &:disabled {
+    background: var(--button-invisible-bgColor-disabled);
+    color: var(--button-invisible-fgColor-disabled);
+    border-color: var(--button-invisible-borderColor-disabled);
+  }
+
   &:hover {
     background: var(--button-invisible-bgColor-hover);
   }
 
   &[data-pressed='true'] {
     border-color: var(--button-default-borderColor-active);
+  }
+}
+
+.Separator {
+  height: auto;
+  width: 1px;
+  position: relative;
+
+  &:before {
+    content: '';
+    position: absolute;
+    height: 75%;
+    display: inline-flex;
+    align-items: center;
+    width: 1px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--borderColor-default);
   }
 }

@@ -15,6 +15,10 @@
  */
 
 import { useEditor } from 'prosekit/solid'
+import LucideBold from 'lucide-solid/icons/bold'
+import LucideItalic from 'lucide-solid/icons/italic'
+import LucideStrike from 'lucide-solid/icons/strikethrough'
+import LucideCode from 'lucide-solid/icons/code'
 import styles from './toolbar.module.css'
 import type { NodeAction } from 'prosekit/core'
 import type { EditorExtension } from '../extension'
@@ -32,20 +36,11 @@ export function Toolbar() {
     <div class={styles.Toolbar}>
       <button
         class={styles.ToolbarAction}
-        data-pressed={editor().nodes.codeBlock.isActive}
-        disabled={!editor().commands.setCodeBlock.canExec()}
-        onClick={() => editor().commands.setCodeBlock()}
-      >
-        Code block
-      </button>
-
-      <button
-        class={styles.ToolbarAction}
         data-pressed={editor().marks.bold.isActive()}
         disabled={!editor().commands.toggleBold.canExec()}
         onClick={() => editor().commands.toggleBold()}
       >
-        Bold
+        <LucideBold size={14} />
       </button>
       <button
         data-pressed={editor().marks.italic.isActive()}
@@ -53,7 +48,7 @@ export function Toolbar() {
         disabled={!editor().commands.toggleItalic.canExec()}
         onClick={() => editor().commands.toggleItalic()}
       >
-        Italic
+        <LucideItalic size={14} />
       </button>
       <button
         data-pressed={editor().marks.strike.isActive()}
@@ -61,35 +56,46 @@ export function Toolbar() {
         disabled={!editor().commands.toggleStrike.canExec()}
         onClick={() => editor().commands.toggleStrike()}
       >
-        Strikethrough
+        <LucideStrike size={14} />
       </button>
 
-      <button
-        data-pressed={isTextAlignActive('center')}
-        class={styles.ToolbarAction}
-        disabled={!editor().commands.setTextAlign.canExec('left')}
-        onClick={() => editor().commands.setTextAlign('left')}
-      >
-        Align left
-      </button>
+      <div class={styles.Separator}></div>
 
       <button
         class={styles.ToolbarAction}
-        data-pressed={isTextAlignActive('center')}
-        disabled={!editor().commands.setTextAlign.canExec('center')}
-        onClick={() => editor().commands.setTextAlign('center')}
+        data-pressed={editor().nodes.codeBlock.isActive}
+        disabled={!editor().commands.setCodeBlock.canExec()}
+        onClick={() => editor().commands.setCodeBlock()}
       >
-        Align center
+        <LucideCode size={14} />
       </button>
 
-      <button
-        class={styles.ToolbarAction}
-        data-pressed={isTextAlignActive('right')}
-        disabled={!editor().commands.setTextAlign.canExec('right')}
-        onClick={() => editor().commands.setTextAlign('right')}
-      >
-        Align right
-      </button>
+      {/* <button*/}
+      {/*  data-pressed={isTextAlignActive('center')}*/}
+      {/*  class={styles.ToolbarAction}*/}
+      {/*  disabled={!editor().commands.setTextAlign.canExec('left')}*/}
+      {/*  onClick={() => editor().commands.setTextAlign('left')}*/}
+      {/* >*/}
+      {/*  Align left*/}
+      {/* </button>*/}
+
+      {/* <button*/}
+      {/*  class={styles.ToolbarAction}*/}
+      {/*  data-pressed={isTextAlignActive('center')}*/}
+      {/*  disabled={!editor().commands.setTextAlign.canExec('center')}*/}
+      {/*  onClick={() => editor().commands.setTextAlign('center')}*/}
+      {/* >*/}
+      {/*  Align center*/}
+      {/* </button>*/}
+
+      {/* <button*/}
+      {/*  class={styles.ToolbarAction}*/}
+      {/*  data-pressed={isTextAlignActive('right')}*/}
+      {/*  disabled={!editor().commands.setTextAlign.canExec('right')}*/}
+      {/*  onClick={() => editor().commands.setTextAlign('right')}*/}
+      {/* >*/}
+      {/*  Align right*/}
+      {/* </button>*/}
     </div>
   )
 }
