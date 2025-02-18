@@ -1,11 +1,9 @@
 {
   "manifest_version": 3,
-  "name": "CRXJS Solid Vite Example",
+  "name": "GitHub better comments",
   "version": "1.0.0",
   "permissions": [
-    "scripting",
-    "tabs",
-    "activeTab"
+    "scripting"
   ],
   "action": {
     "default_popup": "index.html"
@@ -16,23 +14,12 @@
   "content_scripts": [
     {
       "js": [
-        "src/inject/index.ts"
-      ],
-      "matches": [
-        "https://github.com/*"
-      ],
-      "run_at": "document_start",
-      "world": "MAIN"
-    },
-    {
-      "js": [
         "src/content.tsx"
       ],
       "matches": [
         "https://github.com/*"
       ],
-      "run_at": "document_idle",
-      "world": "MAIN"
+      "run_at": "document_idle"
     }
   ]
 }

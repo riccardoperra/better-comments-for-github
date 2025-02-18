@@ -35,11 +35,13 @@ import type { SuggestionData } from './utils/loadSuggestionData'
 
 import 'prosekit/basic/style.css'
 import 'prosekit/basic/typography.css'
+import { DebugNode } from './DebugNode'
 
 export interface EditorProps {
   suggestions: SuggestionData
   textarea: HTMLTextAreaElement
   initialValue: string
+  isOldTextarea: boolean
 }
 
 export function Editor(props: EditorProps) {
@@ -76,6 +78,7 @@ export function Editor(props: EditorProps) {
         forceGithubTextAreaSync(
           props.textarea,
           markdownFromUnistNode(unistNode as any),
+          { behavior: props.isOldTextarea ? 'native' : 'react' },
         )
       }, 150)
     },
@@ -85,6 +88,7 @@ export function Editor(props: EditorProps) {
   return (
     <div>
       <ProsekitEditor editor={editor} mentions={props.suggestions.mentions} />
+      <DebugNode editor={editor} />
     </div>
   )
 }

@@ -23,6 +23,9 @@
   border-top-right-radius: var(--borderRadius-medium);
   flex-direction: column-reverse;
   border: 1px solid var(--borderColor-default);
+
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
 }
 
 .EditorContent {

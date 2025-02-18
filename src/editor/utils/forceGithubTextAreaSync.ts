@@ -17,6 +17,9 @@
 export function forceGithubTextAreaSync(
   textarea: HTMLTextAreaElement,
   value: string,
+  options: {
+    behavior: 'native' | 'react'
+  },
 ) {
   // This is a trick that automatically encode characters and sanitize the `value`
   const fakeTextarea = document.createElement('textarea')
@@ -24,20 +27,27 @@ export function forceGithubTextAreaSync(
   const sanitizedValue = fakeTextarea.value
   fakeTextarea.remove()
 
-  const event = new Event('input', { bubbles: true })
+  const inputEvent = new Event('input', { bubbles: true })
+  Object.assign(inputEvent, { fromEditor: true })
 
-  Object.assign(event, { fromEditor: true })
+  if (options.behavior === 'react') {
+    const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+      window.HTMLTextAreaElement.prototype,
+      'value',
+    )?.set
 
-  const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
-    window.HTMLTextAreaElement.prototype,
-    'value',
-  )?.set
-
-  if (nativeInputValueSetter) {
-    nativeInputValueSetter.call(textarea, sanitizedValue)
-    textarea.dispatchEvent(event)
+    if (nativeInputValueSetter) {
+      nativeInputValueSetter.call(textarea, sanitizedValue)
+      textarea.dispatchEvent(inputEvent)
+    } else {
+      forceCallReactFiberOnChange(inputEvent, textarea)
+    }
   } else {
-    forceCallReactFiberOnChange(event, textarea)
+    const changeEvent = new Event('change', { bubbles: true })
+    Object.assign(changeEvent, { fromEditor: true })
+    textarea.value = sanitizedValue
+    textarea.dispatchEvent(inputEvent)
+    textarea.dispatchEvent(changeEvent)
   }
 }
 

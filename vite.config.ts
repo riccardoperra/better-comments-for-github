@@ -22,9 +22,10 @@ const generateManifest = () => {
 export default defineConfig({
   plugins: [
     solidPlugin(),
-    webExtension({
-      manifest: generateManifest,
-    }),
+    crx({ manifest }),
+    // webExtension({
+    //   manifest: generateManifest,
+    // }),
   ],
   // build: {
   //   minify: 'esbuild' as const,
@@ -36,38 +37,38 @@ export default defineConfig({
   server: {
     port: 3000,
   },
-  build: {
-    minify: false,
-    target: 'esnext',
-    rollupOptions: {
-      plugins: [
-        {
-          name: 'crx:dynamic-imports-polyfill',
-          generateBundle(_, bundle) {
-            const polyfill = `
-                (function () {
-                  const chrome = window.chrome || {};
-                  chrome.runtime = chrome.runtime || {};
-                  chrome.runtime.getURL = chrome.runtime.getURL || function(path) { return path.replace("assets/", "./"); };
-                })();
-            `
-            for (const chunk of Object.values(bundle)) {
-              if (
-                chunk.name?.endsWith('-loader.js') &&
-                'source' in chunk &&
-                typeof chunk.source === 'string' &&
-                chunk.source.includes('chrome.runtime.getURL') &&
-                !chunk.source.includes(polyfill)
-              ) {
-                chunk.source = `
-                  ${polyfill}
-                  ${chunk.source}
-                `
-              }
-            }
-          },
-        },
-      ],
-    },
-  },
+  // build: {
+  //   minify: false,
+  //   target: 'esnext',
+  //   rollupOptions: {
+  //     plugins: [
+  //       {
+  //         name: 'crx:dynamic-imports-polyfill',
+  //         generateBundle(_, bundle) {
+  //           const polyfill = `
+  //               (function () {
+  //                 const chrome = window.chrome || {};
+  //                 chrome.runtime = chrome.runtime || {};
+  //                 chrome.runtime.getURL = chrome.runtime.getURL || function(path) { return path.replace("assets/", "./"); };
+  //               })();
+  //           `
+  //           for (const chunk of Object.values(bundle)) {
+  //             if (
+  //               chunk.name?.endsWith('-loader.js') &&
+  //               'source' in chunk &&
+  //               typeof chunk.source === 'string' &&
+  //               chunk.source.includes('chrome.runtime.getURL') &&
+  //               !chunk.source.includes(polyfill)
+  //             ) {
+  //               chunk.source = `
+  //                 ${polyfill}
+  //                 ${chunk.source}
+  //               `
+  //             }
+  //           }
+  //         },
+  //       },
+  //     ],
+  //   },
+  // },
 })
