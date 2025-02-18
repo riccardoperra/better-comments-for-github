@@ -43,7 +43,6 @@ export function query(selector: string, parentNode: HTMLElement | null = null) {
   }
 
   const elementsOnInit = parentNode.querySelectorAll(selector)
-  console.log(elementsOnInit)
   setElements(() => Array.from(elementsOnInit) as Array<HTMLElement>)
 
   const observer = new MutationObserver((mutations) => {
