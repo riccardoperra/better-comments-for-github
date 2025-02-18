@@ -66,24 +66,24 @@ type DebugTreeItem = {
   isSelected: () => boolean
 }
 
-function formatTree(node: DebugTreeItem, depth = 0, index = 1) {
+function formatTree(node: DebugTreeItem) {
   let output = ''
   const prefix =
-    '  '.repeat(depth) +
+    '  '.repeat(node.depth) +
     (node.isSelected() ? '> ' : '') +
     `├ (${node.from}) ${node.type}\n`
 
   if (node.text) {
     output +=
-      '  '.repeat(depth + 1) +
+      '  '.repeat(node.depth + 1) +
       (node.isSelected() ? '> ' : '') +
       `└ (${node.from}) text "${node.text}"\n`
   } else {
     output += prefix
   }
 
-  node.children.forEach((child, i) => {
-    output += formatTree(child, depth + 1, i + 1)
+  node.children.forEach((child) => {
+    output += formatTree(child)
   })
 
   return output

@@ -24,50 +24,70 @@ import './styles.css'
 
 createRoot(() => {
   const [, onAdded] = queryComment()
-
   onAdded((element) => {
     const suggestionData = loadSuggestionData(element)
-
-    const viewTabs = element.querySelector<HTMLElement>(
-      '[class*="ViewSwitch-module"]',
+    const jsCommentField = element.querySelector<HTMLTextAreaElement>(
+      'textarea.js-comment-field',
     )
 
-    const moduleContainer = element.querySelector(
-      '[class*="MarkdownEditor-module__container"]',
-    )!
+    let textarea: HTMLTextAreaElement | null = null
+    let isOldTextarea: boolean
+    let mountElFunction: (node: HTMLElement) => void
 
-    const inputWrapper = moduleContainer.firstElementChild
-    const textarea = inputWrapper!.querySelector('textarea')
-    const container = document.createElement('div')
+    // Old comment component of GitHub, This is still present in pull requests
+    if (jsCommentField) {
+      isOldTextarea = true
+      textarea = jsCommentField
 
-    // const switchButton = document.createElement('button')
-    // switchButton.classList.add('btn')
-    // switchButton.innerHTML = 'Back to default editor'
-    //
-    // container.appendChild(switchButton)
+      // Search for closest tab-container of the textarea.
+      // This element is the wrapper of the entire comment box.
+      const tabContainer = jsCommentField.closest<HTMLElement>('tab-container')
 
-    moduleContainer.prepend(container)
+      if (!tabContainer) {
+        // TODO: add log
+        return
+      }
 
-    if (textarea) {
-      const root = document.createElement('div')
-      root.id = 'github-better-comment'
-      root.className = styles.injectedEditorContent
-      container.appendChild(root)
+      // We should create our element before the tab container
+      mountElFunction = (node) =>
+        tabContainer.insertAdjacentElement('beforebegin', node)
+    } else {
+      isOldTextarea = false
+      const moduleContainer = element.querySelector(
+        '[class*="MarkdownEditor-module__container"]',
+      )!
+      textarea = moduleContainer.querySelector<HTMLTextAreaElement>('textarea')
 
-      root.addEventListener('keydown', (event) => {
-        event.stopPropagation()
-      })
+      mountElFunction = (node) => moduleContainer.prepend(node)
+    }
 
-      render(
-        () => (
+    if (!textarea) {
+      // add log
+      return
+    }
+
+    const root = document.createElement('div')
+    root.id = 'github-better-comment'
+    root.className = styles.injectedEditorContent
+    mountElFunction(root)
+
+    render(
+      () => (
+        <div
+          data-github-better-comment-wrapper=""
+          on:keydown={(event) => {
+            event.stopPropagation()
+          }}
+        >
           <Editor
+            isOldTextarea={isOldTextarea}
             suggestions={suggestionData}
             textarea={textarea}
             initialValue={textarea.value}
           />
-        ),
-        root,
-      )
-    }
+        </div>
+      ),
+      root,
+    )
   })
 })
