@@ -26,6 +26,8 @@ export function forceGithubTextAreaSync(
 
   const event = new Event('input', { bubbles: true })
 
+  Object.assign(event, { fromEditor: true })
+
   const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
     window.HTMLTextAreaElement.prototype,
     'value',

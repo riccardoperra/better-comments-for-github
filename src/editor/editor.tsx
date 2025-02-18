@@ -49,13 +49,13 @@ export function Editor(props: EditorProps) {
   })
 
   createEffect(() => {
-    props.textarea.addEventListener('input', ({ target }) => {
-      const value = props.textarea.value
-
-      const unistNode = unistNodeFromMarkdown(value)
-      const pmNode = convertUnistToProsemirror(unistNode, editor.schema)
-
-      editor.setContent(pmNode)
+    props.textarea.addEventListener('input', (event) => {
+      if (!(event as { fromEditor?: boolean }).fromEditor) {
+        const value = props.textarea.value
+        const unistNode = unistNodeFromMarkdown(value)
+        const pmNode = convertUnistToProsemirror(unistNode, editor.schema)
+        editor.setContent(pmNode)
+      }
     })
   })
 
