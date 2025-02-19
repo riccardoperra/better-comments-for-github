@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { createEffect, onMount } from 'solid-js'
+import { createContext, createEffect, onMount } from 'solid-js'
 import { createEditor } from 'prosekit/core'
 import { useDocChange } from 'prosekit/solid'
 import {
@@ -43,6 +43,13 @@ export interface EditorProps {
   initialValue: string
   isOldTextarea: boolean
 }
+
+export const EditorRootContext = createContext<{
+  data: SuggestionData
+  textarea: HTMLTextAreaElement
+  initialValue: string
+  isOldTextarea: boolean
+}>()
 
 export function Editor(props: EditorProps) {
   const extension = defineExtension()
@@ -87,7 +94,11 @@ export function Editor(props: EditorProps) {
 
   return (
     <div>
-      <ProsekitEditor editor={editor} mentions={props.suggestions.mentions} />
+      <ProsekitEditor
+        editor={editor}
+        mentions={props.suggestions.mentions}
+        issues={props.suggestions.references}
+      />
       <DebugNode editor={editor} />
     </div>
   )
