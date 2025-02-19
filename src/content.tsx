@@ -18,76 +18,166 @@ import { createRoot } from 'solid-js'
 import { render } from 'solid-js/web'
 import { queryComment } from './dom/queryComment'
 import { loadSuggestionData } from './editor/utils/loadSuggestionData'
-import { Editor } from './editor/editor'
+import { Editor, EditorRootContext } from './editor/editor'
 import styles from './content.module.css'
+import type { SuggestionData } from './editor/utils/loadSuggestionData'
 import './styles.css'
+import {
+  fetchIssues,
+  fetchMentionableUsers,
+  getUserAvatarId,
+} from './github/data'
 
-createRoot(() => {
-  const [, onAdded] = queryComment()
-  onAdded((element) => {
-    const suggestionData = loadSuggestionData(element)
-    const jsCommentField = element.querySelector<HTMLTextAreaElement>(
-      'textarea.js-comment-field',
-    )
+async function waitForReactFiber(
+  element: HTMLElement,
+  interval = 150,
+  timeout = 3000,
+) {
+  return new Promise((resolve, reject) => {
+    const startTime = Date.now()
 
-    let textarea: HTMLTextAreaElement | null = null
-    let isOldTextarea: boolean
-    let mountElFunction: (node: HTMLElement) => void
-
-    // Old comment component of GitHub, This is still present in pull requests
-    if (jsCommentField) {
-      isOldTextarea = true
-      textarea = jsCommentField
-
-      // Search for closest tab-container of the textarea.
-      // This element is the wrapper of the entire comment box.
-      const tabContainer = jsCommentField.closest<HTMLElement>('tab-container')
-
-      if (!tabContainer) {
-        // TODO: add log
+    function check() {
+      if (!element) {
+        reject(new Error('Element not found'))
         return
       }
 
-      // We should create our element before the tab container
-      mountElFunction = (node) =>
-        tabContainer.insertAdjacentElement('beforebegin', node)
-    } else {
-      isOldTextarea = false
-      const moduleContainer = element.querySelector(
-        '[class*="MarkdownEditor-module__container"]',
-      )!
-      textarea = moduleContainer.querySelector<HTMLTextAreaElement>('textarea')
+      let fiber: any
 
-      mountElFunction = (node) => moduleContainer.prepend(node)
+      for (const key in element) {
+        if (key.includes('react')) {
+          console.log('find something', element[key])
+          fiber = element[key]
+          break
+        }
+      }
+      if (fiber) {
+        resolve(fiber)
+        return
+      }
+
+      if (Date.now() - startTime > timeout) {
+        reject(new Error('Timeout waiting for React Fiber'))
+        return
+      }
+
+      setTimeout(check, interval)
     }
 
-    if (!textarea) {
-      // add log
-      return
-    }
-
-    const root = document.createElement('div')
-    root.id = 'github-better-comment'
-    root.className = styles.injectedEditorContent
-    mountElFunction(root)
-
-    render(
-      () => (
-        <div
-          data-github-better-comment-wrapper=""
-          on:keydown={(event) => {
-            event.stopPropagation()
-          }}
-        >
-          <Editor
-            isOldTextarea={isOldTextarea}
-            suggestions={suggestionData}
-            textarea={textarea}
-            initialValue={textarea.value}
-          />
-        </div>
-      ),
-      root,
-    )
+    check()
   })
-})
+}
+
+setTimeout(() => {
+  createRoot(() => {
+    const [, onAdded] = queryComment()
+    onAdded(async (element) => {
+      const jsCommentField = element.querySelector<HTMLTextAreaElement>(
+        'textarea.js-comment-field',
+      )
+
+      let textarea: HTMLTextAreaElement | null = null
+      let mountElFunction: (node: HTMLElement) => void
+      let suggestionData: SuggestionData
+
+      let isOldTextarea = false
+      // Old comment component of GitHub, This is still present in pull requests
+      if (jsCommentField) {
+        isOldTextarea = true
+        textarea = jsCommentField
+
+        const textExpander =
+          jsCommentField.closest<HTMLElement>('text-expander')
+        if (textExpander) {
+          const { emojiUrl, issueUrl, mentionUrl } = textExpander.dataset
+
+          const [issues, mentionableUsers] = await Promise.all([
+            await fetchIssues(issueUrl!),
+            await fetchMentionableUsers(mentionUrl!),
+          ])
+
+          suggestionData = {
+            mentions: mentionableUsers.map((data) => ({
+              avatarUrl: getUserAvatarId(data.id),
+              identifier: data.login,
+              description: data.name,
+              participant: data.participant,
+            })),
+            // emojis: emojiUrlResponse,
+            references: issues,
+            savedReplies: [],
+          }
+        }
+
+        // Search for closest tab-container of the textarea.
+        // This element is the wrapper of the entire comment box.
+        const tabContainer =
+          jsCommentField.closest<HTMLElement>('tab-container')
+
+        if (!tabContainer) {
+          // TODO: add log
+          return
+        }
+
+        // We should create our element before the tab container
+        mountElFunction = (node) =>
+          tabContainer.insertAdjacentElement('beforebegin', node)
+      } else {
+        isOldTextarea = false
+        await waitForReactFiber(element)
+
+        suggestionData = loadSuggestionData(element)
+
+        const moduleContainer = element.querySelector(
+          '[class*="MarkdownEditor-module__container"]',
+        )!
+        textarea =
+          moduleContainer.querySelector<HTMLTextAreaElement>('textarea')
+
+        mountElFunction = (node) => moduleContainer.prepend(node)
+      }
+
+      if (!textarea) {
+        // add log
+        return
+      }
+
+      const root = document.createElement('div')
+      root.id = 'github-better-comment'
+      root.className = styles.injectedEditorContent
+      mountElFunction(root)
+
+      render(
+        () => (
+          <div
+            data-github-better-comment-wrapper=""
+            on:keydown={(event) => {
+              event.stopPropagation()
+            }}
+          >
+            <EditorRootContext.Provider
+              value={{
+                get data() {
+                  return suggestionData
+                },
+                get initialValue() {
+                  return textarea.value
+                },
+                textarea,
+                isOldTextarea,
+              }}
+            >
+              <Editor
+                isOldTextarea={isOldTextarea}
+                suggestions={suggestionData}
+                textarea={textarea}
+                initialValue={textarea.value}
+              />
+            </EditorRootContext.Provider>
+          </div>
+        ),
+        root,
+      )
+    })
+  })
+}, 1000)
