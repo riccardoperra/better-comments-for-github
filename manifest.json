@@ -3,7 +3,9 @@
   "name": "GitHub better comments",
   "version": "1.0.0",
   "permissions": [
-    "scripting"
+    "scripting",
+    "tabs",
+    "activeTab"
   ],
   "action": {
     "default_popup": "index.html"
@@ -19,7 +21,8 @@
       "matches": [
         "https://github.com/*"
       ],
-      "run_at": "document_idle"
+      "run_at": "document_idle",
+      "world": "MAIN"
     }
   ]
 }
