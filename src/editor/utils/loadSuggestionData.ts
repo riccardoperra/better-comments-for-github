@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import { getFiberFromHostInstance, traverseFiber } from 'bippy'
-
 export interface MentionSuggestion {
   avatarUrl: string
   description: string
@@ -47,18 +45,6 @@ export interface SuggestionData {
   emojis: Array<EmojiSuggestion>
 }
 
-export function getGitHubEditorInstanceFiber(element: HTMLElement) {
-  let fiber = getFiberFromHostInstance(element)
-  traverseFiber(fiber, (node) => {
-    if (node.memoizedProps.mentionSuggestions) {
-      fiber = node
-      return true
-    }
-    return false
-  })
-  return fiber
-}
-
 export function loadSuggestionData(element: HTMLElement): SuggestionData {
   const data: SuggestionData = {
     mentions: [],
@@ -67,25 +53,39 @@ export function loadSuggestionData(element: HTMLElement): SuggestionData {
     emojis: [],
   }
 
-  const fiber = getFiberFromHostInstance(element)
-
-  traverseFiber(fiber, (node) => {
-    if (node.memoizedProps.mentionSuggestions) {
-      const {
-        mentionSuggestions,
-        referenceSuggestions,
-        savedReplies,
-        emojiSuggestions,
-      } = node.memoizedProps as any
-
-      data.mentions = mentionSuggestions
-      data.emojis = emojiSuggestions
-      data.savedReplies = savedReplies
-      data.references = referenceSuggestions
-      return true
+  let fiber
+  for (const key in element) {
+    if (key.includes('__reactFiber')) {
+      fiber = element[key as keyof typeof element] as Record<string, any> | null
+      break
     }
-    return false
+  }
+
+  const result = traverseFiber2(fiber, false, (sel) => {
+    return !!sel.memoizedProps.mentionSuggestions
   })
 
+  data.mentions = result.memoizedProps.mentionSuggestions
+  data.emojis = result.memoizedProps.emojiSuggestions
+  data.savedReplies = result.memoizedProps.savedReplies
+  data.references = result.memoizedProps.referenceSuggestions
+
   return data
+}
+
+export function traverseFiber2<T = any>(
+  fiber: any,
+  ascending: boolean,
+  selector: any,
+) {
+  if (!fiber) return
+  if (selector(fiber) === true) return fiber
+
+  let child = ascending ? fiber.return : fiber.child
+  while (child) {
+    const match = traverseFiber2(child, ascending, selector)
+    if (match) return match
+
+    child = ascending ? null : child.sibling
+  }
 }
