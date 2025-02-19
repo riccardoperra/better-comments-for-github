@@ -19,6 +19,8 @@ import LucideBold from 'lucide-solid/icons/bold'
 import LucideItalic from 'lucide-solid/icons/italic'
 import LucideStrike from 'lucide-solid/icons/strikethrough'
 import LucideCode from 'lucide-solid/icons/code'
+import LucideCodeBlock from 'lucide-solid/icons/code-square'
+import LucideBlockquote from 'lucide-solid/icons/text-quote'
 import styles from './toolbar.module.css'
 import type { NodeAction } from 'prosekit/core'
 import type { EditorExtension } from '../extension'
@@ -40,7 +42,7 @@ export function Toolbar() {
         disabled={!editor().commands.toggleBold.canExec()}
         onClick={() => editor().commands.toggleBold()}
       >
-        <LucideBold size={14} />
+        <LucideBold size={16} />
       </button>
       <button
         data-pressed={editor().marks.italic.isActive()}
@@ -48,7 +50,7 @@ export function Toolbar() {
         disabled={!editor().commands.toggleItalic.canExec()}
         onClick={() => editor().commands.toggleItalic()}
       >
-        <LucideItalic size={14} />
+        <LucideItalic size={16} />
       </button>
       <button
         data-pressed={editor().marks.strike.isActive()}
@@ -56,18 +58,36 @@ export function Toolbar() {
         disabled={!editor().commands.toggleStrike.canExec()}
         onClick={() => editor().commands.toggleStrike()}
       >
-        <LucideStrike size={14} />
+        <LucideStrike size={16} />
       </button>
 
       <div class={styles.Separator}></div>
 
       <button
         class={styles.ToolbarAction}
-        data-pressed={editor().nodes.codeBlock.isActive}
-        disabled={!editor().commands.setCodeBlock.canExec()}
-        onClick={() => editor().commands.setCodeBlock()}
+        data-pressed={editor().nodes.codeBlock.isActive()}
+        disabled={!editor().commands.toggleCodeBlock.canExec()}
+        onClick={() => editor().commands.toggleCodeBlock()}
       >
-        <LucideCode size={14} />
+        <LucideCodeBlock size={16} />
+      </button>
+
+      <button
+        class={styles.ToolbarAction}
+        data-pressed={editor().nodes.blockquote.isActive()}
+        disabled={!editor().commands.toggleBlockquote.canExec()}
+        onClick={() => editor().commands.toggleBlockquote()}
+      >
+        <LucideBlockquote size={16} />
+      </button>
+
+      <button
+        class={styles.ToolbarAction}
+        data-pressed={editor().nodes.blockquote.isActive()}
+        disabled={!editor().commands.toggleCode.canExec()}
+        onClick={() => editor().commands.toggleCode()}
+      >
+        <LucideCode size={16} />
       </button>
 
       {/* <button*/}

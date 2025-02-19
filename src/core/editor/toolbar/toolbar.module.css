@@ -45,6 +45,7 @@
   padding: 0 var(--control-small-paddingInline-condensed, 0.5rem);
   border-color: transparent;
   box-shadow: none;
+  width: 32px;
 
   &:disabled {
     background: var(--button-invisible-bgColor-disabled);
