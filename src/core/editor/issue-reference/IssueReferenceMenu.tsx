@@ -22,15 +22,15 @@ import {
   AutocompleteList,
   AutocompletePopover,
 } from '../autocomplete/Autocomplete'
-import styles from './UserMentionMenu.module.css'
+import styles from './IssueReferenceMenu.module.css'
 import type { EditorExtension } from '../extension'
 import type { SuggestionData } from '../../../editor/utils/loadSuggestionData'
 
 export interface UserMentionMenuProps {
-  users: SuggestionData['mentions']
+  issues: SuggestionData['references']
 }
 
-export function UserMentionMenu(props: UserMentionMenuProps) {
+export function IssueReferenceMenu(props: UserMentionMenuProps) {
   const [query, setQuery] = createSignal('')
   const editor = useEditor<EditorExtension>()
 
@@ -48,21 +48,20 @@ export function UserMentionMenu(props: UserMentionMenuProps) {
     const filter = query()
 
     if (!filter) {
-      return props.users.slice(0, 50)
+      return props.issues.slice(0, 50)
     }
 
-    return props.users
-      .filter((user) => {
-        return (
-          user.description.includes(filter) || user.identifier.includes(filter)
-        )
-      })
+    return props.issues
+      .filter(
+        (issue) =>
+          issue.titleText.includes(filter) || String(issue.id).includes(filter),
+      )
       .slice(0, 100)
   })
 
   return (
     <AutocompletePopover
-      regex={/@\w*$/}
+      regex={/#\w*$/}
       fitViewport={false}
       transform={true}
       onQueryChange={setQuery}
@@ -71,18 +70,18 @@ export function UserMentionMenu(props: UserMentionMenuProps) {
         <AutocompleteEmpty>No results</AutocompleteEmpty>
 
         <For each={filteredUsers()}>
-          {(user) => (
-            <AutocompleteItem
-              key={user.identifier}
-              onSelect={() => handleUserInsert(user)}
-            >
-              <img
-                src={user.avatarUrl}
-                class={styles.directiveMenuItemAvatar}
-                alt={''}
-              />
+          {(issue) => (
+            <AutocompleteItem key={issue.id}>
+              <div class={styles.itemContainer}>
+                <div innerHTML={issue.iconHtml}></div>
 
-              {user.description}
+                <div
+                  innerHTML={issue.titleHtml}
+                  class={styles.referenceTitle}
+                ></div>
+
+                <small class={styles.referenceId}>#{issue.id}</small>
+              </div>
             </AutocompleteItem>
           )}
         </For>

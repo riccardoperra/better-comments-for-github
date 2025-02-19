@@ -14,8 +14,26 @@
  * limitations under the License.
  */
 
-.directiveMenuItemAvatar {
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
+.itemContainer {
+  display: flex;
+  align-items: center;
+  gap: var(--base-size-8);
+}
+
+.referenceId {
+  font-size: 80%;
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: top;
+  white-space: nowrap;
+  max-width: 100%;
+  flex-grow: 1;
+  flex-basis: 0;
+  min-width: 0;
+  color: var(--fgColor-muted, var(--color-fg-muted, #848d97));
+}
+
+.referenceTitle {
+  font-weight: 500;
 }

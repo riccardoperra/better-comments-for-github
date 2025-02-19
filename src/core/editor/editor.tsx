@@ -18,12 +18,14 @@ import { ProseKit } from 'prosekit/solid'
 import { Toolbar } from './toolbar/toolbar'
 import styles from './editor.module.css'
 import { UserMentionMenu } from './user-mention/UserMentionMenu'
+import { IssueReferenceMenu } from './issue-reference/IssueReferenceMenu'
 import type { Editor } from 'prosekit/core'
 import type { SuggestionData } from '../../editor/utils/loadSuggestionData'
 
 export interface ProsekitEditor {
   editor: Editor
   mentions: SuggestionData['mentions']
+  issues: SuggestionData['references']
 }
 
 export function ProsekitEditor(props: ProsekitEditor) {
@@ -39,6 +41,7 @@ export function ProsekitEditor(props: ProsekitEditor) {
           />
 
           <UserMentionMenu users={props.mentions} />
+          <IssueReferenceMenu issues={props.issues} />
         </div>
       </div>
     </ProseKit>
