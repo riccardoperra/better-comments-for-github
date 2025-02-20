@@ -24,9 +24,13 @@ import LucideBlockquote from 'lucide-solid/icons/text-quote'
 import LucideAlignLeft from 'lucide-solid/icons/align-left'
 import LucideAlignCenter from 'lucide-solid/icons/align-center'
 import LucideAlignRight from 'lucide-solid/icons/align-right'
+import LucideCog from 'lucide-solid/icons/cog'
+import { Popover, PopoverContent, PopoverTrigger } from '../popover/popover'
+import { Tooltip, TooltipContent, TooltipTrigger } from '../tooltip/tooltip'
 import styles from './toolbar.module.css'
 import type { NodeAction } from 'prosekit/core'
 import type { EditorExtension } from '../extension'
+import type { FlowProps } from 'solid-js'
 
 export function Toolbar() {
   const editor = useEditor<EditorExtension>({ update: true })
@@ -39,88 +43,118 @@ export function Toolbar() {
 
   return (
     <div class={styles.Toolbar}>
-      <button
-        class={styles.ToolbarAction}
-        data-pressed={editor().marks.bold.isActive()}
+      <ToolbarAction
+        label={'Bold'}
+        isPressed={editor().marks.bold.isActive()}
         disabled={!editor().commands.toggleBold.canExec()}
         onClick={() => editor().commands.toggleBold()}
       >
         <LucideBold size={16} />
-      </button>
-      <button
-        data-pressed={editor().marks.italic.isActive()}
-        class={styles.ToolbarAction}
+      </ToolbarAction>
+      <ToolbarAction
+        label={'Italic'}
+        isPressed={editor().marks.italic.isActive()}
         disabled={!editor().commands.toggleItalic.canExec()}
         onClick={() => editor().commands.toggleItalic()}
       >
         <LucideItalic size={16} />
-      </button>
-      <button
-        data-pressed={editor().marks.strike.isActive()}
-        class={styles.ToolbarAction}
+      </ToolbarAction>
+      <ToolbarAction
+        label={'Strike'}
+        isPressed={editor().marks.strike.isActive()}
         disabled={!editor().commands.toggleStrike.canExec()}
         onClick={() => editor().commands.toggleStrike()}
       >
         <LucideStrike size={16} />
-      </button>
+      </ToolbarAction>
 
       <div class={styles.Separator}></div>
 
-      <button
-        class={styles.ToolbarAction}
-        data-pressed={editor().nodes.codeBlock.isActive()}
+      <ToolbarAction
+        label={'Code block'}
+        isPressed={editor().nodes.codeBlock.isActive()}
         disabled={!editor().commands.toggleCodeBlock.canExec()}
         onClick={() => editor().commands.toggleCodeBlock()}
       >
         <LucideCodeBlock size={16} />
-      </button>
+      </ToolbarAction>
 
-      <button
-        class={styles.ToolbarAction}
-        data-pressed={editor().nodes.blockquote.isActive()}
+      <ToolbarAction
+        label={'Blockquote'}
+        isPressed={editor().nodes.blockquote.isActive()}
         disabled={!editor().commands.toggleBlockquote.canExec()}
         onClick={() => editor().commands.toggleBlockquote()}
       >
         <LucideBlockquote size={16} />
-      </button>
+      </ToolbarAction>
 
-      <button
-        class={styles.ToolbarAction}
-        data-pressed={editor().marks.code.isActive()}
+      <ToolbarAction
+        label={'Code'}
+        isPressed={editor().marks.code.isActive()}
         disabled={!editor().commands.toggleCode.canExec()}
         onClick={() => editor().commands.toggleCode()}
       >
         <LucideCode size={16} />
-      </button>
+      </ToolbarAction>
 
       <div class={styles.Separator}></div>
 
-      <button
-        data-pressed={isTextAlignActive('left')}
-        class={styles.ToolbarAction}
+      <ToolbarAction
+        label={'Align left'}
+        isPressed={isTextAlignActive('left')}
         disabled={!editor().commands.setTextAlign.canExec('left')}
         onClick={() => editor().commands.setTextAlign('left')}
       >
         <LucideAlignLeft size={16} />
-      </button>
+      </ToolbarAction>
 
-      <button
-        class={styles.ToolbarAction}
-        data-pressed={isTextAlignActive('center')}
+      <ToolbarAction
+        label={'Align center'}
+        isPressed={isTextAlignActive('center')}
         disabled={!editor().commands.setTextAlign.canExec('center')}
         onClick={() => editor().commands.setTextAlign('center')}
       >
         <LucideAlignCenter size={16} />
-      </button>
+      </ToolbarAction>
 
-      <button
-        class={styles.ToolbarAction}
-        data-pressed={isTextAlignActive('right')}
+      <ToolbarAction
+        isPressed={isTextAlignActive('right')}
         disabled={!editor().commands.setTextAlign.canExec('right')}
         onClick={() => editor().commands.setTextAlign('right')}
+        label={'Align right'}
       >
         <LucideAlignRight size={16} />
-      </button>
+      </ToolbarAction>
+
+      <Popover>
+        <PopoverTrigger class={styles.ToolbarAction}>
+          <LucideCog size={16} />
+        </PopoverTrigger>
+        <PopoverContent>My content</PopoverContent>
+      </Popover>
     </div>
+  )
+}
+
+export function ToolbarAction(
+  props: FlowProps<{
+    isPressed: boolean
+    disabled: boolean
+    onClick: () => void
+    label: string
+  }>,
+) {
+  return (
+    <Tooltip>
+      <TooltipTrigger
+        data-pressed={props.isPressed}
+        disabled={props.disabled}
+        onClick={() => props.onClick()}
+        class={styles.ToolbarAction}
+      >
+        {props.children}
+      </TooltipTrigger>
+      <TooltipContent>{props.label}</TooltipContent>
+    </Tooltip>
   )
 }

@@ -31,11 +31,13 @@
   },
   "dependencies": {
     "@handlewithcare/remark-prosemirror": "^0.1.5",
+    "@kobalte/core": "^0.13.8",
     "@primer/primitives": "^10.3.4",
     "@primer/view-components": "^0.36.5",
     "@prosedoc/markdown-schema": "workspace:*",
     "@prosemirror-adapter/solid": "^0.4.0",
     "@types/chrome": "^0.0.304",
+    "clsx": "^2.1.1",
     "lucide-solid": "^0.475.0",
     "prosekit": "^0.11.5",
     "prosemirror-commands": "^1.6.2",
