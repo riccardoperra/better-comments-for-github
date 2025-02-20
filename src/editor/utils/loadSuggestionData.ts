@@ -14,6 +14,15 @@
  * limitations under the License.
  */
 
+import { batch, createMemo, createSignal } from 'solid-js'
+import {
+  getFiber,
+  traverseFiber,
+  waitForReactFiber,
+} from '../../core/react-hacks/fiber'
+import type { Accessor } from 'solid-js'
+import type { Fiber } from 'bippy'
+
 export interface MentionSuggestion {
   avatarUrl: string
   description: string
@@ -45,47 +54,77 @@ export interface SuggestionData {
   emojis: Array<EmojiSuggestion>
 }
 
-export function loadSuggestionData(element: HTMLElement): SuggestionData {
-  const data: SuggestionData = {
+export function createSuggestionData(element: HTMLElement) {
+  const [data, setData] = createSignal<SuggestionData>({
     mentions: [],
     references: [],
     savedReplies: [],
     emojis: [],
-  }
+  })
 
-  let fiber
-  for (const key in element) {
-    if (key.includes('__reactFiber')) {
-      fiber = element[key as keyof typeof element] as Record<string, any> | null
-      break
+  const fiber = getFiber(element)
+
+  const reactiveData = makeSuggestionData(fiber)
+
+  function updateData(fiber: Fiber) {
+    const suggestionData = reactiveData()
+    if (suggestionData) {
+      batch(() => {
+        setData(() => ({
+          emojis: suggestionData.emojis,
+          mentions: suggestionData.mentions,
+          references: suggestionData.references,
+          savedReplies: suggestionData.savedReplies,
+        }))
+      })
     }
   }
 
-  const result = traverseFiber2(fiber, false, (sel) => {
+  if (!fiber) {
+    waitForReactFiber(element).then((fiber) => {
+      updateData(fiber)
+    })
+  } else {
+    updateData(fiber)
+  }
+
+  return {
+    suggestionData: data,
+  }
+}
+
+function getEditorFiber(fiber: Fiber) {
+  const result = traverseFiber(fiber, false, (sel) => {
     return !!sel.memoizedProps.mentionSuggestions
   })
 
-  data.mentions = result.memoizedProps.mentionSuggestions
-  data.emojis = result.memoizedProps.emojiSuggestions
-  data.savedReplies = result.memoizedProps.savedReplies
-  data.references = result.memoizedProps.referenceSuggestions
-
-  return data
+  if (!result) {
+    return null
+  }
+  return result
 }
 
-export function traverseFiber2<T = any>(
-  fiber: any,
-  ascending: boolean,
-  selector: any,
-) {
-  if (!fiber) return
-  if (selector(fiber) === true) return fiber
+function makeSuggestionData(fiber: Fiber): Accessor<SuggestionData> {
+  fiber = getEditorFiber(fiber)
+  const [notifier, notify] = createSignal()
 
-  let child = ascending ? fiber.return : fiber.child
-  while (child) {
-    const match = traverseFiber2(child, ascending, selector)
-    if (match) return match
+  setTimeout(() => {
+    notify({})
+    setTimeout(() => {
+      notify({})
+    }, 500)
+  }, 500)
 
-    child = ascending ? null : child.sibling
+  const getDataFromFiber = () => {
+    notifier()
+
+    return {
+      mentions: fiber.memoizedProps.mentionSuggestions,
+      emojis: fiber.memoizedProps.emojiSuggestions,
+      savedReplies: fiber.memoizedProps.savedReplies,
+      references: fiber.memoizedProps.referenceSuggestions,
+    } as SuggestionData
   }
+
+  return createMemo(getDataFromFiber)
 }

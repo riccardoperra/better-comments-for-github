@@ -36,7 +36,6 @@
     "@prosedoc/markdown-schema": "workspace:*",
     "@prosemirror-adapter/solid": "^0.4.0",
     "@types/chrome": "^0.0.304",
-    "bippy": "^0.3.3",
     "lucide-solid": "^0.475.0",
     "prosekit": "^0.11.5",
     "prosemirror-commands": "^1.6.2",

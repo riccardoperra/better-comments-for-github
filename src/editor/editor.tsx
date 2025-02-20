@@ -41,14 +41,16 @@ export interface EditorProps {
   suggestions: SuggestionData
   textarea: HTMLTextAreaElement
   initialValue: string
-  isOldTextarea: boolean
+  type: EditorType
 }
+
+export type EditorType = 'native' | 'react'
 
 export const EditorRootContext = createContext<{
   data: SuggestionData
   textarea: HTMLTextAreaElement
   initialValue: string
-  isOldTextarea: boolean
+  type: EditorType
 }>()
 
 export function Editor(props: EditorProps) {
@@ -85,7 +87,7 @@ export function Editor(props: EditorProps) {
         forceGithubTextAreaSync(
           props.textarea,
           markdownFromUnistNode(unistNode as any),
-          { behavior: props.isOldTextarea ? 'native' : 'react' },
+          { behavior: props.type },
         )
       }, 150)
     },
@@ -96,8 +98,8 @@ export function Editor(props: EditorProps) {
     <div>
       <ProsekitEditor
         editor={editor}
-        mentions={props.suggestions.mentions}
-        issues={props.suggestions.references}
+        mentions={props.suggestions.mentions ?? []}
+        issues={props.suggestions.references ?? []}
       />
       <DebugNode editor={editor} />
     </div>

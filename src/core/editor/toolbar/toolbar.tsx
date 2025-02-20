@@ -21,6 +21,9 @@ import LucideStrike from 'lucide-solid/icons/strikethrough'
 import LucideCode from 'lucide-solid/icons/code'
 import LucideCodeBlock from 'lucide-solid/icons/code-square'
 import LucideBlockquote from 'lucide-solid/icons/text-quote'
+import LucideAlignLeft from 'lucide-solid/icons/align-left'
+import LucideAlignCenter from 'lucide-solid/icons/align-center'
+import LucideAlignRight from 'lucide-solid/icons/align-right'
 import styles from './toolbar.module.css'
 import type { NodeAction } from 'prosekit/core'
 import type { EditorExtension } from '../extension'
@@ -83,39 +86,41 @@ export function Toolbar() {
 
       <button
         class={styles.ToolbarAction}
-        data-pressed={editor().nodes.blockquote.isActive()}
+        data-pressed={editor().marks.code.isActive()}
         disabled={!editor().commands.toggleCode.canExec()}
         onClick={() => editor().commands.toggleCode()}
       >
         <LucideCode size={16} />
       </button>
 
-      {/* <button*/}
-      {/*  data-pressed={isTextAlignActive('center')}*/}
-      {/*  class={styles.ToolbarAction}*/}
-      {/*  disabled={!editor().commands.setTextAlign.canExec('left')}*/}
-      {/*  onClick={() => editor().commands.setTextAlign('left')}*/}
-      {/* >*/}
-      {/*  Align left*/}
-      {/* </button>*/}
+      <div class={styles.Separator}></div>
 
-      {/* <button*/}
-      {/*  class={styles.ToolbarAction}*/}
-      {/*  data-pressed={isTextAlignActive('center')}*/}
-      {/*  disabled={!editor().commands.setTextAlign.canExec('center')}*/}
-      {/*  onClick={() => editor().commands.setTextAlign('center')}*/}
-      {/* >*/}
-      {/*  Align center*/}
-      {/* </button>*/}
+      <button
+        data-pressed={isTextAlignActive('left')}
+        class={styles.ToolbarAction}
+        disabled={!editor().commands.setTextAlign.canExec('left')}
+        onClick={() => editor().commands.setTextAlign('left')}
+      >
+        <LucideAlignLeft size={16} />
+      </button>
 
-      {/* <button*/}
-      {/*  class={styles.ToolbarAction}*/}
-      {/*  data-pressed={isTextAlignActive('right')}*/}
-      {/*  disabled={!editor().commands.setTextAlign.canExec('right')}*/}
-      {/*  onClick={() => editor().commands.setTextAlign('right')}*/}
-      {/* >*/}
-      {/*  Align right*/}
-      {/* </button>*/}
+      <button
+        class={styles.ToolbarAction}
+        data-pressed={isTextAlignActive('center')}
+        disabled={!editor().commands.setTextAlign.canExec('center')}
+        onClick={() => editor().commands.setTextAlign('center')}
+      >
+        <LucideAlignCenter size={16} />
+      </button>
+
+      <button
+        class={styles.ToolbarAction}
+        data-pressed={isTextAlignActive('right')}
+        disabled={!editor().commands.setTextAlign.canExec('right')}
+        onClick={() => editor().commands.setTextAlign('right')}
+      >
+        <LucideAlignRight size={16} />
+      </button>
     </div>
   )
 }

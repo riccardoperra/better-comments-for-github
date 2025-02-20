@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import type { SuggestionData } from '../editor/utils/loadSuggestionData'
+
 export function fetchEmojis(url: string) {
   return fetch(url)
 }
@@ -50,6 +52,23 @@ export function fetchIssues(url: string): Promise<{
       Accept: 'application/json',
     },
   }).then((result) => result.json())
+}
+
+export async function tryGetReferences(
+  url: string,
+): Promise<SuggestionData['references']> {
+  try {
+    const referenceData = await fetchIssues(url)
+    const iconMap = referenceData.icons
+    return referenceData.suggestions.map((reference) => ({
+      id: reference.number.toString(),
+      titleText: reference.title,
+      titleHtml: reference.title,
+      iconHtml: iconMap[reference.type],
+    }))
+  } catch {
+    return []
+  }
 }
 
 export function getUserAvatarId(userId: number) {
