@@ -14,6 +14,12 @@
  * limitations under the License.
  */
 
+import { getFiberProps } from '../../core/react-hacks/fiber'
+
+function sanitizeValue(value: string) {
+  return value.replaceAll('> \\[!', '> [!')
+}
+
 export function forceGithubTextAreaSync(
   textarea: HTMLTextAreaElement,
   value: string,
@@ -21,6 +27,8 @@ export function forceGithubTextAreaSync(
     behavior: 'native' | 'react'
   },
 ) {
+  value = sanitizeValue(value)
+
   // This is a trick that automatically encode characters and sanitize the `value`
   const fakeTextarea = document.createElement('textarea')
   fakeTextarea.innerHTML = value
@@ -62,21 +70,11 @@ function forceCallReactFiberOnChange(
     writable: false,
     value: textarea,
   })
-  for (const key in textarea) {
-    if (key.includes('__reactProps')) {
-      const fiberProps = textarea[key as keyof typeof textarea] as Record<
-        string,
-        any
-      > | null
-      if (
-        fiberProps &&
-        'onChange' in fiberProps &&
-        typeof fiberProps.onChange === 'function'
-      ) {
-        fiberProps.onChange(event)
-      }
 
-      break
-    }
+  const fiberProps = getFiberProps<{
+    onChange: (e: Event) => void
+  }>()
+  if (fiberProps && fiberProps.onChange) {
+    fiberProps.onChange(event)
   }
 }

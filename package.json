@@ -30,7 +30,6 @@
     "vite-plugin-web-extension": "^4.4.3"
   },
   "dependencies": {
-    "@handlewithcare/remark-prosemirror": "^0.1.5",
     "@kobalte/core": "^0.13.8",
     "@primer/primitives": "^10.3.4",
     "@primer/view-components": "^0.36.5",

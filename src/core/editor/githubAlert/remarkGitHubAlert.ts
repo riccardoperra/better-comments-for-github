@@ -15,8 +15,14 @@
  */
 
 import { visit } from 'unist-util-visit'
+import { githubAlertTypeMap } from './config'
 
-export function rehypeBlockquote() {
+const matches = Object.entries(githubAlertTypeMap).map(([type, { match }]) => ({
+  match,
+  type,
+}))
+
+export function remarkGitHubAlert() {
   return function transformer(tree: any) {
     visit(tree, 'blockquote', (blockquote) => {
       const firstChildNode = blockquote.children.find(
@@ -25,19 +31,22 @@ export function rehypeBlockquote() {
       if (!firstChildNode) {
         return
       }
+      console.log(firstChildNode)
       for (const child of firstChildNode.children) {
         // Support custom props: `prop1=value`
         if (child.type === 'text') {
           // Support GitHub syntax
-          const match = [
-            { match: '[!WARNING]', type: 'warning' },
-            { match: '[!NOTE]', type: 'info' },
-          ].find(({ match }) => child.value.includes(match))
+          const foundMatch = matches.find(({ match }) =>
+            child.value.includes(match),
+          )
 
-          if (match) {
-            blockquote.type = 'blockquoteCallout'
-            // blockquote.properties.type = match.type
-            child.value = child.value.replaceAll(match, '')
+          if (foundMatch) {
+            blockquote.variant = foundMatch.type
+            blockquote.type = 'githubAlert'
+            // blockquote.properties.type = match.type;
+            child.value = child.value
+              .replaceAll(foundMatch.match, '')
+              .replace('\n', '')
             break
           }
         }

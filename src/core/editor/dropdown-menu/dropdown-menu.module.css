@@ -1,0 +1,90 @@
+.dropdownMenu {
+}
+
+.dropdownMenuContent {
+  --dropdown-background: var(--overlay-bgColor);
+  --dropdown-border-color: var(--borderColor-default);
+  --dropdown-text-color: var(--color-accent-emphasis);
+  --slash-menu-width: 60px;
+  --slash-menuitem-focused-background: var(--control-bgColor-active);
+  --slash-menuitem-focused-text: var(--control-fgColor-rest);
+  --slash-menuitem-text-size: 14.5px;
+  --slash-menuitem-gap: var(--base-size-6);
+  position: relative;
+  display: block;
+  max-height: 400px;
+  user-select: none;
+
+  overflow: auto;
+  white-space: nowrap;
+  padding: var(--base-size-6);
+  z-index: 10;
+  box-sizing: border-box;
+  border-radius: var(--borderRadius-large);
+  background-color: var(--dropdown-background);
+  box-shadow: var(
+    --shadow-floating-small,
+    var(
+      --color-overlay-shadow,
+      0 0 0 1px #30363d,
+      0 16px 32px rgba(1, 4, 9, 0.85)
+    )
+  );
+  /* transition: opacity 75ms ease-in-out; */
+  /* opacity: 0; */
+}
+
+.dropdownMenuItem {
+  position: relative;
+  display: flex;
+  gap: var(--slash-menuitem-gap);
+  align-items: center;
+  height: 30px;
+  border-radius: 4px;
+  padding-inline: var(--base-size-8);
+  box-sizing: border-box;
+  font-size: var(--slash-menuitem-text-size);
+  cursor: default;
+  user-select: none;
+  white-space: nowrap;
+  outline: none;
+
+  &[data-focused],
+  &[data-highlighted] {
+    background-color: var(--slash-menuitem-focused-background);
+    color: var(--slash-menuitem-focused-text);
+  }
+}
+
+.dropdownMenuItemRadio {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+
+  > div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .dropdownMenuItemRadioIndicator {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+:global(.dark) {
+  .dropdownMenuContent {
+    --dropdown-background: #252629;
+    --dropdown-border-color: #37383a;
+    --dropdown-text-color: #e0e1e4;
+    --slash-menuitem-focused-background: #37383a;
+    backdrop-filter: none;
+    box-shadow:
+      0 10px 10px -5px rgb(0 0 0 / 67%),
+      1px -1px 12px 0px rgb(1 1 1 / 66%);
+    border: 1px solid var(--dropdown-border-color);
+  }
+}

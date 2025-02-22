@@ -15,7 +15,7 @@
  */
 
 .directiveMenu {
-  --slash-menu-background: var(--menu-bgColor-active);
+  --slash-menu-background: var(--overlay-bgColor);
   --slash-menu-width: 185px;
   --slash-menuitem-focused-background: var(--color-accent-emphasis);
   --slash-menuitem-focused-text: white;
@@ -37,10 +37,7 @@
   border: none;
   transition: opacity 75ms ease-in-out;
   opacity: 0;
-  background-color: var(
-    --overlay-bgColor,
-    var(--color-canvas-overlay, #161b22)
-  );
+  background-color: var(--slash-menu-background);
   box-shadow: var(
     --shadow-floating-small,
     var(

@@ -46,6 +46,7 @@ import { defineTextAlign } from 'prosekit/extensions/text-align'
 import { defineCodeBlock } from './code-block/code-block'
 import { defineHardbreak } from './hardbreak/hardbreak'
 import { defineMentionMarkdown } from './user-mention/mention'
+import { defineGitHubAlert } from './githubAlert/alert'
 import type { HeadingAttrs } from 'prosekit/extensions/heading'
 
 export function defineMarkdownExtension() {
@@ -97,6 +98,7 @@ export function defineExtension() {
     }),
     defineCodeBlock(),
     defineMentionMarkdown(),
+    defineGitHubAlert(),
   )
 }
 

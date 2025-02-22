@@ -2,6 +2,7 @@ import type { Ref } from 'solid-js'
 
 export interface TextAreaProps {
   ref: Ref<HTMLTextAreaElement>
+  initialValue?: string
 }
 
 export function TextArea(props: TextAreaProps) {
@@ -9,7 +10,7 @@ export function TextArea(props: TextAreaProps) {
     <textarea
       ref={props.ref}
       class={'FormControl FormControl-textarea'}
-      value={'# heading'}
+      value={props.initialValue}
     ></textarea>
   )
 }

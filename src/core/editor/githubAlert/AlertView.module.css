@@ -14,14 +14,26 @@
  * limitations under the License.
  */
 
-.Toolbar {
-  display: flex;
-  padding-block: var(--base-size-2);
-  padding-inline: var(--base-size-4);
-  gap: var(--base-size-4);
+:global(div.ProseMirror .markdown-alert) .gitHubAlertParagraph {
+  > [data-node-view-content] > p:first-of-type {
+    padding: 0;
+  }
+
+  > [data-node-view-content] > p {
+    margin-bottom: 0;
+  }
 }
 
-.ToolbarAction {
+:global(div.ProseMirror .markdown-alert) .gitHubAlertTitle {
+  padding: 0;
+}
+
+.gitHubAlertTitle {
+  margin-bottom: var(--base-size-8);
+}
+
+.gitHubAlertSwitchButton {
+  margin-left: calc(-1 * var(--control-small-paddingInline-condensed, 0.5rem));
   appearance: none;
   background-color: transparent;
   border: var(--borderWidth-thin, max(1px, 0.0625rem)) solid;
@@ -38,8 +50,8 @@
   transition-property: color, fill, background-color, border-color;
   -webkit-user-select: none;
   user-select: none;
-  color: var(--fgColor-muted);
-  font-size: var(--text-body-size-small, 0.75rem);
+  color: inherit;
+  font-size: inherit;
   gap: var(--control-small-gap, 0.25rem);
   height: var(--control-small-size, 1.75rem);
   padding: 0 var(--control-small-paddingInline-condensed, 0.5rem);
@@ -60,32 +72,4 @@
   &[data-pressed='true'] {
     border-color: var(--button-default-borderColor-active);
   }
-}
-
-.Separator {
-  height: auto;
-  width: 1px;
-  position: relative;
-
-  &:before {
-    content: '';
-    position: absolute;
-    height: 75%;
-    display: inline-flex;
-    align-items: center;
-    width: 1px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: var(--borderColor-default);
-  }
-}
-
-.ToolbarMenuCenteredItem {
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-}
-
-.HorizontalListbox {
-  display: flex;
 }

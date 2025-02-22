@@ -25,12 +25,24 @@ import LucideAlignLeft from 'lucide-solid/icons/align-left'
 import LucideAlignCenter from 'lucide-solid/icons/align-center'
 import LucideAlignRight from 'lucide-solid/icons/align-right'
 import LucideCog from 'lucide-solid/icons/cog'
+import LucideChevronDown from 'lucide-solid/icons/chevron-down'
+import LucideAlert from 'lucide-solid/icons/alert-octagon'
+import { For, Match, Switch, createMemo } from 'solid-js'
+import { Dynamic } from 'solid-js/web'
 import { Popover, PopoverContent, PopoverTrigger } from '../popover/popover'
 import { Tooltip, TooltipContent, TooltipTrigger } from '../tooltip/tooltip'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '../dropdown-menu/dropdown-menu'
+import { githubAlertTypeMap } from '../githubAlert/config'
 import styles from './toolbar.module.css'
+import type { GithubAlertType } from '../githubAlert/config'
+import type { FlowProps } from 'solid-js'
 import type { NodeAction } from 'prosekit/core'
 import type { EditorExtension } from '../extension'
-import type { FlowProps } from 'solid-js'
 
 export function Toolbar() {
   const editor = useEditor<EditorExtension>({ update: true })
@@ -40,6 +52,27 @@ export function Toolbar() {
       return node.isActive({ textAlign: value })
     })
   }
+
+  const currentTextAlign = createMemo(() => {
+    let isLeft = false
+    let isCenter = false
+    let isRight = false
+    for (const value of Object.values(editor().nodes)) {
+      if (value.isActive({ textAlign: 'left' })) {
+        isLeft = true
+        break
+      }
+      if (value.isActive({ textAlign: 'center' })) {
+        isCenter = true
+        break
+      }
+      if (value.isActive({ textAlign: 'right' })) {
+        isRight = true
+        break
+      }
+    }
+    return isLeft ? 'left' : isCenter ? 'center' : isRight ? 'right' : 'left'
+  })
 
   return (
     <div class={styles.Toolbar}>
@@ -99,32 +132,67 @@ export function Toolbar() {
 
       <div class={styles.Separator}></div>
 
-      <ToolbarAction
-        label={'Align left'}
-        isPressed={isTextAlignActive('left')}
-        disabled={!editor().commands.setTextAlign.canExec('left')}
-        onClick={() => editor().commands.setTextAlign('left')}
-      >
-        <LucideAlignLeft size={16} />
-      </ToolbarAction>
+      <DropdownMenu>
+        <Tooltip>
+          <TooltipTrigger as={DropdownMenuTrigger} class={styles.ToolbarAction}>
+            <Switch>
+              <Match when={currentTextAlign() === 'left'}>
+                <LucideAlignLeft size={16} />
+              </Match>
+              <Match when={currentTextAlign() === 'center'}>
+                <LucideAlignCenter size={16} />
+              </Match>
+              <Match when={currentTextAlign() === 'right'}>
+                <LucideAlignRight size={16} />
+              </Match>
+            </Switch>
+            <LucideChevronDown size={14} />
+          </TooltipTrigger>
+          <TooltipContent>Align text</TooltipContent>
+        </Tooltip>
+        <DropdownMenuContent>
+          <For each={['left', 'center', 'right'] as const}>
+            {(value) => (
+              <Tooltip placement={'right'}>
+                <TooltipTrigger
+                  as={DropdownMenuItem}
+                  class={styles.ToolbarMenuCenteredItem}
+                  data-pressed={isTextAlignActive(value)}
+                  disabled={!editor().commands.setTextAlign.canExec(value)}
+                  onClick={() => editor().commands.setTextAlign(value)}
+                >
+                  <Dynamic component={alignIcons[value]} size={16} />
+                </TooltipTrigger>
+                <TooltipContent>Align {value}</TooltipContent>
+              </Tooltip>
+            )}
+          </For>
+        </DropdownMenuContent>
+      </DropdownMenu>
 
-      <ToolbarAction
-        label={'Align center'}
-        isPressed={isTextAlignActive('center')}
-        disabled={!editor().commands.setTextAlign.canExec('center')}
-        onClick={() => editor().commands.setTextAlign('center')}
-      >
-        <LucideAlignCenter size={16} />
-      </ToolbarAction>
-
-      <ToolbarAction
-        isPressed={isTextAlignActive('right')}
-        disabled={!editor().commands.setTextAlign.canExec('right')}
-        onClick={() => editor().commands.setTextAlign('right')}
-        label={'Align right'}
-      >
-        <LucideAlignRight size={16} />
-      </ToolbarAction>
+      <DropdownMenu>
+        <Tooltip>
+          <TooltipTrigger as={DropdownMenuTrigger} class={styles.ToolbarAction}>
+            <LucideAlert size={16} />
+            <LucideChevronDown size={14} />
+          </TooltipTrigger>
+          <TooltipContent>Align text</TooltipContent>
+        </Tooltip>
+        <DropdownMenuContent>
+          <For each={Object.keys(githubAlertTypeMap) as Array<GithubAlertType>}>
+            {(value) => (
+              <DropdownMenuItem
+                data-pressed={isTextAlignActive(value)}
+                disabled={!editor().commands.setAlert.canExec(value)}
+                onClick={() => editor().commands.setAlert(value)}
+              >
+                <Dynamic component={githubAlertTypeMap[value].icon} />
+                {githubAlertTypeMap[value].label}
+              </DropdownMenuItem>
+            )}
+          </For>
+        </DropdownMenuContent>
+      </DropdownMenu>
 
       <Popover>
         <PopoverTrigger class={styles.ToolbarAction}>
@@ -134,6 +202,12 @@ export function Toolbar() {
       </Popover>
     </div>
   )
+}
+
+const alignIcons = {
+  left: LucideAlignLeft,
+  center: LucideAlignCenter,
+  right: LucideAlignRight,
 }
 
 export function ToolbarAction(

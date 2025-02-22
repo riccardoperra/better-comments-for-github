@@ -8,9 +8,6 @@ importers:
 
   .:
     dependencies:
-      '@handlewithcare/remark-prosemirror':
-        specifier: ^0.1.5
-        version: 0.1.5(prosemirror-model@1.24.1)
       '@kobalte/core':
         specifier: ^0.13.8
         version: 0.13.8(solid-js@1.9.4)
@@ -988,11 +985,6 @@ packages:
 
   '@github/tab-container-element@3.4.0':
     resolution: {integrity: sha512-Yx70pO8A0p7Stnm9knKkUNX8i4bjuwDYZarRkM8JH0Z+ffhpe++oNAPbzGI9GEcGugRHvKuSC6p4YOdoHtTniQ==}
-
-  '@handlewithcare/remark-prosemirror@0.1.5':
-    resolution: {integrity: sha512-HLDQJLKyvvLs8F62xR9ufWl42PDHOzJbRYL5zoAiBWTrx+6mqyBOZrB7ZygLtt9Q8kW1g57GSXJLh+ScUA/Rwg==}
-    peerDependencies:
-      prosemirror-model: ^1.24.0
 
   '@humanfs/core@0.19.1':
     resolution: {integrity: sha512-5DyQ4+1JEUzejeK1JGICcideyfUbGixgS9jNgex5nqkW+cY7WZhxBigmieN5Qnw9ZosSNVC9KQKyb+GUaGyKUA==}
@@ -5557,20 +5549,6 @@ snapshots:
   '@github/remote-input-element@0.4.0': {}
 
   '@github/tab-container-element@3.4.0': {}
-
-  '@handlewithcare/remark-prosemirror@0.1.5(prosemirror-model@1.24.1)':
-    dependencies:
-      '@types/hast': 3.0.4
-      '@types/mdast': 4.0.4
-      '@types/unist': 3.0.3
-      devlop: 1.1.0
-      hast-util-from-html: 2.0.3
-      micromark-util-sanitize-uri: 2.0.1
-      prosemirror-model: 1.24.1
-      trim-lines: 3.0.1
-      unist-util-is: 6.0.0
-      unist-util-visit: 5.0.0
-      zwitch: 2.0.4
 
   '@humanfs/core@0.19.1': {}
 

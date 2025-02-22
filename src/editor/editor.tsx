@@ -17,10 +17,7 @@
 import { createContext, createEffect, onMount } from 'solid-js'
 import { createEditor } from 'prosekit/core'
 import { useDocChange } from 'prosekit/solid'
-import {
-  markdownFromUnistNode,
-  unistNodeFromMarkdown,
-} from 'prosemirror-transformer-markdown/unified'
+import { markdownFromUnistNode } from 'prosemirror-transformer-markdown/unified'
 import {
   convertPmSchemaToUnist,
   convertUnistToProsemirror,
@@ -33,9 +30,9 @@ import { setEditorContent } from './utils/setContent'
 import { forceGithubTextAreaSync } from './utils/forceGithubTextAreaSync'
 import type { SuggestionData } from './utils/loadSuggestionData'
 
-import 'prosekit/basic/style.css'
-import 'prosekit/basic/typography.css'
+import './editor.css'
 import { DebugNode } from './DebugNode'
+import { unistNodeFromMarkdown } from './utils/unistNodeFromMarkdown'
 
 export interface EditorProps {
   suggestions: SuggestionData

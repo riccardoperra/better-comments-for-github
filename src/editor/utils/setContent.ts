@@ -15,7 +15,7 @@
  */
 
 import { convertUnistToProsemirror } from 'prosemirror-transformer-markdown/prosemirror'
-import { unistNodeFromMarkdown } from 'prosemirror-transformer-markdown/unified'
+import { unistNodeFromMarkdown } from './unistNodeFromMarkdown'
 import type { EditorView } from 'prosemirror-view'
 
 export function setEditorContent(

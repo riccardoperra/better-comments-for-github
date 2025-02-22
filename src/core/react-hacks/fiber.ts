@@ -44,6 +44,19 @@ export function getFiber(element: HTMLElement): Fiber | null {
   return fiber
 }
 
+export function getFiberProps<
+  T extends Record<string, any> = Record<string, any>,
+>(element: HTMLElement): Partial<T> | null {
+  let fiber: Fiber
+  for (const key in element) {
+    if (key.includes('__reactProps')) {
+      fiber = element[key as keyof typeof element] as Record<string, any> | null
+      return fiber
+    }
+  }
+  return fiber
+}
+
 export async function waitForReactFiber(
   element: HTMLElement,
   interval = 150,
