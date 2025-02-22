@@ -1,16 +1,6 @@
-import type {
-  ContainerDirective,
-  LeafDirective,
-  TextDirective,
-} from "mdast-util-directive";
-import type { BlockContent, DefinitionContent, PhrasingContent } from "mdast";
+import type { Root } from "mdast";
 import type { UnistNode } from "./types.js";
-import type {
-  MdxJsxAttribute,
-  MdxJsxExpressionAttribute,
-  MdxJsxFlowElement,
-} from "mdast-util-mdx-jsx";
-import type { Node, Node as ProseMirrorNode, Schema } from "prosemirror-model";
+import type { Node as ProseMirrorNode, Schema } from "prosemirror-model";
 
 function convertNode(node: ProseMirrorNode, schema: Schema) {
   let convertedNodes: UnistNode[] | null = null;
@@ -56,6 +46,7 @@ function convertNode(node: ProseMirrorNode, schema: Schema) {
 export function convertPmSchemaToUnist(
   node: ProseMirrorNode,
   schema: Schema,
+  options?: Partial<{ postProcess: (node: Root) => void }>,
 ): UnistNode {
   const rootNode = convertNode(node, schema);
   if (rootNode.length !== 1) {
@@ -63,83 +54,9 @@ export function convertPmSchemaToUnist(
       "Couldn't find any way to convert the root ProseMirror node.",
     );
   }
-  return rootNode[0];
-}
-
-export function toUnistDirective(
-  node: Node,
-  children: UnistNode[],
-): LeafDirective | TextDirective | ContainerDirective {
-  const nodeType = node.type;
-  const name = node.type.spec.unistName
-    ? node.type.spec.unistName.replace("directive:", "")
-    : node.type.name;
-  console.log(node, "parsing unist directive");
-  if (nodeType.isInline) {
-    return {
-      type: "textDirective",
-      name,
-      attributes: node.attrs,
-      // TODO: validation?
-      children: nodeType.isLeaf ? [] : (children as PhrasingContent[]),
-    };
-  } else if (nodeType.isBlock) {
-    if (nodeType.isAtom) {
-      return {
-        type: "leafDirective",
-        name,
-        attributes: node.attrs,
-        children: [],
-      };
-    } else {
-      return {
-        type: "containerDirective",
-        name,
-        attributes: node.attrs,
-        children: children as (BlockContent | DefinitionContent)[],
-      };
-    }
-  } else {
-    return {
-      type: "leafDirective",
-      name,
-      attributes: node.attrs,
-      children: children as PhrasingContent[],
-    };
+  const result = rootNode[0];
+  if (options?.postProcess) {
+    options.postProcess(result as Root);
   }
-}
-
-export function toUnistJsxElement(
-  tag: string,
-  options: {
-    attrs: Record<string, any>;
-    children: any;
-  },
-): MdxJsxFlowElement {
-  const attributes: (MdxJsxAttribute | MdxJsxExpressionAttribute)[] = [];
-  for (const attr in options.attrs) {
-    const value = options.attrs[attr];
-    if (typeof value === "string") {
-      attributes.push({
-        type: "mdxJsxAttribute",
-        name: attr,
-        value,
-      });
-    } else {
-      attributes.push({
-        type: "mdxJsxAttribute",
-        name: attr,
-        value: {
-          type: "mdxJsxAttributeValueExpression",
-          value,
-        },
-      });
-    }
-  }
-  return {
-    type: "mdxJsxFlowElement",
-    name: tag,
-    attributes: attributes,
-    children: options.children,
-  };
+  return result;
 }

@@ -126,12 +126,18 @@ importers:
       hast-util-to-html:
         specifier: ^9.0.4
         version: 9.0.4
+      mdast-util-to-markdown:
+        specifier: ^2.1.2
+        version: 2.1.2
       prosekit:
         specifier: ^0.11.4
         version: 0.11.5(@types/hast@3.0.4)(prosemirror-model@1.24.1)(prosemirror-state@1.4.3)(prosemirror-transform@1.10.2)(prosemirror-view@1.38.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(solid-js@1.9.4)(svelte@5.20.1)(vue@3.5.13(typescript@5.7.3))
       prosemirror-transformer-markdown:
         specifier: workspace:*
         version: link:../markdown-transformer
+      unist:
+        specifier: ^0.0.1
+        version: 0.0.1
     devDependencies:
       '@types/mdast':
         specifier: ^4.0.4
@@ -4624,6 +4630,10 @@ packages:
 
   unist-util-visit@5.0.0:
     resolution: {integrity: sha512-MR04uvD+07cwl/yhVuVWAtw+3GOR/knlL55Nd/wAdblk27GCVt3lqpTivy/tkJcZoNPzTwS1Y+KMojlLDhoTzg==}
+
+  unist@0.0.1:
+    resolution: {integrity: sha512-bnzuF8b6d47WubA4a5yLqFbuZz/v/NS6eRwUIdOaDmsqzwTlyv8yS1g3M7ISdtBQrigPD3qKK87Cu7zhEfCF3A==}
+    deprecated: Use @types/unist instead
 
   universalify@1.0.0:
     resolution: {integrity: sha512-rb6X1W158d7pRQBg5gkR8uPaSfiids68LTJQYOtEUhoJUWBdaQHsuT/EUduxXYxcrt4r5PJ4fuHW1MHT6p0qug==}
@@ -10047,6 +10057,8 @@ snapshots:
       '@types/unist': 3.0.3
       unist-util-is: 6.0.0
       unist-util-visit-parents: 6.0.1
+
+  unist@0.0.1: {}
 
   universalify@1.0.0: {}
 

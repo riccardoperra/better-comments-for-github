@@ -15,12 +15,14 @@
  */
 
 import { unistNodeFromMarkdown as coreUnistNodeFromMarkdown } from 'prosemirror-transformer-markdown/unified'
+import { remarkFlatList } from '@prosedoc/markdown-schema'
 import { remarkGitHubAlert } from '../../core/editor/githubAlert/remarkGitHubAlert'
 
 export function unistNodeFromMarkdown(content: string) {
   return coreUnistNodeFromMarkdown(content, {
     transformers: [
-      { type: 'remarkPlugin', handler: () => remarkGitHubAlert() },
+      { type: 'remarkPlugin', handler: remarkGitHubAlert },
+      { type: 'remarkPlugin', handler: remarkFlatList },
     ],
   })
 }

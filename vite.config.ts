@@ -36,7 +36,6 @@ export default defineConfig({
         {
           name: 'crx:dynamic-imports-polyfill',
           generateBundle(_, bundle) {
-            console.log('Generate')
             const polyfill = `
                 (function () {
                   const chrome = window.chrome || {};

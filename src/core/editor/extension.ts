@@ -23,7 +23,6 @@ import {
 } from 'prosekit/core'
 import { defineDropCursor } from 'prosekit/extensions/drop-cursor'
 import { defineGapCursor } from 'prosekit/extensions/gap-cursor'
-import { defineList } from 'prosekit/extensions/list'
 import { defineModClickPrevention } from 'prosekit/extensions/mod-click-prevention'
 import { defineVirtualSelection } from 'prosekit/extensions/virtual-selection'
 import { definePlaceholder } from 'prosekit/extensions/placeholder'
@@ -38,6 +37,7 @@ import {
   defineImageMarkdown,
   defineItalicMarkdown,
   defineLinkMarkdown,
+  defineListMarkdown,
   defineParagraphMarkdown,
   defineStrikethroughMarkdown,
   defineTableMarkdown,
@@ -56,7 +56,7 @@ export function defineMarkdownExtension() {
     defineTextMarkdown(),
     defineHeadingMarkdown(),
     defineHistory(),
-    defineList(),
+    defineListMarkdown(),
     defineBlockquoteMarkdown(),
 
     defineBaseKeymap(),

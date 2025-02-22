@@ -22,6 +22,7 @@ import {
   convertPmSchemaToUnist,
   convertUnistToProsemirror,
 } from 'prosemirror-transformer-markdown/prosemirror'
+import { unistMergeAdjacentList } from '@prosedoc/markdown-schema'
 import { ProsekitEditor } from '../core/editor/editor'
 import { defineExtension } from '../core/editor/extension'
 
@@ -80,7 +81,13 @@ export function Editor(props: EditorProps) {
         const unistNode = convertPmSchemaToUnist(
           editor.state.doc,
           editor.schema,
+          {
+            postProcess: (node) => {
+              unistMergeAdjacentList(node)
+            },
+          },
         )
+
         forceGithubTextAreaSync(
           props.textarea,
           markdownFromUnistNode(unistNode as any),

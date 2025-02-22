@@ -15,22 +15,23 @@ import LucideHeading6 from 'lucide-solid/icons/heading-6'
 import LucideList from 'lucide-solid/icons/list'
 import LucideListCollapse from 'lucide-solid/icons/list-collapse'
 import LucideQuote from 'lucide-solid/icons/text-quote'
+import LucideDivider from 'lucide-solid/icons/minus'
 import LucideListOrdered from 'lucide-solid/icons/list-ordered'
-import LucideListTodo from 'lucide-solid/icons/list-todo'
 import LucideCodeBlock from 'lucide-solid/icons/code-square'
 import { For, Show } from 'solid-js'
 
 import { githubAlertTypeMap } from '../../githubAlert/config'
 import styles from './slash-menu.module.css'
+import type { JSX } from 'solid-js'
 import type { LucideProps } from 'lucide-solid'
 
 import type { EditorExtension } from '../../extension'
 
 import type { Editor } from 'prosekit/core'
-import type { JSX } from 'solid-js'
 
 export interface SlashMenuItem {
   label: string
+  canExec: (editor: Editor<EditorExtension>) => boolean
   command: (editor: Editor<EditorExtension>) => void
   icon?: (props: LucideProps) => JSX.Element
   sectionId?: string
@@ -51,42 +52,51 @@ const SlashMenuItems: Array<SlashMenuItem> = [
     (level) =>
       ({
         label: `Heading ${level}`,
+        canExec: (editor) => editor.commands.toggleHeading.canExec({ level }),
         command: (editor) => editor.commands.setHeading({ level: level }),
         icon: icons[level - 1],
         shortcut: '#'.repeat(level),
       }) as SlashMenuItem,
   ),
   {
-    label: 'Task list',
-    command: (editor) => editor.commands.wrapInList({ kind: 'task' }),
-    icon: LucideListTodo,
-    sectionId: 'list',
-    shortcut: '[]',
+    label: 'Horizontal divider',
+    canExec: (editor) => editor.commands.insertHorizontalRule.canExec(),
+    command: (editor) => editor.commands.insertHorizontalRule(),
+    shortcut: '---',
+    icon: LucideDivider,
   },
-  {
-    label: 'Bullet list',
-    command: (editor) => editor.commands.wrapInList({ kind: 'bullet' }),
-    icon: LucideList,
-    sectionId: 'list',
-    shortcut: '-',
-  },
-  {
-    label: 'Numbered list',
-    command: (editor) => editor.commands.wrapInList({ kind: 'ordered' }),
-    icon: LucideListOrdered,
-    sectionId: 'list',
-    shortcut: '1.',
-  },
-  {
-    label: 'Toggle list',
-    command: (editor) => editor.commands.wrapInList({ kind: 'toggle' }),
-    icon: LucideListCollapse,
-    sectionId: 'list',
-    shortcut: '>>',
-  },
+  ...[
+    { label: 'Task', kind: 'task', shortcut: '[]', icon: LucideList },
+    { label: 'Bullet', kind: 'bullet', shortcut: '[]', icon: LucideList },
+    {
+      label: 'Numbered',
+      kind: 'ordered',
+      shortcut: '[]',
+      icon: LucideListOrdered,
+    },
+    {
+      label: 'Toggle',
+      kind: 'toggle',
+      shortcut: '>>',
+      icon: LucideListCollapse,
+    },
+  ].map(
+    (listType) =>
+      ({
+        label: `${listType.label} list`,
+        command: (editor) =>
+          editor.commands.wrapInList({ kind: listType.kind }),
+        icon: listType.icon,
+        shortcut: listType.shortcut,
+        canExec: (editor) =>
+          editor.commands.wrapInList.canExec({ kind: listType.kind }),
+        sectionId: 'list',
+      }) satisfies SlashMenuItem,
+  ),
   {
     label: 'Blockquote',
     command: (editor) => editor.commands.toggleBlockquote(),
+    canExec: (editor) => editor.commands.toggleBlockquote.canExec(),
     icon: LucideQuote,
     shortcut: '>',
   },
@@ -96,13 +106,15 @@ const SlashMenuItems: Array<SlashMenuItem> = [
         label: `${alert.label}`,
         icon: alert.icon,
         shortcut: `>${alert.label}`,
-        command: (editor) => editor.commands.toggleAlert(alert.type),
+        command: (editor) => editor.commands.setAlert(alert.type),
+        canExec: (editor) => editor.commands.toggleAlert.canExec(alert.type),
         sectionId: 'alerts',
       }) satisfies SlashMenuItem,
   ),
   {
     label: 'Code block',
     command: (editor) => editor.commands.toggleCodeBlock(),
+    canExec: (editor) => editor.commands.toggleCodeBlock.canExec(),
     icon: LucideCodeBlock,
     shortcut: '```',
   },
@@ -175,25 +187,27 @@ export default function SlashMenu() {
 
                 <For each={group.children}>
                   {(item) => (
-                    <AutocompleteItem
-                      class={styles.slashMenuItem}
-                      value={item.label}
-                      onSelect={() => item.command(editor())}
-                    >
-                      <Show when={item.icon}>
-                        {(icon) => {
-                          const Icon = icon()
-                          return <Icon size={17} strokeWidth={2} />
-                        }}
-                      </Show>
-                      {item.label}
+                    <Show when={item.canExec(editor())}>
+                      <AutocompleteItem
+                        class={styles.slashMenuItem}
+                        value={item.label}
+                        onSelect={() => item.command(editor())}
+                      >
+                        <Show when={item.icon}>
+                          {(icon) => {
+                            const Icon = icon()
+                            return <Icon size={17} strokeWidth={2} />
+                          }}
+                        </Show>
+                        {item.label}
 
-                      <Show when={item.shortcut}>
-                        <span class={styles.slashMenuItemShortcut}>
-                          {item.shortcut}
-                        </span>
-                      </Show>
-                    </AutocompleteItem>
+                        <Show when={item.shortcut}>
+                          <span class={styles.slashMenuItemShortcut}>
+                            {item.shortcut}
+                          </span>
+                        </Show>
+                      </AutocompleteItem>
+                    </Show>
                   )}
                 </For>
               </div>

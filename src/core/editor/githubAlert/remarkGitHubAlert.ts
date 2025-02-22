@@ -31,7 +31,6 @@ export function remarkGitHubAlert() {
       if (!firstChildNode) {
         return
       }
-      console.log(firstChildNode)
       for (const child of firstChildNode.children) {
         // Support custom props: `prop1=value`
         if (child.type === 'text') {

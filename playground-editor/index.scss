@@ -2,6 +2,10 @@
 
 @import "@primer/css/forms/index";
 
+body {
+  min-height: 100dvh;
+}
+
 .App {
   margin: 0 auto;
   padding-top: var(--base-size-32);

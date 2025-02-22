@@ -3,6 +3,16 @@ import { Editor } from '../src/editor/editor'
 import { TextArea } from './components/TextArea'
 
 const initialValue = `
+- [ ] Task list item
+- [x] Completed task list item
+
+1. Ordered list item
+    1. Nested ordered list item
+    
+- Bullet list item
+- Bullet list item 2
+  - Bullet list item nested
+
 > [!NOTE]
 > Useful information that users should know, even when skimming content.
 

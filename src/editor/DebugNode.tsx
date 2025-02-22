@@ -15,7 +15,7 @@
  */
 
 import { useStateUpdate } from 'prosekit/solid'
-import { createSignal } from 'solid-js'
+import { createSignal, onMount } from 'solid-js'
 import styles from './DebugNode.module.css'
 import type { Accessor } from 'solid-js'
 import type { Editor } from 'prosekit/core'
@@ -29,6 +29,15 @@ export interface DebugNodeProps {
 export function DebugNode(props: DebugNodeProps) {
   const [value, setValue] = createSignal<any>()
 
+  onMount(() => {
+    const tree = debugNodeTree(
+      props.editor.state.doc,
+      props.editor.state,
+      () => props.editor.state.selection,
+    )
+    setValue(formatTree(tree))
+  })
+
   useStateUpdate(
     (state) => {
       const tree = debugNodeTree(
@@ -36,14 +45,14 @@ export function DebugNode(props: DebugNodeProps) {
         props.editor.state,
         () => props.editor.state.selection,
       )
-      setValue(formatTree(tree, state.selection.from))
+      setValue(formatTree(tree))
     },
     { editor: props.editor },
   )
 
   return (
     <div class={styles.DebugAnchor}>
-      <pre>{value()}</pre>
+      <pre innerHTML={value()} />
     </div>
   )
 }
@@ -57,6 +66,7 @@ function debugNodeTree(
 }
 
 type DebugTreeItem = {
+  attrs: Record<string, any>
   type: string
   text: string | null
   depth: number
@@ -66,12 +76,26 @@ type DebugTreeItem = {
   isSelected: () => boolean
 }
 
+function formatNodeAttrs(attrs: Record<string, any>): string {
+  let str = ''
+  for (const attr in attrs) {
+    str += `${attr}=${attrs[attr]},`
+  }
+  if (str === '') {
+    return ''
+  }
+  if (str.at(-1) === ',') {
+    str = str.slice(0, str.length - 1)
+  }
+  return `<small style="color: var(--fgColor-muted); font-size: 12px">{${str}}</small>`
+}
+
 function formatTree(node: DebugTreeItem) {
   let output = ''
   const prefix =
     '  '.repeat(node.depth) +
     (node.isSelected() ? '> ' : '') +
-    `├ (${node.from}) ${node.type}\n`
+    `├ (${node.from}) ${node.type} ${formatNodeAttrs(node.attrs)} \n`
 
   if (node.text) {
     output +=
@@ -107,6 +131,7 @@ const layerJson = (
     from: start,
     to: end,
     children,
+    attrs: node.attrs,
     isSelected: () => {
       const $cursor = cursor()
       if (!$cursor) {

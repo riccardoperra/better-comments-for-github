@@ -4,7 +4,7 @@ import { unified } from "unified";
 import type { VFile, VFileCompatible } from "vfile";
 import type { Node as UnistNode, Root } from "mdast";
 
-type RemarkHandler = (tree: Root, vfile: VFile) => undefined;
+type RemarkHandler = (tree: Root, vfile: VFile) => void;
 type TransformerRemarkHandler = (options?: Record<any, any>) => RemarkHandler;
 type TransformerRemarkPlugin = {
   type: "remarkPlugin";

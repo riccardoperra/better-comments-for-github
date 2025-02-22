@@ -12,7 +12,13 @@ export function markdownFromUnistNode(rootNode: Root): string {
       fences: true,
       listItemIndent: "one",
       resourceLink: true,
-      rule: "-",
+      bullet: "-",
+      bulletOrdered: ".",
+      emphasis: "*",
+      incrementListMarker: true,
+      setext: true,
+      ruleSpaces: true,
+      strong: "*",
     });
 
   return processor.stringify(rootNode);

@@ -29,7 +29,9 @@
   },
   "dependencies": {
     "hast-util-to-html": "^9.0.4",
+    "mdast-util-to-markdown": "^2.1.2",
     "prosekit": "^0.11.4",
-    "prosemirror-transformer-markdown": "workspace:*"
+    "prosemirror-transformer-markdown": "workspace:*",
+    "unist": "^0.0.1"
   }
 }
