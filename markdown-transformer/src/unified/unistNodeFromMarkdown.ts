@@ -1,11 +1,6 @@
-import remarkDirective from "remark-directive";
-import remarkFrontmatter from "remark-frontmatter";
 import remarkGfm from "remark-gfm";
-import remarkMdx from "remark-mdx";
 import remarkParse from "remark-parse";
 import { unified } from "unified";
-import { visit } from "unist-util-visit";
-import { remarkExtractFrontMatter } from "../ast/frontmatter.js";
 import type { VFile, VFileCompatible } from "vfile";
 import type { Node as UnistNode, Root } from "mdast";
 
