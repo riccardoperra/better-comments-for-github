@@ -54,14 +54,15 @@ export function IssueReferenceMenu(props: UserMentionMenuProps) {
     return props.issues
       .filter(
         (issue) =>
-          issue.titleText.includes(filter) || String(issue.id).includes(filter),
+          issue.titleText.toLowerCase().includes(filter.toLowerCase()) ||
+          String(issue.id).includes(filter),
       )
       .slice(0, 100)
   })
 
   return (
     <AutocompletePopover
-      regex={/#\w*$/}
+      regex={/#\w?(.*)/}
       fitViewport={false}
       transform={true}
       onQueryChange={setQuery}

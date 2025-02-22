@@ -48,10 +48,17 @@ function defineGitHubAlertCommands() {
 }
 
 function defineGitHubAlertInputRule() {
-  return defineWrappingInputRule({
-    regex: /^>\s/,
-    type: 'blockquote',
-  })
+  return union(
+    ...Object.values(githubAlertTypeMap).map((map) =>
+      defineWrappingInputRule({
+        regex: map.shortcutRegexp,
+        type: 'githubAlert',
+        attrs: {
+          type: map.type,
+        },
+      }),
+    ),
+  )
 }
 
 function backspaceUnsetBlockquote(): Command {

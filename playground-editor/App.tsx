@@ -31,7 +31,14 @@ export function App() {
           <div class={'EditorContent'}>
             <Editor
               suggestions={{
-                references: [],
+                references: [
+                  {
+                    id: '1',
+                    titleText: 'This is an example issues',
+                    iconHtml: '',
+                    titleHtml: 'This is an example issues',
+                  },
+                ],
                 savedReplies: [],
                 emojis: [],
                 mentions: [],
