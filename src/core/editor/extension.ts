@@ -18,6 +18,7 @@ import {
   defineBaseCommands,
   defineBaseKeymap,
   defineHistory,
+  defineNodeSpec,
   union,
 } from 'prosekit/core'
 import { defineDropCursor } from 'prosekit/extensions/drop-cursor'
@@ -99,6 +100,11 @@ export function defineExtension() {
     defineCodeBlock(),
     defineMentionMarkdown(),
     defineGitHubAlert(),
+    defineNodeSpec({
+      name: 'doc',
+      content: '(block|githubAlert)+',
+      topNode: true,
+    }),
   )
 }
 

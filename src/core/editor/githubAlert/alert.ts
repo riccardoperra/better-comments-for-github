@@ -74,8 +74,6 @@ function defineGitHubAlertSpec() {
   return defineNodeSpec({
     name: 'githubAlert',
     content: 'block+',
-    group: 'block',
-    defining: true,
     parseDOM: [{ tag: 'blockquote' }],
     attrs: {
       type: {

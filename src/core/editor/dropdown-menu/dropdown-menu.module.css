@@ -54,6 +54,10 @@
     background-color: var(--slash-menuitem-focused-background);
     color: var(--slash-menuitem-focused-text);
   }
+
+  &[data-disabled] {
+    color: var(--fgColor-disabled);
+  }
 }
 
 .dropdownMenuItemRadio {
