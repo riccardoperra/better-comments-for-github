@@ -13,6 +13,10 @@ body {
   width: clamp(320px, 100vw, 720px);
 }
 
+textarea {
+  min-height: 400px;
+}
+
 .EditorContent {
   margin-top: var(--base-size-12);
 }

@@ -27,24 +27,18 @@ import {
 } from 'solid-js'
 import { useNodeViewContext } from '@prosemirror-adapter/solid'
 import LucideLoaderCircle from 'lucide-solid/icons/loader-circle'
-import LucideUndo2 from 'lucide-solid/icons/undo-2'
-import LucidePersonStanding from 'lucide-solid/icons/person-standing'
+import LucideImageOff from 'lucide-solid/icons/image-off'
 import { createStore } from 'solid-js/store'
+import { clsx } from 'clsx'
 import { EditorRootContext } from '../../../editor/editor'
-import { Popover, PopoverContent, PopoverTrigger } from '../popover/popover'
-import { Tooltip, TooltipContent, TooltipTrigger } from '../tooltip/tooltip'
 import styles from './image-view.module.css'
-import type { ImageAttrs } from 'prosekit/extensions/image'
+import { ImageViewActions } from './image-view-actions'
+import type { ImageAttrs } from '@prosedoc/markdown-schema'
 
 export function ImageView() {
   const context = useNodeViewContext()
   const { uploadHandler } = useContext(EditorRootContext)!
-  const selected = createMemo(() => context().selected)
-  const referenceId = () => context().node.attrs.referenceId
-  const attrs = () => context().node.attrs as ImageAttrs
-  const url = () => attrs().src || ''
   const [resizableRoot, setResizableRoot] = createSignal<HTMLElement | null>()
-  const uploading = () => gitHubFileRef()?.status === 'progress'
   const [aspectRatio, setAspectRatio] = createSignal<number | undefined>()
   const [error, setError] = createSignal<string | undefined>()
 
@@ -59,6 +53,12 @@ export function ImageView() {
     width: context().node.attrs.width,
     height: context().node.attrs.height,
   })
+
+  const selected = createMemo(() => context().selected)
+  const referenceId = () => context().node.attrs.referenceId
+  const attrs = () => context().node.attrs as ImageAttrs
+  const url = () => attrs().src || ''
+  const uploading = () => gitHubFileRef()?.status === 'progress'
 
   const gitHubFileRef = createMemo(() =>
     referenceId()
@@ -88,6 +88,10 @@ export function ImageView() {
       untrack(url) !== ref.originalUrl
     ) {
       context().setAttrs({ ...context().node.attrs, src: ref.originalUrl })
+    }
+
+    if (ref?.status === 'error') {
+      setError(ref.errorMessage ?? 'Cannot upload image')
     }
   })
 
@@ -121,15 +125,6 @@ export function ImageView() {
     }
   })
 
-  const canRevertToOriginalSize = createMemo(() => {
-    return (
-      size.initialWidth === size.width &&
-      size.initialHeight === size.height &&
-      context().node.attrs.width !== size.initialWidth &&
-      context().node.attrs.height !== size.initialHeight
-    )
-  })
-
   createEffect(() => {
     const selectedValue = selected()
     const el = resizableRoot()
@@ -150,8 +145,6 @@ export function ImageView() {
     })
   }
 
-  const [openAltPopover, setOpenAltPopover] = createSignal(false)
-
   return (
     <ResizableRoot
       width={size.width ?? undefined}
@@ -163,10 +156,12 @@ export function ImageView() {
           setSize('height', event.detail.height)
         })
       }}
-      class={styles.wrapper}
+      class={clsx(styles.wrapper, { [styles.isError]: error() })}
     >
       <Show when={imageSrc() && !error()}>
         <img
+          alt={attrs().alt ?? ''}
+          title={attrs().title ?? ''}
           src={imageSrc()}
           onLoad={handleImageLoad}
           class={styles.image}
@@ -182,54 +177,16 @@ export function ImageView() {
           <LucideLoaderCircle size={14} />
         </div>
       </Show>
-      <Show when={error()}>Error</Show>
+      <Show when={error()}>
+        {(error) => (
+          <div class={styles.errorWrapper} contenteditable={false}>
+            <LucideImageOff size={20} />
+            <p>{error()}</p>
+          </div>
+        )}
+      </Show>
 
-      <div class={styles.actions}>
-        <Tooltip>
-          <Popover
-            placement={'bottom-start'}
-            open={openAltPopover()}
-            onOpenChange={setOpenAltPopover}
-          >
-            <PopoverTrigger as={TooltipTrigger} class={styles.action}>
-              <LucidePersonStanding size={14} />
-            </PopoverTrigger>
-            <PopoverContent
-              class={styles.altTextPopoverContent}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter') {
-                  setOpenAltPopover(false)
-                }
-              }}
-            >
-              <h5>Alternative text</h5>
-              <div>
-                <input
-                  autofocus={true}
-                  type={'text'}
-                  class={'FormControl FormControl-input'}
-                  value={context().node.attrs.alt}
-                  onChange={(event) => {
-                    context().setAttrs({ alt: event.target.value })
-                  }}
-                />
-              </div>
-            </PopoverContent>
-          </Popover>
-          <TooltipContent>Alternative text</TooltipContent>
-        </Tooltip>
-
-        <Tooltip>
-          <TooltipTrigger
-            class={styles.action}
-            onClick={undoResize}
-            disabled={!canRevertToOriginalSize()}
-          >
-            <LucideUndo2 size={14} />
-          </TooltipTrigger>
-          <TooltipContent>Revert to original size</TooltipContent>
-        </Tooltip>
-      </div>
+      <ImageViewActions error={error()} onUndoResize={undoResize} />
 
       <ResizableHandle
         class={styles.resizableHandler}

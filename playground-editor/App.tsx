@@ -1,8 +1,21 @@
 import { Show, createSignal } from 'solid-js'
-import { Editor } from '../src/editor/editor'
+import { Editor, EditorRootContext } from '../src/editor/editor'
 import { TextArea } from './components/TextArea'
+import { MockUploaderNativeHandler } from './mock-uploader'
 
 const initialValue = `
+
+<img src="https://placehold.co/600x400" alt="Placeholder text">
+
+# heading 1
+## heading 2
+### heading 3
+#### heading 4
+##### heading 5
+###### heading 6
+
+---
+
 - [ ] Task list item
 - [x] Completed task list item
 
@@ -12,6 +25,8 @@ const initialValue = `
 - Bullet list item
 - Bullet list item 2
   - Bullet list item nested
+
+---
 
 > [!NOTE]
 > Useful information that users should know, even when skimming content.
@@ -32,33 +47,71 @@ const initialValue = `
 export function App() {
   const [textareaRef, setTextareaRef] = createSignal<HTMLTextAreaElement>()
 
+  let uploaderRef!: HTMLDivElement
+
+  const mockUploader = new MockUploaderNativeHandler()
+
+  const data = {
+    references: [
+      {
+        id: '1',
+        titleText: 'This is an example issues',
+        iconHtml: '',
+        titleHtml: 'This is an example issues',
+      },
+    ],
+    savedReplies: [],
+    emojis: [],
+    mentions: [],
+  }
+
   return (
     <div class={'App'}>
-      <TextArea ref={setTextareaRef} initialValue={initialValue} />
+      <input
+        type={'file'}
+        onChange={(event) => {
+          const file = event.target.files?.[0]
+          if (file) {
+            const uploadFile = mockUploader.init(file)
+            mockUploader.upload(uploadFile, null)
+          }
+        }}
+      />
+      <div>
+        <TextArea ref={setTextareaRef} initialValue={initialValue} />
 
-      <Show when={textareaRef()}>
-        {(textareaRef) => (
-          <div class={'EditorContent'}>
-            <Editor
-              suggestions={{
-                references: [
-                  {
-                    id: '1',
-                    titleText: 'This is an example issues',
-                    iconHtml: '',
-                    titleHtml: 'This is an example issues',
+        <Show when={textareaRef()}>
+          {(textareaRef) => (
+            <div class={'EditorContent'}>
+              <EditorRootContext.Provider
+                value={{
+                  data,
+                  uploadHandler: mockUploader,
+                  get fileAttachmentTransfer() {
+                    return {} as any
                   },
-                ],
-                savedReplies: [],
-                emojis: [],
-                mentions: [],
-              }}
-              textarea={textareaRef()}
-              initialValue={textareaRef().value}
-            />
-          </div>
-        )}
-      </Show>
+                  get initialValue() {
+                    return textareaRef().value
+                  },
+                  get textarea() {
+                    return textareaRef()
+                  },
+                  get type() {
+                    return 'native'
+                  },
+                }}
+              >
+                <Editor
+                  type={'native'}
+                  suggestions={data}
+                  textarea={textareaRef()}
+                  initialValue={textareaRef().value}
+                />
+              </EditorRootContext.Provider>
+            </div>
+          )}
+        </Show>
+      </div>
     </div>
   )
 }

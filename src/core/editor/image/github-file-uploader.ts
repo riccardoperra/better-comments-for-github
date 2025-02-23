@@ -24,6 +24,7 @@ export type GitHubFile = {
   previewUrl: string | null
   originalUrl: string | null
   status: 'idle' | 'error' | 'progress' | 'done'
+  errorMessage?: string
 }
 
 export interface GitHubUploaderStoreOptions {
@@ -41,6 +42,22 @@ export interface GitHubUploaderHandler {
 
   get: ReadonlyArray<GitHubFile>
 }
+
+const possibleErrorStates = [
+  'is-default',
+  'is-uploading',
+  'is-bad-file',
+  'is-duplicate-filename',
+  'is-too-big',
+  'is-too-many',
+  'is-hidden-file',
+  'is-failed',
+  'is-bad-dimensions',
+  'is-empty',
+  'is-bad-permissions',
+  'is-repository-required',
+  'is-bad-format',
+]
 
 export class GitHubUploaderNativeHandler implements GitHubUploaderHandler {
   #store = createStore<Array<GitHubFile>>([])
@@ -72,6 +89,52 @@ export class GitHubUploaderNativeHandler implements GitHubUploaderHandler {
 
   upload(file: GitHubFile, dataTransfer: DataTransfer | null): void {
     const getIndex = () => this.get.findIndex((_) => _.id === file.id)
+
+    this.#attachmentHandler.addEventListener(
+      'upload:invalid',
+      async (error) => {
+        requestAnimationFrame(() => {
+          setTimeout(() => {
+            let errorState: string | null = null
+            for (const possibleErrorState of possibleErrorStates) {
+              if (
+                this.#attachmentHandler.classList.contains(possibleErrorState)
+              ) {
+                errorState = possibleErrorState
+                break
+              }
+            }
+
+            let errorMessage = 'Unknown error'
+            if (errorState) {
+              const errorsContainer = this.#attachmentHandler.querySelector(
+                '.file-attachment-errors',
+              )
+              if (errorsContainer) {
+                const banners = errorsContainer.querySelectorAll('x-banner')
+                for (const banner of banners.values()) {
+                  const error = banner.querySelector<HTMLElement>(
+                    '[data-view-component]',
+                  )
+                  if (
+                    error &&
+                    error.classList.contains(errorState.replace('is-', ''))
+                  ) {
+                    errorMessage = error.innerText
+                  }
+                }
+              }
+            }
+
+            this.set(getIndex(), (file) => ({
+              ...file,
+              status: 'error',
+              errorMessage,
+            }))
+          })
+        })
+      },
+    )
 
     this.#attachmentHandler.addEventListener(
       'upload:complete',
