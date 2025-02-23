@@ -29,6 +29,9 @@ export function defineCodeMarkdown() {
       },
       unistToNode(node, schema, children, context) {
         const code = node as InlineCode
+        if (!code.value) {
+          return []
+        }
         return [schema.text(code.value).mark([schema.marks.code.create()])]
       },
     }),

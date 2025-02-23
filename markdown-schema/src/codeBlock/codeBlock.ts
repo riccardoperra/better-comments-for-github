@@ -61,7 +61,7 @@ export function defineCodeBlockMarkdown() {
         return createProseMirrorNode(
           'codeBlock',
           schema,
-          [schema.text(code.value)],
+          code.value ? [schema.text(code.value)] : [],
           { language: code.lang },
         )
       },
