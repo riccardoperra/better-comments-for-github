@@ -38,9 +38,7 @@ const { doc, p, code } = builders(extension.schema!, {
 
 test('markdown -> prosemirror', () => {
   const editor = getEditorInstance(extension)
-  const unist = unistNodeFromMarkdown(`
-    Just a test content \`with code text\`
-  `)
+  const unist = unistNodeFromMarkdown('Just a test content `with code text`')
 
   const result = convertUnistToProsemirror(unist, editor.schema)
 

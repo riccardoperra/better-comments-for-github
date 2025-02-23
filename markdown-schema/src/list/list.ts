@@ -31,7 +31,7 @@ export function defineListMarkdown() {
         const listNode = node as FlatList
         return createProseMirrorNode('list', schema, children, {
           kind: listNode.kind,
-          checked: listNode.checked,
+          checked: listNode.kind === 'task' ? listNode.checked : null,
         })
       },
       toUnist(node, children): Array<List> {

@@ -38,9 +38,9 @@ const { doc, p, link } = builders(extension.schema!, {
 
 test('(markdown -> prosemirror) Link with url', () => {
   const editor = getEditorInstance(extension)
-  const unist = unistNodeFromMarkdown(`
-    Just a [link](https://example.com) into content
-  `)
+  const unist = unistNodeFromMarkdown(
+    `Just a [link](https://example.com) into content`,
+  )
 
   const result = convertUnistToProsemirror(unist, editor.schema)
 
@@ -58,9 +58,9 @@ test('(markdown -> prosemirror) Link with url', () => {
 
 test('(markdown -> prosemirror) Link with title', () => {
   const editor = getEditorInstance(extension)
-  const unist = unistNodeFromMarkdown(`
-    Just a [link](https://example.com "This is a title") into content
-  `)
+  const unist = unistNodeFromMarkdown(
+    `Just a [link](https://example.com "This is a title") into content`,
+  )
 
   const result = convertUnistToProsemirror(unist, editor.schema)
 
@@ -78,9 +78,9 @@ test('(markdown -> prosemirror) Link with title', () => {
 
 test('(markdown -> prosemirror) Link with defined content', () => {
   const editor = getEditorInstance(extension)
-  const unist = unistNodeFromMarkdown(`
-    This is an example link: [https://example.com]
-  `)
+  const unist = unistNodeFromMarkdown(
+    `This is an example link: [https://example.com]`,
+  )
 
   const result = convertUnistToProsemirror(unist, editor.schema)
 

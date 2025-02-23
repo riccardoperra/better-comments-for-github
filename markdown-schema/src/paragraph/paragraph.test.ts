@@ -32,17 +32,15 @@ import { defineParagraphMarkdown } from './paragraph'
 
 const extension = getNodesBaseExtensions([defineParagraphMarkdown()])
 
-const { doc, p, quote } = builders(extension.schema!, {
+const { doc, p } = builders(extension.schema!, {
   p: { nodeType: 'paragraph' },
 })
 
 test('markdown -> prosemirror', () => {
   const editor = getEditorInstance(extension)
-  const unist = unistNodeFromMarkdown(`
-    This is just a paragraph.
-    
-    This is the second paragraph.
-  `)
+  const unist = unistNodeFromMarkdown(
+    `This is just a paragraph.\n\nThis is the second paragraph.`,
+  )
 
   const result = convertUnistToProsemirror(unist, editor.schema)
 

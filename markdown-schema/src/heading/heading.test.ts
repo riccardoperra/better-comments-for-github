@@ -44,18 +44,12 @@ const { doc, p, h1, h2, h3, h4, h5, h6 } = builders(extension.schema!, {
 
 test('markdown -> prosemirror', () => {
   const editor = getEditorInstance(extension)
-  const unist = unistNodeFromMarkdown(`
-    # Heading 1
-    
-    ## Heading 2
-    
-    ### Heading 3
-    
-    #### Heading 4
-    
-    #### Heading 5
-    
-    ##### Heading 6    
+  const unist = unistNodeFromMarkdown(`# Heading 1
+## Heading 2
+### Heading 3
+#### Heading 4
+##### Heading 5
+###### Heading 6    
   `)
 
   const result = convertUnistToProsemirror(unist, editor.schema)
