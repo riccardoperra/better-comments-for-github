@@ -20,8 +20,8 @@ import {
   traverseFiber,
   waitForReactFiber,
 } from '../../core/react-hacks/fiber'
+import type { Fiber } from '../../core/react-hacks/fiber'
 import type { Accessor } from 'solid-js'
-import type { Fiber } from 'bippy'
 
 export interface MentionSuggestion {
   avatarUrl: string

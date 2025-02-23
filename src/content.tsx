@@ -27,6 +27,7 @@ import {
 } from './github/data'
 import { mountEditor } from './render'
 import { GitHubUploaderNativeHandler } from './core/editor/image/github-file-uploader'
+import { createGitHubUploaderReactHandler } from './editor/utils/reactFileUploader'
 import type {
   AttachmentHandlerElement,
   GitHubUploaderHandler,
@@ -46,7 +47,7 @@ createRoot(() => {
     let mountElFunction: (node: HTMLElement) => void
     let suggestionData: Accessor<SuggestionData>
     let type: EditorType
-    let uploadHandler: GitHubUploaderHandler | null = null
+    let uploadHandler: GitHubUploaderHandler
 
     // Old comment component of GitHub, This is still present in pull requests
     if (jsCommentField) {
@@ -96,6 +97,7 @@ createRoot(() => {
     } else {
       type = 'react'
       const suggestionDataResult = createSuggestionData(element)
+      uploadHandler = createGitHubUploaderReactHandler(element)
       suggestionData = suggestionDataResult.suggestionData
       const moduleContainer = element.querySelector(
         '[class*="MarkdownEditor-module__container"]',
@@ -119,7 +121,9 @@ createRoot(() => {
       get suggestionData() {
         return suggestionData()
       },
-      uploadHandler,
+      get uploadHandler() {
+        return uploadHandler
+      },
       get textarea() {
         return textarea
       },

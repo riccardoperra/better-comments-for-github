@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-type Fiber = any
+export type Fiber = any
 
 export function traverseFiber<T = any>(
   fiber: Fiber,
