@@ -17,7 +17,6 @@
 import type { Accessor } from 'solid-js'
 import { createRoot } from 'solid-js'
 import { queryComment } from './dom/queryComment'
-import type { SuggestionData } from './editor/utils/loadSuggestionData'
 import { createSuggestionData } from './editor/utils/loadSuggestionData'
 import styles from './content.module.css'
 import './styles.css'
@@ -27,6 +26,12 @@ import {
   tryGetReferences,
 } from './github/data'
 import { mountEditor } from './render'
+import { GitHubUploaderNativeHandler } from './core/editor/image/github-file-uploader'
+import type {
+  AttachmentHandlerElement,
+  GitHubUploaderHandler,
+} from './core/editor/image/github-file-uploader'
+import type { SuggestionData } from './editor/utils/loadSuggestionData'
 import type { EditorType } from './editor/editor'
 
 createRoot(() => {
@@ -41,6 +46,7 @@ createRoot(() => {
     let mountElFunction: (node: HTMLElement) => void
     let suggestionData: Accessor<SuggestionData>
     let type: EditorType
+    let uploadHandler: GitHubUploaderHandler | null = null
 
     // Old comment component of GitHub, This is still present in pull requests
     if (jsCommentField) {
@@ -67,6 +73,12 @@ createRoot(() => {
           references: issues,
           savedReplies: [],
         })
+      }
+
+      const fileAttachmentTransfer =
+        jsCommentField.closest<AttachmentHandlerElement>('file-attachment')
+      if (fileAttachmentTransfer) {
+        uploadHandler = new GitHubUploaderNativeHandler(fileAttachmentTransfer)
       }
 
       // Search for closest tab-container of the textarea.
@@ -107,6 +119,7 @@ createRoot(() => {
       get suggestionData() {
         return suggestionData()
       },
+      uploadHandler,
       get textarea() {
         return textarea
       },

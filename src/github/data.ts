@@ -74,3 +74,37 @@ export async function tryGetReferences(
 export function getUserAvatarId(userId: number) {
   return `https://avatars.githubusercontent.com/u/${userId}?v=4`
 }
+
+export async function getImagePreviewUrl(
+  href: string,
+  project: string,
+  repository: string,
+): Promise<string> {
+  return new Promise<string>((resolve, reject) => {
+    const formData = new FormData()
+    formData.set('text', `<img src="${href}" />`)
+    formData.set('project', project)
+    formData.set('issue', project)
+    formData.set('repository', repository)
+    formData.set('subject_type', 'issue')
+
+    fetch('/preview', {
+      body: formData,
+      method: 'POST',
+      headers: { 'GitHub-Verified-Fetch': 'true' },
+    }).then(async (response) => {
+      if (!response.ok) {
+        reject(new Error('Failed to parse response'))
+      }
+      const htmlText = await response.text()
+
+      const getUrlFromHtml = (html: string) => {
+        const regex = /https:\/\/[^"'\s]+/i
+        const match = html.match(regex)
+        return match ? match[0] : null
+      }
+
+      resolve(getUrlFromHtml(htmlText)!)
+    })
+  })
+}

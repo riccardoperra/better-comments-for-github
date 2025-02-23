@@ -34,6 +34,7 @@ import type { SuggestionData } from './utils/loadSuggestionData'
 import './editor.css'
 import { DebugNode } from './DebugNode'
 import { unistNodeFromMarkdown } from './utils/unistNodeFromMarkdown'
+import type { GitHubUploaderHandler } from '../core/editor/image/github-file-uploader'
 
 export interface EditorProps {
   suggestions: SuggestionData
@@ -48,6 +49,7 @@ export const EditorRootContext = createContext<{
   data: SuggestionData
   textarea: HTMLTextAreaElement
   initialValue: string
+  uploadHandler: GitHubUploaderHandler
   type: EditorType
 }>()
 
@@ -99,7 +101,7 @@ export function Editor(props: EditorProps) {
   )
 
   return (
-    <div>
+    <div data-editor-wrapper={''}>
       <ProsekitEditor
         editor={editor}
         mentions={props.suggestions.mentions ?? []}

@@ -17,11 +17,13 @@
 import { render } from 'solid-js/web'
 import { Editor, EditorRootContext } from './editor/editor'
 import type { EditorType } from './editor/editor'
+import type { GitHubUploaderHandler } from './core/editor/image/github-file-uploader'
 import type { SuggestionData } from './editor/utils/loadSuggestionData'
 
 export interface RenderEditorProps {
   suggestionData: SuggestionData
   initialValue: string
+  uploadHandler: GitHubUploaderHandler
   textarea: HTMLTextAreaElement
   type: EditorType
 }
@@ -39,6 +41,9 @@ export function mountEditor(root: HTMLElement, props: RenderEditorProps) {
           value={{
             get data() {
               return props.suggestionData
+            },
+            get uploadHandler() {
+              return props.uploadHandler
             },
             get initialValue() {
               return props.textarea.value

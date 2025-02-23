@@ -30,8 +30,8 @@ importers:
         specifier: ^2.1.1
         version: 2.1.1
       lucide-solid:
-        specifier: ^0.475.0
-        version: 0.475.0(solid-js@1.9.4)
+        specifier: ^0.474.0
+        version: 0.474.0(solid-js@1.9.4)
       prosekit:
         specifier: ^0.11.5
         version: 0.11.5(@types/hast@3.0.4)(prosemirror-model@1.24.1)(prosemirror-state@1.4.3)(prosemirror-transform@1.10.2)(prosemirror-view@1.38.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(solid-js@1.9.4)(svelte@5.20.1)(vue@3.5.13(typescript@5.7.3))
@@ -3303,8 +3303,8 @@ packages:
     resolution: {integrity: sha512-Jo6dJ04CmSjuznwJSS3pUeWmd/H0ffTlkXXgwZi+eq1UCmqQwCh+eLsYOYCwY991i2Fah4h1BEMCx4qThGbsiA==}
     engines: {node: '>=10'}
 
-  lucide-solid@0.475.0:
-    resolution: {integrity: sha512-iAelwwRgMJie0sj+qWWQzYOixbk6FUcxflF3od+ZMpQokmeCD+yywyNMMsqfCcsCD50PBKKhqBeFsdjUzlhfxw==}
+  lucide-solid@0.474.0:
+    resolution: {integrity: sha512-sSEzUW2TVHpbYRehLfPuWtL+mGeBUQRZWPE0020aealCIxaNSuZOWts3NdS+R+itWr5JenTcwi1+Q3OcLTIZXg==}
     peerDependencies:
       solid-js: ^1.4.7
 
@@ -8312,7 +8312,7 @@ snapshots:
     dependencies:
       yallist: 4.0.0
 
-  lucide-solid@0.475.0(solid-js@1.9.4):
+  lucide-solid@0.474.0(solid-js@1.9.4):
     dependencies:
       solid-js: 1.9.4
 

@@ -37,7 +37,7 @@
     "@prosemirror-adapter/solid": "^0.4.0",
     "@types/chrome": "^0.0.304",
     "clsx": "^2.1.1",
-    "lucide-solid": "^0.475.0",
+    "lucide-solid": "^0.474.0",
     "prosekit": "^0.11.5",
     "prosemirror-commands": "^1.6.2",
     "prosemirror-example-setup": "^1.2.3",
