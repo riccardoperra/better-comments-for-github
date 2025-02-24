@@ -2,3 +2,4 @@ packages:
   - .
   - ./markdown-schema
   - ./markdown-transformer
+  - ./v2
