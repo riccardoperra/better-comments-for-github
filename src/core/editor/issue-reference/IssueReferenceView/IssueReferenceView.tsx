@@ -26,7 +26,10 @@ import {
   HoverCardTrigger,
 } from '../../hover-card/HoverCard'
 import { getLinkFromIssueReferenceAttrs } from '../issue-reference-utils'
-import { getIssueHoverCardContent } from '../../../../github/data'
+import {
+  getIssueHoverCardContent,
+  getPullRequestHoverCardContent,
+} from '../../../../github/data'
 import styles from './IssueReferenceView.module.css'
 import type { GitHubIssueReferenceAttrs } from '../issue'
 import type { NodeViewContextProps } from '@prosemirror-adapter/solid'
@@ -42,7 +45,13 @@ export function IssueReferenceView(props: NodeViewContextProps) {
     if (cacheStorage.get.issueReferencesHtml[link]) {
       return cacheStorage.get.issueReferencesHtml[link]
     }
-    return getIssueHoverCardContent(link)
+
+    const fetchCall =
+      attrs().type === 'pull'
+        ? getPullRequestHoverCardContent
+        : getIssueHoverCardContent
+
+    return fetchCall(link)
       .then((res) => {
         cacheStorage.set('issueReferencesHtml', link, res)
         return res

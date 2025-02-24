@@ -114,7 +114,26 @@ export function getIssueHoverCardUrl(path: string) {
   const subjectTag = document
     .querySelector<HTMLMetaElement>('meta[name="hovercard-subject-tag"]')
     ?.content.replace('issue:', '')
+    .replace('pull_request', '')
   return `${path}/hovercard?subject=issue:${subjectTag}&current_path=${window.location.pathname}`
+}
+
+export function getPullHoverCardUrl(path: string) {
+  // TODO: global store?
+  const subjectTag = document
+    .querySelector<HTMLMetaElement>('meta[name="hovercard-subject-tag"]')
+    ?.content.replace('issue:', '')
+    .replace('pull_request', '')
+  return `${path}/hovercard?pull_request:${subjectTag}&current_path=${window.location.pathname}`
+}
+
+export function getPullRequestHoverCardContent(path: string) {
+  const url = getPullHoverCardUrl(path)
+  return fetch(url, {
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+    },
+  }).then((res) => res.text())
 }
 
 export function getIssueHoverCardContent(path: string) {

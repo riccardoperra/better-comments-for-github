@@ -38,19 +38,16 @@ export function IssueReferenceMenu(props: UserMentionMenuProps) {
     ref: SuggestionData['references'][number],
   ) => {
     const isPullRequest = ref.iconHtml.includes('pull-request')
-    if (isPullRequest) {
-      // support pull request
-    } else {
-      const [, owner, repository] = window.location.pathname.split('/')
-      if (owner && repository) {
-        queueMicrotask(() => {
-          editor().commands.insertGitHubIssueReference({
-            owner,
-            repository,
-            issue: ref.id,
-          })
+    const [, owner, repository] = window.location.pathname.split('/')
+    if (owner && repository) {
+      queueMicrotask(() => {
+        editor().commands.insertGitHubIssueReference({
+          owner,
+          repository,
+          issue: ref.id,
+          type: isPullRequest ? 'pull' : 'issue',
         })
-      }
+      })
     }
   }
 

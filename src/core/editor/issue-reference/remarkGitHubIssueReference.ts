@@ -19,7 +19,7 @@ import { getLinkFromIssueReferenceAttrs } from './issue-reference-utils'
 import type { Node, Parent, Root, Text } from 'mdast'
 
 export const githubIssueRegex =
-  /(?:https?:\/\/)?github\.com\/([^/]+)\/([^/]+)\/issues\/(\d+)/i
+  /(?:https?:\/\/)?github\.com\/([^/]+)\/([^/]+)\/(issues|pull)\/(\d+)/i
 
 export const githubIssueReferenceType = 'githubIssueReference'
 
@@ -40,6 +40,14 @@ export interface GitHubIssueReference extends Node {
    * GitHub repository name
    */
   repository: string
+  /**
+   * Whether the issue is a pull request
+   */
+  isPullRequest: boolean
+  /**
+   * Original href
+   */
+  href: string
 }
 
 declare module 'mdast' {
@@ -59,8 +67,14 @@ export function matchGitHubIssueLinkReference(text: string) {
   if (!match) {
     return null
   }
-  const [, owner, repository, issue] = match
-  return { owner, repository, issue } as const
+  const [, owner, repository, type, issue] = match
+  return {
+    owner,
+    repository,
+    type: type === 'pull' ? 'pull' : 'issue',
+    issue,
+    href: text,
+  } as const
 }
 
 export function remarkParseLinkToGitHubIssueReference() {
@@ -76,6 +90,8 @@ export function remarkParseLinkToGitHubIssueReference() {
             issue: Number(issue),
             owner,
             repository,
+            isPullRequest: match.type === 'pull',
+            href,
           } satisfies GitHubIssueReference
         }
       }
@@ -88,7 +104,13 @@ export function remarkGitHubIssueReferenceSupport() {
     visit(tree, githubIssueReferenceType, (_issue, index, parent) => {
       const result: Text = {
         type: 'text',
-        value: getLinkFromIssueReferenceAttrs(_issue),
+        value: getLinkFromIssueReferenceAttrs({
+          issue: _issue.issue,
+          type: _issue.isPullRequest ? 'pull' : 'issue',
+          owner: _issue.owner,
+          href: _issue.href,
+          repository: _issue.repository,
+        }),
       }
       if (typeof index === 'number' && parent) {
         ;(parent as Parent).children[index] = result

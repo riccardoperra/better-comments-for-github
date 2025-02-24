@@ -26,7 +26,7 @@ import { createProseMirrorNode } from 'prosemirror-transformer-markdown/prosemir
 import { defineSolidNodeView } from 'prosekit/solid'
 import {
   githubIssueReferenceType,
-  githubIssueRegex,
+  matchGitHubIssueLinkReference,
 } from './remarkGitHubIssueReference'
 import { IssueReferenceView } from './IssueReferenceView/IssueReferenceView'
 import { defineIssueReferencePasteRule } from './issue-reference-paste-rule'
@@ -37,6 +37,8 @@ export interface GitHubIssueReferenceAttrs {
   issue: number | string
   repository: string
   owner: string
+  type: 'pull' | 'issue'
+  href: string
 }
 
 /**
@@ -52,6 +54,8 @@ export function defineIssueReferenceSpec() {
       issue: {},
       repository: {},
       owner: {},
+      type: {},
+      href: {},
     },
     inline: true,
     leafText: (node) => {
@@ -67,6 +71,8 @@ export function defineIssueReferenceSpec() {
           issue: attrs.issue,
           owner: attrs.owner,
           repository: attrs.repository,
+          href: attrs.href,
+          isPullRequest: attrs.type === 'pull',
         } satisfies GitHubIssueReference,
       ]
     },
@@ -76,6 +82,8 @@ export function defineIssueReferenceSpec() {
         issue: node.issue,
         owner: node.owner,
         repository: node.repository,
+        type: node.isPullRequest ? 'pull' : 'issue',
+        href: node.href,
       } satisfies GitHubIssueReferenceAttrs)
     },
     parseDOM: [
@@ -83,21 +91,23 @@ export function defineIssueReferenceSpec() {
         tag: `a[href]`,
         getAttrs: (dom: HTMLElement): GitHubIssueReferenceAttrs | false => {
           const href = (dom as HTMLAnchorElement).href
-          const match = href.match(githubIssueRegex)
+          const match = matchGitHubIssueLinkReference(href)
           if (!match) {
             return false
           }
-          const [, owner, repository, issue] = match
+          const { issue, repository, owner } = match
           return {
             owner,
             repository,
             issue: Number(issue),
+            href,
+            type: match.type === 'pull' ? 'pull' : 'issue',
           }
         },
       },
     ],
     toDOM(node) {
-      const { issue, owner, repository } =
+      const { issue, owner, repository, type } =
         node.attrs as GitHubIssueReferenceAttrs
       return [
         'a',
@@ -108,6 +118,7 @@ export function defineIssueReferenceSpec() {
           'data-issue': issue,
           'data-owner': owner,
           'data-repository': repository,
+          'data-type': type,
         },
         `#${issue}`,
       ]
@@ -117,8 +128,16 @@ export function defineIssueReferenceSpec() {
 
 export function defineIssueReferenceCommands() {
   return defineCommands({
-    insertGitHubIssueReference: (attrs: GitHubIssueReferenceAttrs) => {
-      return insertNode({ type: 'gh-issue-reference', attrs })
+    insertGitHubIssueReference: (
+      attrs: Omit<GitHubIssueReferenceAttrs, 'href'>,
+    ) => {
+      return insertNode({
+        type: 'gh-issue-reference',
+        attrs: {
+          ...attrs,
+          href: getLinkFromIssueReferenceAttrs(attrs),
+        },
+      })
     },
   })
 }

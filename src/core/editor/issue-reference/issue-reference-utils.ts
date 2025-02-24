@@ -17,7 +17,8 @@
 import type { GitHubIssueReferenceAttrs } from './issue'
 
 export function getLinkFromIssueReferenceAttrs(
-  attrs: GitHubIssueReferenceAttrs,
+  attrs: Omit<GitHubIssueReferenceAttrs, 'href'>,
 ) {
-  return `https://github.com/${attrs.owner}/${attrs.repository}/issues/${attrs.issue}`
+  const type: 'issues' | 'pull' = attrs.type === 'pull' ? 'pull' : 'issues'
+  return `https://github.com/${attrs.owner}/${attrs.repository}/${type}/${attrs.issue}`
 }
