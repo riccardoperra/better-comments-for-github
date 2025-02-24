@@ -71,7 +71,6 @@ export async function waitForReactFiber(
         return
       }
       const fiber = getFiber(element)
-      console.log('check fiber', element, fiber)
       if (fiber) {
         resolve(fiber)
         return

@@ -21,10 +21,10 @@ import {
   AutocompleteItem,
   AutocompleteList,
   AutocompletePopover,
-} from '../autocomplete/Autocomplete'
+} from '../../autocomplete/Autocomplete'
 import styles from './IssueReferenceMenu.module.css'
-import type { EditorExtension } from '../extension'
-import type { SuggestionData } from '../../../editor/utils/loadSuggestionData'
+import type { EditorExtension } from '../../extension'
+import type { SuggestionData } from '../../../../editor/utils/loadSuggestionData'
 
 export interface UserMentionMenuProps {
   issues: SuggestionData['references']
@@ -34,14 +34,24 @@ export function IssueReferenceMenu(props: UserMentionMenuProps) {
   const [query, setQuery] = createSignal('')
   const editor = useEditor<EditorExtension>()
 
-  const handleUserInsert = (user: SuggestionData['mentions'][number]) => {
-    console.log(user)
-    editor().commands.insertMention({
-      id: user.identifier.toString(),
-      value: '@' + user.identifier,
-      kind: 'user',
-    })
-    editor().commands.insertText({ text: ' ' })
+  const handleIssueReferenceInsert = (
+    ref: SuggestionData['references'][number],
+  ) => {
+    const isPullRequest = ref.iconHtml.includes('pull-request')
+    if (isPullRequest) {
+      // support pull request
+    } else {
+      const [, owner, repository] = window.location.pathname.split('/')
+      if (owner && repository) {
+        queueMicrotask(() => {
+          editor().commands.insertGitHubIssueReference({
+            owner,
+            repository,
+            issue: ref.id,
+          })
+        })
+      }
+    }
   }
 
   const filteredUsers = createMemo(() => {
@@ -72,7 +82,9 @@ export function IssueReferenceMenu(props: UserMentionMenuProps) {
 
         <For each={filteredUsers()}>
           {(issue) => (
-            <AutocompleteItem key={issue.id}>
+            <AutocompleteItem
+              onSelect={() => handleIssueReferenceInsert(issue)}
+            >
               <div class={styles.itemContainer}>
                 <div innerHTML={issue.iconHtml}></div>
 

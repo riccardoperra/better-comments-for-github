@@ -36,6 +36,7 @@ import './editor.css'
 import { unistNodeFromMarkdown } from './utils/unistNodeFromMarkdown'
 import type { GitHubUploaderHandler } from '../core/editor/image/github-file-uploader'
 import { DebugNode } from './DebugNode'
+import { remarkGitHubIssueReferenceSupport } from '../core/editor/issue-reference/remarkGitHubIssueReference'
 
 export interface EditorProps {
   suggestions: SuggestionData
@@ -88,6 +89,7 @@ export function Editor(props: EditorProps) {
           {
             postProcess: (node) => {
               unistMergeAdjacentList(node)
+              remarkGitHubIssueReferenceSupport()(node)
             },
           },
         )

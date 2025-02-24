@@ -63,6 +63,12 @@ Paragraph after **hardbreak**
   },
 }
 
+export const IssueReference: Story = {
+  args: {
+    initialValue: `[](https://github.com/riccardoperra/better-writer-for-github/issues/4)`,
+  },
+}
+
 export const Alert: Story = {
   args: {
     initialValue: `> [!NOTE]

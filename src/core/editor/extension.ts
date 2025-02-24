@@ -49,6 +49,7 @@ import { defineHardbreak } from './hardbreak/hardbreak'
 import { defineMentionMarkdown } from './user-mention/mention'
 import { defineGitHubAlert } from './githubAlert/alert'
 import { defineImageExtension } from './image/extension'
+import { defineGitHubIssueReference } from './issue-reference/issue'
 import type { HeadingAttrs } from 'prosekit/extensions/heading'
 
 export function defineMarkdownExtension() {
@@ -80,6 +81,7 @@ export function defineMarkdownExtension() {
     defineVirtualSelection(),
     defineModClickPrevention(),
     defineTableMarkdown(),
+    defineGitHubIssueReference(),
   )
 }
 

@@ -17,7 +17,13 @@
 import { getFiberProps } from '../../core/react-hacks/fiber'
 
 function sanitizeValue(value: string) {
-  return value.replaceAll('> \\[!', '> [!')
+  return (
+    value
+      // Handle Alerts:  > [!NOTE]
+      .replaceAll('> \\[!', '> [!')
+      // Handle github links: https:\//github.com
+      .replaceAll('https\\://github', 'https://github')
+  )
 }
 
 export function forceGithubTextAreaSync(

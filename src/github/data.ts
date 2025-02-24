@@ -108,3 +108,20 @@ export async function getImagePreviewUrl(
     })
   })
 }
+
+export function getIssueHoverCardUrl(path: string) {
+  // TODO: global store?
+  const subjectTag = document
+    .querySelector<HTMLMetaElement>('meta[name="hovercard-subject-tag"]')
+    ?.content.replace('issue:', '')
+  return `${path}/hovercard?subject=issue:${subjectTag}&current_path=${window.location.pathname}`
+}
+
+export function getIssueHoverCardContent(path: string) {
+  const url = getIssueHoverCardUrl(path)
+  return fetch(url, {
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+    },
+  }).then((res) => res.text())
+}

@@ -22,6 +22,7 @@ import {
   remarkInlineImage,
 } from '@prosedoc/markdown-schema'
 import { remarkGitHubAlert } from '../../core/editor/githubAlert/remarkGitHubAlert'
+import { remarkParseLinkToGitHubIssueReference } from '../../core/editor/issue-reference/remarkGitHubIssueReference'
 
 export function unistNodeFromMarkdown(content: string) {
   return coreUnistNodeFromMarkdown(content, {
@@ -31,6 +32,7 @@ export function unistNodeFromMarkdown(content: string) {
       { type: 'remarkPlugin', handler: remarkHtmlImage },
       { type: 'remarkPlugin', handler: remarkInlineImage },
       { type: 'remarkPlugin', handler: remarkHtmlHardbreak },
+      { type: 'remarkPlugin', handler: remarkParseLinkToGitHubIssueReference },
     ],
   })
 }
