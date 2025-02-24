@@ -21,6 +21,7 @@ export default defineConfig({
 
   modules: ['@wxt-dev/module-solid'],
   manifest: {
+    name: 'Better write for GitHub',
     permissions: ['storage'],
     web_accessible_resources: [
       {
