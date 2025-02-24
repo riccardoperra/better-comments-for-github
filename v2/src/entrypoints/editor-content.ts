@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-import { queryComment } from '../../src/dom/queryComment'
-import { createSuggestionData } from '../../src/editor/utils/loadSuggestionData'
-import { GitHubUploaderNativeHandler } from '../../src/core/editor/image/github-file-uploader'
+import { queryComment } from '../../../src/dom/queryComment'
+import { createSuggestionData } from '../../../src/editor/utils/loadSuggestionData'
+import { GitHubUploaderNativeHandler } from '../../../src/core/editor/image/github-file-uploader'
 import {
   fetchMentionableUsers,
   getUserAvatarId,
   tryGetReferences,
-} from '../../src/github/data'
-import { createGitHubUploaderReactHandler } from '../../src/editor/utils/reactFileUploader'
-import { mountEditor } from '../../src/render'
+} from '../../../src/github/data'
+import { createGitHubUploaderReactHandler } from '../../../src/editor/utils/reactFileUploader'
+import { mountEditor } from '../../../src/render'
 import styles from './main.module.css'
 import type {
   AttachmentHandlerElement,
   GitHubUploaderHandler,
-} from '../../src/core/editor/image/github-file-uploader'
-import type { SuggestionData } from '../../src/editor/utils/loadSuggestionData'
-import type { EditorType } from '../../src/editor/editor'
+} from '../../../src/core/editor/image/github-file-uploader'
+import type { SuggestionData } from '../../../src/editor/utils/loadSuggestionData'
+import type { EditorType } from '../../../src/editor/editor'
 import type { Accessor } from 'solid-js'
 
 import './styles.css'

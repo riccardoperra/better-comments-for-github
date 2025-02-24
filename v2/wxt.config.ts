@@ -3,6 +3,9 @@ import { defineConfig } from 'wxt'
 // See https://wxt.dev/api/config.html
 export default defineConfig({
   extensionApi: 'chrome',
+  srcDir: './src',
+  outDir: './dist',
+
   modules: ['@wxt-dev/module-solid'],
   manifest: {
     web_accessible_resources: [

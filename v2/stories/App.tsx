@@ -38,9 +38,6 @@ export function App(props: AppProps) {
               value={{
                 data,
                 uploadHandler: mockUploader,
-                get fileAttachmentTransfer() {
-                  return {} as any
-                },
                 get initialValue() {
                   return textareaRef().value
                 },
@@ -48,7 +45,7 @@ export function App(props: AppProps) {
                   return textareaRef()
                 },
                 get type() {
-                  return 'native'
+                  return 'native' as const
                 },
               }}
             >
