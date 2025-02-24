@@ -29,41 +29,39 @@ export function App(props: AppProps) {
 
   return (
     <div class={'App'}>
-      <div>
-        <TextArea ref={setTextareaRef} initialValue={props.initialValue} />
+      <TextArea ref={setTextareaRef} initialValue={props.initialValue} />
 
-        <Show when={textareaRef()}>
-          {(textareaRef) => (
-            <div class={'EditorContent'}>
-              <EditorRootContext.Provider
-                value={{
-                  data,
-                  uploadHandler: mockUploader,
-                  get fileAttachmentTransfer() {
-                    return {} as any
-                  },
-                  get initialValue() {
-                    return textareaRef().value
-                  },
-                  get textarea() {
-                    return textareaRef()
-                  },
-                  get type() {
-                    return 'native'
-                  },
-                }}
-              >
-                <Editor
-                  type={'native'}
-                  suggestions={data}
-                  textarea={textareaRef()}
-                  initialValue={textareaRef().value}
-                />
-              </EditorRootContext.Provider>
-            </div>
-          )}
-        </Show>
-      </div>
+      <Show when={textareaRef()}>
+        {(textareaRef) => (
+          <div class={'EditorContent'}>
+            <EditorRootContext.Provider
+              value={{
+                data,
+                uploadHandler: mockUploader,
+                get fileAttachmentTransfer() {
+                  return {} as any
+                },
+                get initialValue() {
+                  return textareaRef().value
+                },
+                get textarea() {
+                  return textareaRef()
+                },
+                get type() {
+                  return 'native'
+                },
+              }}
+            >
+              <Editor
+                type={'native'}
+                suggestions={data}
+                textarea={textareaRef()}
+                initialValue={textareaRef().value}
+              />
+            </EditorRootContext.Provider>
+          </div>
+        )}
+      </Show>
     </div>
   )
 }

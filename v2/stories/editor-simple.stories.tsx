@@ -21,9 +21,6 @@ import type { Meta, StoryObj } from 'storybook-solidjs'
 const meta = {
   title: 'Editor/Basic',
   component: App,
-  parameters: {
-    layout: 'centered',
-  },
 } satisfies Meta<typeof App>
 
 export default meta
@@ -80,5 +77,11 @@ export const List: Story = {
 - Bullet list item
 - Bullet list item 2
   - Bullet list item nested`,
+  },
+}
+
+export const Images: Story = {
+  args: {
+    initialValue: `<img src="https://placehold.co/600x400" alt="placeholder" /> inline text`,
   },
 }
