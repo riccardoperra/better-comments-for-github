@@ -1,18 +1,19 @@
 import { defineConfig } from 'wxt'
+import { statebuilder } from 'statebuilder/compiler'
 
 // See https://wxt.dev/api/config.html
 export default defineConfig({
   extensionApi: 'chrome',
   srcDir: './src',
   outDir: './dist',
-  // vite: (env) => ({
-  //   plugins: [
-  //     statebuilder({
-  //       autoKey: true,
-  //       dev: env.mode === 'development',
-  //     }) as any,
-  //   ],
-  // }),
+  vite: (env) => ({
+    plugins: [
+      statebuilder({
+        autoKey: true,
+        dev: env.mode === 'development',
+      }) as any,
+    ],
+  }),
   // only on linux/macOS
   runner: {
     chromiumArgs: ['--user-data-dir=./.wxt/chrome-data'],

@@ -15,17 +15,20 @@
  */
 
 import { createSignal } from 'solid-js'
-import { Checkbox } from './checkbox'
+import { TextField } from './checkbox'
 import type { Meta, StoryObj } from 'storybook-solidjs'
 
 // More on how to set up stories at: https://storybook.js.org/docs/7.0/solid/writing-stories/introduction
 const meta = {
-  title: 'Primitives/Checkbox',
-  component: Checkbox,
+  title: 'Primitives/TextField',
+  component: TextField,
   parameters: {
     layout: 'centered',
   },
-} satisfies Meta<typeof Checkbox>
+  argTypes: {
+    backgroundColor: { control: 'color' },
+  },
+} satisfies Meta<typeof TextField>
 
 export default meta
 type Story = StoryObj<typeof meta>
@@ -33,13 +36,13 @@ type Story = StoryObj<typeof meta>
 // More on writing stories with args: https://storybook.js.org/docs/solid/writing-stories/args
 export const Default: Story = {
   render: () => {
-    const [checked, setChecked] = createSignal(false)
+    const [value, setValue] = createSignal('')
     return (
-      <Checkbox
+      <TextField
         label={'Label'}
         description={'This is a checkbox caption'}
-        checked={checked()}
-        onCheckedChange={setChecked}
+        value={value()}
+        onValueChange={setValue}
       />
     )
   },

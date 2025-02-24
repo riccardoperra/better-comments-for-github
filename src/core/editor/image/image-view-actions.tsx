@@ -22,6 +22,7 @@ import { useNodeViewContext } from '@prosemirror-adapter/solid'
 import { Tooltip, TooltipContent, TooltipTrigger } from '../tooltip/tooltip'
 import { deleteRange } from '../../../editor/utils/deleteRange'
 import { Popover, PopoverContent, PopoverTrigger } from '../popover/popover'
+import { TextField } from '../text-field/text-field'
 import styles from './image-view.module.css'
 
 export interface ImageViewActionsProps {
@@ -75,18 +76,22 @@ export function ImageViewActions(props: ImageViewActionsProps) {
                 }
               }}
             >
-              <h5>Alternative text</h5>
-              <div>
-                <input
-                  autofocus={true}
-                  type={'text'}
-                  class={'FormControl FormControl-input'}
-                  value={context().node.attrs.alt}
-                  onChange={(event) => {
-                    context().setAttrs({ alt: event.target.value })
-                  }}
-                />
-              </div>
+              {(() => {
+                const [value, setValue] = createSignal<string>(
+                  context().node.attrs.value,
+                )
+                return (
+                  <TextField
+                    autofocus
+                    label={'Alternative text'}
+                    value={value()}
+                    onValueChange={setValue}
+                    onChange={(event) => {
+                      context().setAttrs({ alt: value() })
+                    }}
+                  />
+                )
+              })()}
             </PopoverContent>
           </Popover>
           <TooltipContent>Alternative text</TooltipContent>

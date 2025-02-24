@@ -1,4 +1,5 @@
 import { Show, createSignal } from 'solid-js'
+import { StateProvider } from 'statebuilder'
 import { Editor, EditorRootContext } from '../../src/editor/editor'
 import { MockUploaderNativeHandler } from './mock-uploader'
 
@@ -28,38 +29,40 @@ export function App(props: AppProps) {
   }
 
   return (
-    <div class={'App'}>
-      <TextArea ref={setTextareaRef} initialValue={props.initialValue} />
+    <StateProvider>
+      <div class={'App'}>
+        <TextArea ref={setTextareaRef} initialValue={props.initialValue} />
 
-      <Show when={textareaRef()}>
-        {(textareaRef) => (
-          <div class={'EditorContent'}>
-            <EditorRootContext.Provider
-              value={{
-                data,
-                uploadHandler: mockUploader,
-                get initialValue() {
-                  return textareaRef().value
-                },
-                get textarea() {
-                  return textareaRef()
-                },
-                get type() {
-                  return 'native' as const
-                },
-              }}
-            >
-              <Editor
-                type={'native'}
-                suggestions={data}
-                textarea={textareaRef()}
-                initialValue={textareaRef().value}
-              />
-            </EditorRootContext.Provider>
-          </div>
-        )}
-      </Show>
-    </div>
+        <Show when={textareaRef()}>
+          {(textareaRef) => (
+            <div class={'EditorContent'}>
+              <EditorRootContext.Provider
+                value={{
+                  data,
+                  uploadHandler: mockUploader,
+                  get initialValue() {
+                    return textareaRef().value
+                  },
+                  get textarea() {
+                    return textareaRef()
+                  },
+                  get type() {
+                    return 'native' as const
+                  },
+                }}
+              >
+                <Editor
+                  type={'native'}
+                  suggestions={data}
+                  textarea={textareaRef()}
+                  initialValue={textareaRef().value}
+                />
+              </EditorRootContext.Provider>
+            </div>
+          )}
+        </Show>
+      </div>
+    </StateProvider>
   )
 }
 

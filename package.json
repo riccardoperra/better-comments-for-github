@@ -53,6 +53,7 @@
     "remark-stringify": "^11.0.0",
     "solid-js": "^1.9.4",
     "statebuilder": "^0.8.0",
+    "storybook-solidjs": "^1.0.0-beta.6",
     "unified": "^11.0.5",
     "unist-util-visit": "^5.0.0"
   }

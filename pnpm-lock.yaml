@@ -77,6 +77,9 @@ importers:
       statebuilder:
         specifier: ^0.8.0
         version: 0.8.0
+      storybook-solidjs:
+        specifier: ^1.0.0-beta.6
+        version: 1.0.0-beta.6(solid-js@1.9.4)
       unified:
         specifier: ^11.0.5
         version: 11.0.5

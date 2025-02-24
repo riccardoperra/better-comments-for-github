@@ -15,6 +15,7 @@
  */
 
 import { Show } from 'solid-js'
+import * as KCheckbox from '@kobalte/core/checkbox'
 import type { JSX } from 'solid-js'
 
 export interface CheckboxProps {
@@ -24,34 +25,47 @@ export interface CheckboxProps {
   description?: JSX.Element
 }
 
+export const revertVisuallyHiddenStyles: JSX.CSSProperties = {
+  border: undefined,
+  clip: undefined,
+  'clip-path': undefined,
+  height: undefined,
+  margin: 'revert',
+  overflow: undefined,
+  padding: undefined,
+  position: undefined,
+  width: undefined,
+  'white-space': undefined,
+}
+
 export function Checkbox(props: CheckboxProps) {
   return (
-    <div class="FormControl-checkbox-wrap">
-      <input
-        type="checkbox"
-        name="toggle-debug"
+    <KCheckbox.Root
+      class="FormControl-checkbox-wrap"
+      checked={props.checked}
+      onChange={props.onCheckedChange}
+    >
+      <KCheckbox.Input
         class={'FormControl-checkbox'}
-        checked={props.checked}
-        onChange={(event) => {
-          props.onCheckedChange(event.target.checked)
-        }}
-        id="toggle-debug"
+        style={revertVisuallyHiddenStyles}
       />
 
       <span class={'FormControl-checkbox-labelWrap'}>
         <Show when={props.label}>
           {(label) => (
-            <label for="toggle-debug" class={'FormControl-label'}>
+            <KCheckbox.Label for="toggle-debug" class={'FormControl-label'}>
               {label()}
-            </label>
+            </KCheckbox.Label>
           )}
         </Show>
         <Show when={props.description}>
           {(description) => (
-            <span class={'FormControl-description'}>{description()}</span>
+            <KCheckbox.Description class={'FormControl-description'}>
+              {description()}
+            </KCheckbox.Description>
           )}
         </Show>
       </span>
-    </div>
+    </KCheckbox.Root>
   )
 }
