@@ -170,7 +170,7 @@ export default function SlashMenu() {
   const editor = useEditor<EditorExtension>()
   return (
     <AutocompletePopover
-      regex={/\/.*$/iu}
+      regex={/(?:^|(?<=\s))\/(?!\/)[^/]*$/iu}
       class={styles.slashMenu}
       fitViewport={false}
     >

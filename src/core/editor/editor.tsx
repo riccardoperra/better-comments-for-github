@@ -21,6 +21,7 @@ import { UserMentionMenu } from './user-mention/UserMentionMenu'
 import { IssueReferenceMenu } from './issue-reference/IssueReferenceMenu'
 import { EditorBlockHandler } from './block-handle/block-handle'
 import SlashMenu from './slash-menu/slash-menu/slash-menu'
+import InlineMenu from './inline-menu/InlineMenu'
 import type { Editor } from 'prosekit/core'
 import type { SuggestionData } from '../../editor/utils/loadSuggestionData'
 
@@ -45,6 +46,7 @@ export function ProsekitEditor(props: ProsekitEditor) {
           <SlashMenu />
           <UserMentionMenu users={props.mentions} />
           <IssueReferenceMenu issues={props.issues} />
+          <InlineMenu />
           <EditorBlockHandler />
         </div>
       </div>

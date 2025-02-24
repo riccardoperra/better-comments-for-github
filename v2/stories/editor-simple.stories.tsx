@@ -46,6 +46,23 @@ Paragraph after **hardbreak**
   },
 }
 
+export const Link: Story = {
+  args: {
+    initialValue: `https://www.google.com
+[GitHub link with custom title](https://www.google.com)
+
+[https://www.google.com](https://www.google.com)
+
+This is just a paragraph
+
+---
+
+Paragraph after **hardbreak**
+
+`,
+  },
+}
+
 export const Alert: Story = {
   args: {
     initialValue: `> [!NOTE]

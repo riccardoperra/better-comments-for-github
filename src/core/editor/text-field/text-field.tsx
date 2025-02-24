@@ -16,7 +16,8 @@
 
 import { Show } from 'solid-js'
 import * as KTextField from '@kobalte/core/text-field'
-import type { JSX } from 'solid-js'
+import { clsx } from 'clsx'
+import type { JSX, Ref } from 'solid-js'
 
 export interface CheckboxProps {
   value?: string
@@ -25,12 +26,20 @@ export interface CheckboxProps {
   label?: JSX.Element
   description?: JSX.Element
   autofocus?: boolean
+  placeholder?: string
+  ref?: Ref<HTMLInputElement>
+  fit?: boolean
 }
 
 export function TextField(props: CheckboxProps) {
   return (
     <KTextField.Root
-      class={'FormControl-input-wrap FormControl-input-leadingVisualWrap'}
+      class={clsx(
+        'FormControl-input-wrap FormControl-input-leadingVisualWrap',
+        {
+          'FormControl--fullWidth': props.fit,
+        },
+      )}
       value={props.value}
       onChange={props.onValueChange}
     >
@@ -47,6 +56,8 @@ export function TextField(props: CheckboxProps) {
         autofocus={props.autofocus}
         class={'FormControl FormControl-input'}
         onChange={props.onChange}
+        placeholder={props.placeholder}
+        ref={props.ref}
       />
 
       <Show when={props.description}>

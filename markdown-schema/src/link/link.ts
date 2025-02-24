@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-import { defineMarkSpec, union } from 'prosekit/core'
+import { addMark, defineCommands, defineMarkSpec, union } from 'prosekit/core'
 import { defineLink } from 'prosekit/extensions/link'
-import type { LinkAttrs } from 'prosekit/extensions/link'
+import type { LinkAttrs as $LinkAttrs } from 'prosekit/extensions/link'
 import type { Link, PhrasingContent } from 'mdast'
+
+export type LinkAttrs = $LinkAttrs & { title?: string | null }
 
 export function defineLinkMarkdown() {
   return union(
@@ -51,6 +53,9 @@ export function defineLinkMarkdown() {
           ),
         )
       },
+    }),
+    defineCommands({
+      addLink: (attrs: LinkAttrs) => addMark({ type: 'link', attrs }),
     }),
   )
 }

@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@floating-ui/dom':
+        specifier: ^1.6.13
+        version: 1.6.13
       '@kobalte/core':
         specifier: ^0.13.8
         version: 0.13.8(solid-js@1.9.4)
@@ -23,6 +26,9 @@ importers:
       '@prosemirror-adapter/solid':
         specifier: ^0.4.0
         version: 0.4.0(solid-js@1.9.4)
+      '@solid-primitives/memo':
+        specifier: ^1.4.0
+        version: 1.4.0(solid-js@1.9.4)
       '@types/chrome':
         specifier: ^0.0.304
         version: 0.0.304
@@ -1810,6 +1816,11 @@ packages:
     peerDependencies:
       solid-js: ^1.6.12
 
+  '@solid-primitives/memo@1.4.0':
+    resolution: {integrity: sha512-Q0eSnGnhzbUPUNES2OOcEj6qF/9YZntoq04nmQEAIp6QhKdpAsH9mNFrVQtB1by41H/QndNui7Yd2wjI7PUpPA==}
+    peerDependencies:
+      solid-js: ^1.6.12
+
   '@solid-primitives/props@3.2.0':
     resolution: {integrity: sha512-vEg5yERdXftJz2+A6B0IMYTrPL9SE2DPmpURV/nZyqQ+PXziF02V4b4SDr6JX3jNJxBlY6c17LqwYEw+bIfGRg==}
     peerDependencies:
@@ -1827,6 +1838,11 @@ packages:
 
   '@solid-primitives/rootless@1.5.0':
     resolution: {integrity: sha512-YJ+EveQeDv9DLqfDKfsPAAGy2x3vBruoD23yn+nD2dT84QjoBxWT1T0qA0TMFjek6/xuN3flqnHtQ4r++4zdjg==}
+    peerDependencies:
+      solid-js: ^1.6.12
+
+  '@solid-primitives/scheduled@1.5.0':
+    resolution: {integrity: sha512-RVw24IRNh1FQ4DCMb3OahB70tXIwc5vH8nhR4nNPsXwUPQeuOkLsDI5BlxaPk0vyZgqw9lDpufgI3HnPwplgDw==}
     peerDependencies:
       solid-js: ^1.6.12
 
@@ -7679,6 +7695,12 @@ snapshots:
       '@solid-primitives/utils': 6.3.0(solid-js@1.9.4)
       solid-js: 1.9.4
 
+  '@solid-primitives/memo@1.4.0(solid-js@1.9.4)':
+    dependencies:
+      '@solid-primitives/scheduled': 1.5.0(solid-js@1.9.4)
+      '@solid-primitives/utils': 6.3.0(solid-js@1.9.4)
+      solid-js: 1.9.4
+
   '@solid-primitives/props@3.2.0(solid-js@1.9.4)':
     dependencies:
       '@solid-primitives/utils': 6.3.0(solid-js@1.9.4)
@@ -7700,6 +7722,10 @@ snapshots:
   '@solid-primitives/rootless@1.5.0(solid-js@1.9.4)':
     dependencies:
       '@solid-primitives/utils': 6.3.0(solid-js@1.9.4)
+      solid-js: 1.9.4
+
+  '@solid-primitives/scheduled@1.5.0(solid-js@1.9.4)':
+    dependencies:
       solid-js: 1.9.4
 
   '@solid-primitives/static-store@0.1.0(solid-js@1.9.4)':
