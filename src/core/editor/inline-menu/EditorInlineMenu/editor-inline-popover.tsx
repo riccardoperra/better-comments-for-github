@@ -71,7 +71,6 @@ export function InlineEditorPopover(
     <Popover
       ref={setHost}
       modal={false}
-      forceMount={true}
       placement="top"
       open={open()}
       onOpenChange={(open) => {
@@ -89,6 +88,7 @@ export function InlineEditorPopover(
       }}
     >
       <PopoverContent
+        onOpenAutoFocus={(event) => event.preventDefault()}
         class={props.class}
         onEscapeKeyDown={() => {
           onEscape()

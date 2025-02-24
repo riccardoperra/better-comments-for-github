@@ -30,11 +30,13 @@
     "vite-plugin-web-extension": "^4.4.3"
   },
   "dependencies": {
+    "@floating-ui/dom": "^1.6.13",
     "@kobalte/core": "^0.13.8",
     "@primer/primitives": "^10.3.4",
     "@primer/view-components": "^0.36.5",
     "@prosedoc/markdown-schema": "workspace:*",
     "@prosemirror-adapter/solid": "^0.4.0",
+    "@solid-primitives/memo": "^1.4.0",
     "@types/chrome": "^0.0.304",
     "clsx": "^2.1.1",
     "lucide-solid": "^0.474.0",
