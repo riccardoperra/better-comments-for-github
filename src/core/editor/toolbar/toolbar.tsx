@@ -38,6 +38,7 @@ import {
   DropdownMenuTrigger,
 } from '../dropdown-menu/dropdown-menu'
 import { githubAlertTypeMap } from '../githubAlert/config'
+import { Settings } from '../settings/settings'
 import styles from './toolbar.module.css'
 import type { GithubAlertType } from '../githubAlert/config'
 import type { FlowProps } from 'solid-js'
@@ -198,7 +199,9 @@ export function Toolbar() {
         <PopoverTrigger class={styles.ToolbarAction}>
           <LucideCog size={16} />
         </PopoverTrigger>
-        <PopoverContent>My content</PopoverContent>
+        <PopoverContent>
+          <Settings />
+        </PopoverContent>
       </Popover>
     </div>
   )
@@ -214,7 +217,7 @@ export function ToolbarAction(
   props: FlowProps<{
     isPressed: boolean
     disabled: boolean
-    onClick: () => void
+    onClick?: () => void
     label: string
   }>,
 ) {
@@ -223,7 +226,7 @@ export function ToolbarAction(
       <TooltipTrigger
         data-pressed={props.isPressed}
         disabled={props.disabled}
-        onClick={() => props.onClick()}
+        onClick={() => props.onClick?.()}
         class={styles.ToolbarAction}
       >
         {props.children}

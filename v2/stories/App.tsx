@@ -1,53 +1,15 @@
 import { Show, createSignal } from 'solid-js'
-import { Editor, EditorRootContext } from '../src/editor/editor'
-import { TextArea } from './components/TextArea'
+import { Editor, EditorRootContext } from '../../src/editor/editor'
 import { MockUploaderNativeHandler } from './mock-uploader'
 
-const initialValue = `
+import type { Ref } from 'solid-js'
 
-<img src="https://placehold.co/600x400" alt="Placeholder text">
+export interface AppProps {
+  initialValue: string
+}
 
-# heading 1
-## heading 2
-### heading 3
-#### heading 4
-##### heading 5
-###### heading 6
-
----
-
-- [ ] Task list item
-- [x] Completed task list item
-
-1. Ordered list item
-    1. Nested ordered list item
-    
-- Bullet list item
-- Bullet list item 2
-  - Bullet list item nested
-
----
-
-> [!NOTE]
-> Useful information that users should know, even when skimming content.
-
-> [!TIP]
-> Helpful advice for doing things better or more easily.
-
-> [!IMPORTANT]
-> Key information users need to know to achieve their goal.
-
-> [!WARNING]
-> Urgent info that needs immediate user attention to avoid problems.
-
-> [!CAUTION]
-> Advises about risks or negative outcomes of certain actions.
-`
-
-export function App() {
+export function App(props: AppProps) {
   const [textareaRef, setTextareaRef] = createSignal<HTMLTextAreaElement>()
-
-  let uploaderRef!: HTMLDivElement
 
   const mockUploader = new MockUploaderNativeHandler()
 
@@ -67,18 +29,8 @@ export function App() {
 
   return (
     <div class={'App'}>
-      <input
-        type={'file'}
-        onChange={(event) => {
-          const file = event.target.files?.[0]
-          if (file) {
-            const uploadFile = mockUploader.init(file)
-            mockUploader.upload(uploadFile, null)
-          }
-        }}
-      />
       <div>
-        <TextArea ref={setTextareaRef} initialValue={initialValue} />
+        <TextArea ref={setTextareaRef} initialValue={props.initialValue} />
 
         <Show when={textareaRef()}>
           {(textareaRef) => (
@@ -113,5 +65,20 @@ export function App() {
         </Show>
       </div>
     </div>
+  )
+}
+
+interface TextAreaProps {
+  ref: Ref<HTMLTextAreaElement>
+  initialValue?: string
+}
+
+function TextArea(props: TextAreaProps) {
+  return (
+    <textarea
+      ref={props.ref}
+      class={'FormControl FormControl-textarea'}
+      value={props.initialValue}
+    ></textarea>
   )
 }
