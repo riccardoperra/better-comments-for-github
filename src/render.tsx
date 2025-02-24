@@ -15,6 +15,7 @@
  */
 
 import { render } from 'solid-js/web'
+import { StateProvider } from 'statebuilder'
 import { Editor, EditorRootContext } from './editor/editor'
 import type { EditorType } from './editor/editor'
 import type { GitHubUploaderHandler } from './core/editor/image/github-file-uploader'
@@ -31,39 +32,41 @@ export interface RenderEditorProps {
 export function mountEditor(root: HTMLElement, props: RenderEditorProps) {
   return render(
     () => (
-      <div
-        data-github-better-comment-wrapper=""
-        on:keydown={(event) => {
-          event.stopPropagation()
-        }}
-      >
-        <EditorRootContext.Provider
-          value={{
-            get data() {
-              return props.suggestionData
-            },
-            get uploadHandler() {
-              return props.uploadHandler
-            },
-            get initialValue() {
-              return props.textarea.value
-            },
-            get textarea() {
-              return props.textarea
-            },
-            get type() {
-              return props.type
-            },
+      <StateProvider>
+        <div
+          data-github-better-comment-wrapper=""
+          on:keydown={(event) => {
+            event.stopPropagation()
           }}
         >
-          <Editor
-            type={props.type}
-            suggestions={props.suggestionData}
-            textarea={props.textarea}
-            initialValue={props.textarea.value}
-          />
-        </EditorRootContext.Provider>
-      </div>
+          <EditorRootContext.Provider
+            value={{
+              get data() {
+                return props.suggestionData
+              },
+              get uploadHandler() {
+                return props.uploadHandler
+              },
+              get initialValue() {
+                return props.textarea.value
+              },
+              get textarea() {
+                return props.textarea
+              },
+              get type() {
+                return props.type
+              },
+            }}
+          >
+            <Editor
+              type={props.type}
+              suggestions={props.suggestionData}
+              textarea={props.textarea}
+              initialValue={props.textarea.value}
+            />
+          </EditorRootContext.Provider>
+        </div>
+      </StateProvider>
     ),
     root,
   )

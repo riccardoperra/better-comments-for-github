@@ -42,6 +42,8 @@
 //     </div>
 import { query } from './query'
 
-export function queryComment() {
-  return query('slash-command-expander')
+export function queryComment(onAdded: (element: HTMLElement) => void) {
+  return query('slash-command-expander', null, {
+    onAdded,
+  })
 }

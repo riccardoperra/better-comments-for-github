@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { createContext, createEffect, onMount } from 'solid-js'
+import { Show, createContext, createEffect, onMount } from 'solid-js'
 import { createEditor } from 'prosekit/core'
 import { useDocChange } from 'prosekit/solid'
 import { markdownFromUnistNode } from 'prosemirror-transformer-markdown/unified'
@@ -27,14 +27,15 @@ import { ProsekitEditor } from '../core/editor/editor'
 import { defineExtension } from '../core/editor/extension'
 
 import 'prosemirror-example-setup/style/style.css'
+import { ConfigStore } from '../config.store'
 import { setEditorContent } from './utils/setContent'
 import { forceGithubTextAreaSync } from './utils/forceGithubTextAreaSync'
 import type { SuggestionData } from './utils/loadSuggestionData'
 
 import './editor.css'
-import { DebugNode } from './DebugNode'
 import { unistNodeFromMarkdown } from './utils/unistNodeFromMarkdown'
 import type { GitHubUploaderHandler } from '../core/editor/image/github-file-uploader'
+import { DebugNode } from './DebugNode'
 
 export interface EditorProps {
   suggestions: SuggestionData
@@ -54,6 +55,7 @@ export const EditorRootContext = createContext<{
 }>()
 
 export function Editor(props: EditorProps) {
+  const configStore = ConfigStore.provide()
   const extension = defineExtension()
   const editor = createEditor({
     extension,
@@ -107,7 +109,9 @@ export function Editor(props: EditorProps) {
         mentions={props.suggestions.mentions ?? []}
         issues={props.suggestions.references ?? []}
       />
-      <DebugNode editor={editor} />
+      <Show when={configStore.get.showDebug}>
+        <DebugNode editor={editor} />
+      </Show>
     </div>
   )
 }

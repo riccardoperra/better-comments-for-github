@@ -17,7 +17,8 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
-    "solid-js": "^1.9.3"
+    "solid-js": "^1.9.3",
+    "statebuilder": "^0.8.0"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^3.2.4",

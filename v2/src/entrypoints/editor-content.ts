@@ -36,101 +36,115 @@ import type { Accessor } from 'solid-js'
 import './styles.css'
 
 export default defineUnlistedScript(() => {
-  const [, onAdded] = queryComment()
+  createRoot(() =>
+    queryComment(async (element) => {
+      const jsCommentField = element.querySelector<HTMLTextAreaElement>(
+        'textarea.js-comment-field',
+      )
+      let textarea: HTMLTextAreaElement | null = null
+      let mountElFunction: (node: HTMLElement) => void
+      let suggestionData: Accessor<SuggestionData>
+      let type: EditorType
+      let uploadHandler: GitHubUploaderHandler
 
-  onAdded(async (element) => {
-    const jsCommentField = element.querySelector<HTMLTextAreaElement>(
-      'textarea.js-comment-field',
-    )
+      // Old comment component of GitHub, This is still present in pull requests
+      if (jsCommentField) {
+        type = 'native'
+        textarea = jsCommentField
 
-    let textarea: HTMLTextAreaElement | null = null
-    let mountElFunction: (node: HTMLElement) => void
-    let suggestionData: Accessor<SuggestionData>
-    let type: EditorType
-    let uploadHandler: GitHubUploaderHandler
+        const textExpander =
+          jsCommentField.closest<HTMLElement>('text-expander')
+        if (textExpander) {
+          const { emojiUrl, issueUrl, mentionUrl } = textExpander.dataset
 
-    // Old comment component of GitHub, This is still present in pull requests
-    if (jsCommentField) {
-      type = 'native'
-      textarea = jsCommentField
+          const [issues, mentionableUsers] = await Promise.all([
+            await tryGetReferences(issueUrl!),
+            await fetchMentionableUsers(mentionUrl!),
+          ])
 
-      const textExpander = jsCommentField.closest<HTMLElement>('text-expander')
-      if (textExpander) {
-        const { emojiUrl, issueUrl, mentionUrl } = textExpander.dataset
+          suggestionData = () => ({
+            mentions: mentionableUsers.map((data) => ({
+              avatarUrl: getUserAvatarId(data.id),
+              identifier: data.login,
+              description: data.name,
+              participant: data.participant,
+            })),
+            emojis: [],
+            references: issues,
+            savedReplies: [],
+          })
+        }
 
-        const [issues, mentionableUsers] = await Promise.all([
-          await tryGetReferences(issueUrl!),
-          await fetchMentionableUsers(mentionUrl!),
-        ])
+        const fileAttachmentTransfer =
+          jsCommentField.closest<AttachmentHandlerElement>('file-attachment')
+        if (fileAttachmentTransfer) {
+          uploadHandler = new GitHubUploaderNativeHandler(
+            fileAttachmentTransfer,
+          )
+        }
 
-        suggestionData = () => ({
-          mentions: mentionableUsers.map((data) => ({
-            avatarUrl: getUserAvatarId(data.id),
-            identifier: data.login,
-            description: data.name,
-            participant: data.participant,
-          })),
-          emojis: [],
-          references: issues,
-          savedReplies: [],
-        })
+        const classes = [] as Array<string>
+        // Search for closest tab-container of the textarea.
+        // This element is the wrapper of the entire comment box.
+        let tabContainer = jsCommentField.closest<HTMLElement>('tab-container')
+        if (!tabContainer) {
+          // When tab container is not present, user is trying to edit an existing pull request comment
+          tabContainer = jsCommentField.closest<HTMLElement>('.CommentBox')
+          classes.push('m-2')
+        }
+
+        if (!tabContainer) {
+          // TODO: add log
+          return
+        }
+
+        // We should create our element before the tab container
+        mountElFunction = (node) => {
+          node.classList.add(...classes)
+          node.style.width = 'auto'
+          tabContainer.style.display = 'none'
+          tabContainer.insertAdjacentElement('beforebegin', node)
+        }
+      } else {
+        type = 'react'
+        const suggestionDataResult = createSuggestionData(element)
+        uploadHandler = createGitHubUploaderReactHandler(element)
+        suggestionData = suggestionDataResult.suggestionData
+        const moduleContainer = element.querySelector(
+          '[class*="MarkdownEditor-module__container"]',
+        )!
+        textarea =
+          moduleContainer.querySelector<HTMLTextAreaElement>('textarea')
+
+        mountElFunction = (node) => moduleContainer.prepend(node)
       }
 
-      const fileAttachmentTransfer =
-        jsCommentField.closest<AttachmentHandlerElement>('file-attachment')
-      if (fileAttachmentTransfer) {
-        uploadHandler = new GitHubUploaderNativeHandler(fileAttachmentTransfer)
-      }
-
-      // Search for closest tab-container of the textarea.
-      // This element is the wrapper of the entire comment box.
-      const tabContainer = jsCommentField.closest<HTMLElement>('tab-container')
-
-      if (!tabContainer) {
-        // TODO: add log
+      if (!textarea) {
+        // add log
         return
       }
 
-      // We should create our element before the tab container
-      mountElFunction = (node) =>
-        tabContainer.insertAdjacentElement('beforebegin', node)
-    } else {
-      type = 'react'
-      const suggestionDataResult = createSuggestionData(element)
-      uploadHandler = createGitHubUploaderReactHandler(element)
-      suggestionData = suggestionDataResult.suggestionData
-      const moduleContainer = element.querySelector(
-        '[class*="MarkdownEditor-module__container"]',
-      )!
-      textarea = moduleContainer.querySelector<HTMLTextAreaElement>('textarea')
+      const root = document.createElement('div')
+      root.id = 'github-better-comment'
+      root.className = styles.injectedEditorContent
 
-      mountElFunction = (node) => moduleContainer.prepend(node)
-    }
+      mountElFunction(root)
 
-    if (!textarea) {
-      // add log
-      return
-    }
-
-    const root = document.createElement('div')
-    root.id = 'github-better-comment'
-    root.className = styles.injectedEditorContent
-    mountElFunction(root)
-
-    mountEditor(root, {
-      get suggestionData() {
-        return suggestionData()
-      },
-      get uploadHandler() {
-        return uploadHandler
-      },
-      get textarea() {
-        return textarea
-      },
-      get initialValue() {
-        return textarea.value
-      },
-      type,
-    })
-  })
+      mountEditor(root, {
+        get suggestionData() {
+          return suggestionData()
+        },
+        get uploadHandler() {
+          return uploadHandler
+        },
+        get textarea() {
+          return textarea
+        },
+        get initialValue() {
+          return textarea.value
+        },
+        type,
+      })
+    }),
+  )
 })

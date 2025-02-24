@@ -14,37 +14,34 @@
  * limitations under the License.
  */
 
-import { onMount } from 'solid-js'
-import { StorageItem } from 'webext-storage'
-import { createStore, reconcile } from 'solid-js/store'
-
-export interface EditorOptions {
-  showDebug: boolean
-}
+import { ConfigStore } from '../../../config.store'
+import styles from './settings.module.css'
 
 export function Settings() {
-  const [options, setOptions] = createStore<EditorOptions>({})
-  const optionsItem = new StorageItem<EditorOptions>('editor-options', {
-    area: 'sync',
-  })
-
-  onMount(() => {
-    optionsItem.onChanged((value) => {
-      setOptions(reconcile(value, { merge: true }))
-    })
-  })
+  const configStore = ConfigStore.provide()
 
   return (
-    <div>
-      <input
-        type={'check'}
-        class={'form-checkbox'}
-        checked={options.showDebug}
-        onChange={(event) => {
-          setOptions('showDebug', event.target.checked)
-          optionsItem.set({ showDebug: event.target.checked }).then()
-        }}
-      />
+    <div class={styles.settingsContainer}>
+      <div class="FormControl-checkbox-wrap">
+        <input
+          type="checkbox"
+          name="toggle-debug"
+          class={'FormControl-checkbox'}
+          checked={configStore.get.showDebug}
+          onChange={(event) => {
+            configStore.set('showDebug', event.target.checked)
+          }}
+          id="toggle-debug"
+        />
+        <span class={'FormControl-checkbox-labelWrap'}>
+          <label for="toggle-debug" class={'FormControl-label'}>
+            Show/hide debug tools
+          </label>
+          <span class={'FormControl-caption'}>
+            Enable or disable debug tools for the editor.
+          </span>
+        </span>
+      </div>
     </div>
   )
 }
