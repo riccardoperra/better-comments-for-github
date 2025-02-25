@@ -105,11 +105,42 @@ export default defineUnlistedScript(() => {
             return
           }
 
+          const commentFooter = document.querySelector(
+            '#partial-new-comment-form-actions',
+          )
+
           // We should create our element before the tab container
           mountElFunction = (node) => {
+            if (commentFooter) {
+              const actionsWrapper = commentFooter.firstElementChild
+              if (actionsWrapper) {
+                const switchRoot = document.createElement('div')
+                actionsWrapper.prepend(switchRoot)
+
+                render(
+                  () =>
+                    createComponent(SwitchButton, {
+                      get open() {
+                        return showOldEditor()
+                      },
+                      onOpenChange: (open) => {
+                        setShowOldEditor(open)
+                      },
+                    }),
+                  switchRoot,
+                )
+
+                effect(() => {
+                  const show = showOldEditor()
+                  show
+                    ? tabContainer.style.setProperty('display', 'none')
+                    : tabContainer.style.removeProperty('display')
+                })
+              }
+            }
+
             node.classList.add(...classes)
             node.style.width = 'auto'
-            tabContainer.style.display = 'none'
             tabContainer.insertAdjacentElement('beforebegin', node)
           }
         } else {

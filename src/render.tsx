@@ -40,6 +40,7 @@ export function SwitchButton(props: {
 
   return (
     <button
+      type={'button'}
       class={'Button Button--invisible Button--small'}
       onClick={() => props.onOpenChange(!props.open)}
     >
