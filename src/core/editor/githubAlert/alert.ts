@@ -32,6 +32,7 @@ import { AlertView } from './AlertView'
 import { githubAlertTypeMap } from './config'
 import type { GithubAlertType } from './config'
 import type { Command } from 'prosemirror-state'
+import type { TagParseRule } from 'prosemirror-model'
 
 function defineGitHubAlertCommands() {
   return defineCommands({
@@ -81,7 +82,30 @@ function defineGitHubAlertSpec() {
   return defineNodeSpec({
     name: 'githubAlert',
     content: 'block+',
-    parseDOM: [{ tag: 'blockquote[data-alert]' }],
+    selectable: true,
+    draggable: true,
+
+    parseDOM: [
+      { tag: 'blockquote[data-alert]' },
+
+      ...Object.values(githubAlertTypeMap).map(({ type }) => {
+        return {
+          tag: `div.markdown-alert.markdown-alert-${type}`,
+          attrs: {
+            type,
+          },
+          contentElement: (el) => {
+            if ('querySelector' in el) {
+              const title = (el as HTMLElement).querySelector(
+                '.markdown-alert-title',
+              )
+              title && title.remove()
+            }
+            return el as HTMLElement
+          },
+        } satisfies TagParseRule
+      }),
+    ],
     attrs: {
       type: {
         default: 'note',
@@ -89,9 +113,9 @@ function defineGitHubAlertSpec() {
     },
     toDOM: (node) => {
       return [
-        'blockquote',
+        'div',
         {
-          'data-alert': node.attrs.type || 'info',
+          class: `markdown-alert markdown-alert-${node.attrs.type}`,
         },
         0,
       ]

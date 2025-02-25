@@ -20,7 +20,7 @@
   }
 
   > [data-node-view-content] > p {
-    margin-bottom: 0;
+    /*margin-bottom: 0;*/
   }
 }
 

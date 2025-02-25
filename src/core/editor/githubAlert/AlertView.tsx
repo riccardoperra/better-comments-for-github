@@ -77,10 +77,7 @@ export function AlertView(props: NodeViewContextProps) {
             </p>
           )}
         </Show>
-        <div
-          ref={props.contentRef}
-          class={`markdown-body ${styles.gitHubAlertParagraph}`}
-        />
+        <div ref={props.contentRef} class={`${styles.gitHubAlertParagraph}`} />
       </div>
     </NodeViewWrapper>
   )
