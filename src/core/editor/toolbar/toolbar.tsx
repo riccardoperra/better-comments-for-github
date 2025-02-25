@@ -40,9 +40,10 @@ import {
 } from '../dropdown-menu/dropdown-menu'
 import { githubAlertTypeMap } from '../githubAlert/config'
 import { Settings } from '../settings/settings'
+import { EditorTextShortcut } from '../kbd/kbd'
 import styles from './toolbar.module.css'
 import type { GithubAlertType } from '../githubAlert/config'
-import type { FlowProps } from 'solid-js'
+import type { FlowProps, JSX } from 'solid-js'
 import type { NodeAction } from 'prosekit/core'
 import type { EditorExtension } from '../extension'
 
@@ -79,7 +80,11 @@ export function Toolbar() {
   return (
     <div class={styles.Toolbar}>
       <ToolbarAction
-        label={'Bold'}
+        label={
+          <>
+            Bold (<EditorTextShortcut type={'keyboard'} element={'bold'} />)
+          </>
+        }
         isPressed={editor().marks.bold.isActive()}
         disabled={!editor().commands.toggleBold.canExec()}
         onClick={() => editor().commands.toggleBold()}
@@ -87,7 +92,11 @@ export function Toolbar() {
         <LucideBold size={16} />
       </ToolbarAction>
       <ToolbarAction
-        label={'Italic'}
+        label={
+          <>
+            Italic (<EditorTextShortcut type={'keyboard'} element={'italic'} />)
+          </>
+        }
         isPressed={editor().marks.italic.isActive()}
         disabled={!editor().commands.toggleItalic.canExec()}
         onClick={() => editor().commands.toggleItalic()}
@@ -95,7 +104,12 @@ export function Toolbar() {
         <LucideItalic size={16} />
       </ToolbarAction>
       <ToolbarAction
-        label={'Strike'}
+        label={
+          <>
+            Strike (
+            <EditorTextShortcut type={'keyboard'} element={'strikethrough'} />)
+          </>
+        }
         isPressed={editor().marks.strike.isActive()}
         disabled={!editor().commands.toggleStrike.canExec()}
         onClick={() => editor().commands.toggleStrike()}
@@ -104,6 +118,20 @@ export function Toolbar() {
       </ToolbarAction>
 
       <div class={styles.Separator}></div>
+
+      <ToolbarAction
+        label={
+          <>
+            Blockquote (
+            <EditorTextShortcut type={'keyboard'} element={'blockquote'} />)
+          </>
+        }
+        isPressed={editor().nodes.blockquote.isActive()}
+        disabled={!editor().commands.toggleBlockquote.canExec()}
+        onClick={() => editor().commands.toggleBlockquote()}
+      >
+        <LucideBlockquote size={16} />
+      </ToolbarAction>
 
       <ToolbarAction
         label={'Code block'}
@@ -115,16 +143,12 @@ export function Toolbar() {
       </ToolbarAction>
 
       <ToolbarAction
-        label={'Blockquote'}
-        isPressed={editor().nodes.blockquote.isActive()}
-        disabled={!editor().commands.toggleBlockquote.canExec()}
-        onClick={() => editor().commands.toggleBlockquote()}
-      >
-        <LucideBlockquote size={16} />
-      </ToolbarAction>
-
-      <ToolbarAction
-        label={'Code'}
+        label={
+          <>
+            Code (
+            <EditorTextShortcut type={'keyboard'} element={'code'} />)
+          </>
+        }
         isPressed={editor().marks.code.isActive()}
         disabled={!editor().commands.toggleCode.canExec()}
         onClick={() => editor().commands.toggleCode()}
@@ -165,7 +189,14 @@ export function Toolbar() {
                 >
                   <Dynamic component={alignIcons[value]} size={16} />
                 </TooltipTrigger>
-                <TooltipContent>Align {value}</TooltipContent>
+                <TooltipContent>
+                  Align {value} (
+                  <EditorTextShortcut
+                    type={'keyboard'}
+                    element={`textAlign>${value}`}
+                  />
+                  )
+                </TooltipContent>
               </Tooltip>
             )}
           </For>
@@ -178,7 +209,7 @@ export function Toolbar() {
             <LucideAlert size={16} />
             <LucideChevronDown size={14} />
           </TooltipTrigger>
-          <TooltipContent>Align text</TooltipContent>
+          <TooltipContent>Alert</TooltipContent>
         </Tooltip>
         <DropdownMenuContent>
           <For each={Object.keys(githubAlertTypeMap) as Array<GithubAlertType>}>
@@ -227,7 +258,7 @@ export function ToolbarAction(
     isPressed: boolean
     disabled: boolean
     onClick?: () => void
-    label: string
+    label: JSX.Element
   }>,
 ) {
   return (

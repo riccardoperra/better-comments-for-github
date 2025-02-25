@@ -16,10 +16,12 @@
 
 import { defineStore } from 'statebuilder'
 
-export interface ConfigState {
-  showDebug: false | 'md' | 'node'
+export interface ExtensionEditorState {
+  markdown: string
+  nodeString: string
 }
 
-export const ConfigStore = defineStore<ConfigState>(() => ({
-  showDebug: import.meta.env.MODE === 'development' ? 'md' : false,
+export const ExtensionEditorStore = defineStore<ExtensionEditorState>(() => ({
+  markdown: '',
+  nodeString: '',
 }))

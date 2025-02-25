@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
-import { defineStore } from 'statebuilder'
+.editorTextShortcut {
+  display: inline-flex;
+  line-height: inherit;
+  align-items: center;
 
-export interface ConfigState {
-  showDebug: false | 'md' | 'node'
+  span {
+    text-transform: capitalize;
+  }
 }
 
-export const ConfigStore = defineStore<ConfigState>(() => ({
-  showDebug: import.meta.env.MODE === 'development' ? 'md' : false,
-}))
+.char {
+  text-transform: uppercase;
+}

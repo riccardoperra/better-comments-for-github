@@ -16,12 +16,14 @@
 
 import { render } from 'solid-js/web'
 import { StateProvider } from 'statebuilder'
+import { Show } from 'solid-js'
 import { Editor, EditorRootContext } from './editor/editor'
 import type { EditorType } from './editor/editor'
 import type { GitHubUploaderHandler } from './core/editor/image/github-file-uploader'
 import type { SuggestionData } from './editor/utils/loadSuggestionData'
 
 export interface RenderEditorProps {
+  open?: boolean
   suggestionData: SuggestionData
   initialValue: string
   uploadHandler: GitHubUploaderHandler
@@ -29,43 +31,62 @@ export interface RenderEditorProps {
   type: EditorType
 }
 
+export function SwitchButton(props: {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+}) {
+  const label = () =>
+    props.open ? 'Back to default editor' : 'Switch to a better editor'
+
+  return (
+    <button
+      class={'Button Button--invisible Button--small'}
+      onClick={() => props.onOpenChange(!props.open)}
+    >
+      <span class={'fgColor-muted'}>{label()}</span>
+    </button>
+  )
+}
+
 export function mountEditor(root: HTMLElement, props: RenderEditorProps) {
   return render(
     () => (
       <StateProvider>
-        <div
-          data-github-better-comment-wrapper=""
-          on:keydown={(event) => {
-            event.stopPropagation()
-          }}
-        >
-          <EditorRootContext.Provider
-            value={{
-              get data() {
-                return props.suggestionData
-              },
-              get uploadHandler() {
-                return props.uploadHandler
-              },
-              get initialValue() {
-                return props.textarea.value
-              },
-              get textarea() {
-                return props.textarea
-              },
-              get type() {
-                return props.type
-              },
+        <Show when={props.open !== false}>
+          <div
+            data-github-better-comment-wrapper=""
+            on:keydown={(event) => {
+              event.stopPropagation()
             }}
           >
-            <Editor
-              type={props.type}
-              suggestions={props.suggestionData}
-              textarea={props.textarea}
-              initialValue={props.textarea.value}
-            />
-          </EditorRootContext.Provider>
-        </div>
+            <EditorRootContext.Provider
+              value={{
+                get data() {
+                  return props.suggestionData
+                },
+                get uploadHandler() {
+                  return props.uploadHandler
+                },
+                get initialValue() {
+                  return props.textarea.value
+                },
+                get textarea() {
+                  return props.textarea
+                },
+                get type() {
+                  return props.type
+                },
+              }}
+            >
+              <Editor
+                type={props.type}
+                suggestions={props.suggestionData}
+                textarea={props.textarea}
+                initialValue={props.textarea.value}
+              />
+            </EditorRootContext.Provider>
+          </div>
+        </Show>
       </StateProvider>
     ),
     root,

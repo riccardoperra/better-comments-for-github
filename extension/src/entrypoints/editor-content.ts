@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { getOwner, runWithOwner } from 'solid-js'
+import { createComponent, getOwner, runWithOwner } from 'solid-js'
 import { effect } from 'solid-js/web'
 import { queryComment } from '../../../src/dom/queryComment'
 import { createSuggestionData } from '../../../src/editor/utils/loadSuggestionData'
@@ -25,14 +25,14 @@ import {
   tryGetReferences,
 } from '../../../src/github/data'
 import { createGitHubUploaderReactHandler } from '../../../src/editor/utils/reactFileUploader'
-import { mountEditor } from '../../../src/render'
+import { SwitchButton, mountEditor } from '../../../src/render'
 import styles from './main.module.css'
-import type { Accessor } from 'solid-js'
-import type { SuggestionData } from '../../../src/editor/utils/loadSuggestionData'
 import type {
   AttachmentHandlerElement,
   GitHubUploaderHandler,
 } from '../../../src/core/editor/image/github-file-uploader'
+import type { SuggestionData } from '../../../src/editor/utils/loadSuggestionData'
+import type { Accessor } from 'solid-js'
 import type { EditorType } from '../../../src/editor/editor'
 
 import './styles.css'
@@ -42,6 +42,8 @@ export default defineUnlistedScript(() => {
     const owner = getOwner()
     queryComment(async (element) =>
       runWithOwner(owner, async () => {
+        const [showOldEditor, setShowOldEditor] = createSignal(true)
+
         const jsCommentField = element.querySelector<HTMLTextAreaElement>(
           'textarea.js-comment-field',
         )
@@ -125,43 +127,37 @@ export default defineUnlistedScript(() => {
             'footer[class*="Footer-module"]',
           )
 
-          const [showOldEditor, setShowOldEditor] = createSignal(true)
-
           mountElFunction = (node) => {
             if (footerModule) {
               const actionsWrapper = footerModule.firstElementChild
               if (actionsWrapper) {
-                const switchButton = document.createElement('button')
-                switchButton.classList.add('btn', 'btn-invisible')
-                switchButton.type = 'button'
-                const text = document.createElement('span')
-                text.classList.add('fgColor-muted')
-                switchButton.append(text)
+                const switchRoot = document.createElement('div')
+                actionsWrapper.prepend(switchRoot)
 
-                switchButton.addEventListener('click', () => {
-                  setShowOldEditor((show) => !show)
+                render(
+                  () =>
+                    createComponent(SwitchButton, {
+                      get open() {
+                        return showOldEditor()
+                      },
+                      onOpenChange: (open) => {
+                        setShowOldEditor(open)
+                      },
+                    }),
+                  switchRoot,
+                )
+
+                effect(() => {
+                  const show = showOldEditor()
+                  const wrapper = element.querySelector<HTMLElement>(
+                    '[class*="MarkdownEditor-module__inputWrapper"]',
+                  )
+                  if (wrapper) {
+                    show
+                      ? wrapper.style.setProperty('display', 'none')
+                      : wrapper.style.removeProperty('display')
+                  }
                 })
-
-                runWithOwner(owner, () => {
-                  effect(() => {
-                    const show = showOldEditor()
-                    const wrapper = element.querySelector<HTMLElement>(
-                      '[class*="MarkdownEditor-module__inputWrapper"]',
-                    )
-                    if (wrapper) {
-                      wrapper.style.display = show ? 'none' : 'block'
-                    }
-                    node.style.display = show ? 'block' : 'none'
-                  })
-
-                  effect(() => {
-                    text.innerText = showOldEditor()
-                      ? 'Back to default editor'
-                      : 'Switch to live editor'
-                  })
-                })
-
-                actionsWrapper.before(switchButton)
               }
             }
 
@@ -178,22 +174,26 @@ export default defineUnlistedScript(() => {
         root.id = 'github-better-comment'
         root.className = styles.injectedEditorContent
 
-        mountElFunction(root)
-
-        mountEditor(root, {
-          get suggestionData() {
-            return suggestionData()
-          },
-          get uploadHandler() {
-            return uploadHandler
-          },
-          get textarea() {
-            return textarea
-          },
-          get initialValue() {
-            return textarea.value
-          },
-          type,
+        runWithOwner(owner, () => {
+          mountElFunction(root)
+          mountEditor(root, {
+            get open() {
+              return showOldEditor()
+            },
+            get suggestionData() {
+              return suggestionData()
+            },
+            get uploadHandler() {
+              return uploadHandler
+            },
+            get textarea() {
+              return textarea
+            },
+            get initialValue() {
+              return textarea.value
+            },
+            type,
+          })
         })
       }),
     )

@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-.DebugAnchor {
+.debugAnchor {
+  display: flex;
+  flex-direction: column;
+  gap: var(--base-size-2);
   border-radius: var(--borderRadius-default);
   border: 1px solid var(--borderColor-default);
   overflow: auto;
@@ -27,4 +30,8 @@
   margin-top: calc(-1 * var(--base-size-8));
   padding-top: var(--base-size-20);
   z-index: 0;
+}
+
+.toggleMode {
+  margin-left: auto;
 }

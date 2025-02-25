@@ -37,6 +37,8 @@ import { unistNodeFromMarkdown } from './utils/unistNodeFromMarkdown'
 import type { GitHubUploaderHandler } from '../core/editor/image/github-file-uploader'
 import { DebugNode } from './DebugNode'
 import { remarkGitHubIssueReferenceSupport } from '../core/editor/issue-reference/remarkGitHubIssueReference'
+import { ExtensionEditorStore } from '../editor.store'
+import type { Root } from 'mdast'
 
 export interface EditorProps {
   suggestions: SuggestionData
@@ -55,8 +57,20 @@ export const EditorRootContext = createContext<{
   type: EditorType
 }>()
 
+function sanitizeMarkdownValue(value: string) {
+  return (
+    value
+      // Handle Alerts:  > [!NOTE]
+      .replaceAll('> \\[!', '> [!')
+      // Handle github links: https:\//github.com
+      .replaceAll('https\\://github', 'https://github')
+  )
+}
+
 export function Editor(props: EditorProps) {
   const configStore = ConfigStore.provide()
+  const editorStore = ExtensionEditorStore.provide()
+
   const extension = defineExtension()
   const editor = createEditor({
     extension,
@@ -78,27 +92,29 @@ export function Editor(props: EditorProps) {
       isFromTextarea: true,
       isInitialValue: true,
     })
+
+    const markdown = toMarkdown()
+    editorStore.set('markdown', markdown)
   })
+
+  function toMarkdown() {
+    const unistNode = convertPmSchemaToUnist(editor.state.doc, editor.schema, {
+      postProcess: (node) => {
+        unistMergeAdjacentList(node)
+        remarkGitHubIssueReferenceSupport()(node)
+      },
+    })
+    return sanitizeMarkdownValue(markdownFromUnistNode(unistNode as Root))
+  }
 
   useDocChange(
     (node) => {
       setTimeout(() => {
-        const unistNode = convertPmSchemaToUnist(
-          editor.state.doc,
-          editor.schema,
-          {
-            postProcess: (node) => {
-              unistMergeAdjacentList(node)
-              remarkGitHubIssueReferenceSupport()(node)
-            },
-          },
-        )
-
-        forceGithubTextAreaSync(
-          props.textarea,
-          markdownFromUnistNode(unistNode as any),
-          { behavior: props.type },
-        )
+        const markdown = toMarkdown()
+        editorStore.set('markdown', markdown)
+        forceGithubTextAreaSync(props.textarea, markdown, {
+          behavior: props.type,
+        })
       }, 150)
     },
     { editor },

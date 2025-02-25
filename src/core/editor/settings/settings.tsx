@@ -27,9 +27,9 @@ export function Settings() {
           type="checkbox"
           name="toggle-debug"
           class={'FormControl-checkbox'}
-          checked={configStore.get.showDebug}
+          checked={configStore.get.showDebug !== false}
           onChange={(event) => {
-            configStore.set('showDebug', event.target.checked)
+            configStore.set('showDebug', event.target.checked ? 'md' : false)
           }}
           id="toggle-debug"
         />

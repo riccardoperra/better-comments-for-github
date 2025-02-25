@@ -13,7 +13,6 @@ import LucideHeading4 from 'lucide-solid/icons/heading-4'
 import LucideHeading5 from 'lucide-solid/icons/heading-5'
 import LucideHeading6 from 'lucide-solid/icons/heading-6'
 import LucideList from 'lucide-solid/icons/list'
-import LucideListCollapse from 'lucide-solid/icons/list-collapse'
 import LucideQuote from 'lucide-solid/icons/text-quote'
 import LucideDivider from 'lucide-solid/icons/minus'
 import LucideListOrdered from 'lucide-solid/icons/list-ordered'
@@ -21,6 +20,7 @@ import LucideCodeBlock from 'lucide-solid/icons/code-square'
 import { For, Show } from 'solid-js'
 
 import { githubAlertTypeMap } from '../../githubAlert/config'
+import { EditorTextShortcut } from '../../kbd/kbd'
 import styles from './slash-menu.module.css'
 import type { JSX } from 'solid-js'
 import type { LucideProps } from 'lucide-solid'
@@ -36,6 +36,7 @@ export interface SlashMenuItem {
   icon?: (props: LucideProps) => JSX.Element
   sectionId?: string
   shortcut?: string
+  actionId?: string
 }
 
 const icons = [
@@ -55,31 +56,40 @@ const SlashMenuItems: Array<SlashMenuItem> = [
         canExec: (editor) => editor.commands.toggleHeading.canExec({ level }),
         command: (editor) => editor.commands.setHeading({ level: level }),
         icon: icons[level - 1],
-        shortcut: '#'.repeat(level),
+        actionId: `heading>${level}`,
       }) as SlashMenuItem,
   ),
   {
     label: 'Horizontal divider',
     canExec: (editor) => editor.commands.insertHorizontalRule.canExec(),
     command: (editor) => editor.commands.insertHorizontalRule(),
-    shortcut: '---',
+    actionId: 'horizontalRule',
     icon: LucideDivider,
   },
   ...[
-    { label: 'Task', kind: 'task', shortcut: '[]', icon: LucideList },
-    { label: 'Bullet', kind: 'bullet', shortcut: '[]', icon: LucideList },
+    {
+      label: 'Task',
+      actionId: 'taskList',
+      kind: 'task',
+      icon: LucideList,
+    },
+    {
+      label: 'Bullet',
+      actionId: 'bulletList',
+      kind: 'bullet',
+      icon: LucideList,
+    },
     {
       label: 'Numbered',
       kind: 'ordered',
-      shortcut: '[]',
       icon: LucideListOrdered,
     },
-    {
-      label: 'Toggle',
-      kind: 'toggle',
-      shortcut: '>>',
-      icon: LucideListCollapse,
-    },
+    // {
+    //   label: 'Toggle',
+    //   kind: 'toggle',
+    //   shortcut: '>>',
+    //   icon: LucideListCollapse,
+    // },
   ].map(
     (listType) =>
       ({
@@ -87,7 +97,7 @@ const SlashMenuItems: Array<SlashMenuItem> = [
         command: (editor) =>
           editor.commands.wrapInList({ kind: listType.kind }),
         icon: listType.icon,
-        shortcut: listType.shortcut,
+        actionId: `${listType.kind}List`,
         canExec: (editor) =>
           editor.commands.wrapInList.canExec({ kind: listType.kind }),
         sectionId: 'list',
@@ -98,14 +108,14 @@ const SlashMenuItems: Array<SlashMenuItem> = [
     command: (editor) => editor.commands.toggleBlockquote(),
     canExec: (editor) => editor.commands.toggleBlockquote.canExec(),
     icon: LucideQuote,
-    shortcut: '>',
+    actionId: 'blockquote',
   },
   ...Object.values(githubAlertTypeMap).map(
     (alert) =>
       ({
         label: `${alert.label}`,
         icon: alert.icon,
-        shortcut: `>${alert.label}`,
+        actionId: `alert>${alert.type}`,
         command: (editor) => editor.commands.setAlert(alert.type),
         canExec: (editor) => editor.commands.toggleAlert.canExec(alert.type),
         sectionId: 'alerts',
@@ -116,7 +126,7 @@ const SlashMenuItems: Array<SlashMenuItem> = [
     command: (editor) => editor.commands.toggleCodeBlock(),
     canExec: (editor) => editor.commands.toggleCodeBlock.canExec(),
     icon: LucideCodeBlock,
-    shortcut: '```',
+    actionId: 'codeBlock',
   },
 ]
 
@@ -201,9 +211,12 @@ export default function SlashMenu() {
                         </Show>
                         {item.label}
 
-                        <Show when={item.shortcut}>
+                        <Show when={item.actionId}>
                           <span class={styles.slashMenuItemShortcut}>
-                            {item.shortcut}
+                            <EditorTextShortcut
+                              element={item.actionId!}
+                              type={'inputRule'}
+                            />
                           </span>
                         </Show>
                       </AutocompleteItem>

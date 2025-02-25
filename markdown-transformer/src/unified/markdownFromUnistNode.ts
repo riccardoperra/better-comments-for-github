@@ -16,7 +16,8 @@ export function markdownFromUnistNode(rootNode: Root): string {
       bulletOrdered: ".",
       emphasis: "*",
       incrementListMarker: true,
-      ruleSpaces: true,
+      rule: "-",
+      // ruleSpaces: true,
       strong: "*",
     });
 

@@ -16,16 +16,6 @@
 
 import { getFiberProps } from '../../core/react-hacks/fiber'
 
-function sanitizeValue(value: string) {
-  return (
-    value
-      // Handle Alerts:  > [!NOTE]
-      .replaceAll('> \\[!', '> [!')
-      // Handle github links: https:\//github.com
-      .replaceAll('https\\://github', 'https://github')
-  )
-}
-
 export function forceGithubTextAreaSync(
   textarea: HTMLTextAreaElement,
   value: string,
@@ -33,8 +23,6 @@ export function forceGithubTextAreaSync(
     behavior: 'native' | 'react'
   },
 ) {
-  value = sanitizeValue(value)
-
   // This is a trick that automatically encode characters and sanitize the `value`
   const fakeTextarea = document.createElement('textarea')
   fakeTextarea.innerHTML = value
