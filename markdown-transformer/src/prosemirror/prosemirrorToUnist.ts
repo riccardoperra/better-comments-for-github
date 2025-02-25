@@ -1,11 +1,13 @@
-import type {
-  Attrs,
-  MarkSpec,
-  Node as ProsemirrorNode,
-  NodeSpec,
-  Schema,
+import {
+  type Attrs,
+  type MarkSpec,
+  type Node as ProsemirrorNode,
+  type NodeSpec,
+  type Schema,
 } from "prosemirror-model";
 import type { UnistNode } from "./types.js";
+import type { Html } from "mdast";
+import { DOMParser as ProseMirrorDOMParser } from "prosekit/pm/model";
 
 type SchemaMap = Record<string, MarkSpec | NodeSpec>;
 
@@ -35,6 +37,19 @@ function convertNode(
   context: Partial<NonNullable<unknown>>,
 ) {
   let type = unistNode.type;
+
+  if (type === "html") {
+    const value = (unistNode as Html).value;
+    if (globalThis.DOMParser) {
+      const doc = new globalThis.DOMParser().parseFromString(
+        value,
+        "text/html",
+      );
+      const slice = ProseMirrorDOMParser.fromSchema(schema).parse(doc.body);
+      return slice.content.content;
+    }
+  }
+
   const spec = map[type] as NodeSpec | MarkSpec | undefined;
   if (!spec || !spec.unistToNode) {
     console.warn(

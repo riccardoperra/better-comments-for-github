@@ -66,7 +66,12 @@ Paragraph after **hardbreak**
 export const RawHtml: Story = {
   args: {
     initialValue: `<p style="text-align: center">My centered content</p>
-<div style="text-align:right">My content at the rightt</div>`,
+<div style="text-align:right">My content at the rightt</div>
+
+<img src="https://placehold.co/100x100" alt="placeholder" /> 
+
+<blockquote>Blockquote</blockquote>
+`,
   },
 }
 

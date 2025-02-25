@@ -81,7 +81,7 @@ function defineGitHubAlertSpec() {
   return defineNodeSpec({
     name: 'githubAlert',
     content: 'block+',
-    parseDOM: [{ tag: 'blockquote' }],
+    parseDOM: [{ tag: 'blockquote[data-alert]' }],
     attrs: {
       type: {
         default: 'note',
@@ -89,9 +89,9 @@ function defineGitHubAlertSpec() {
     },
     toDOM: (node) => {
       return [
-        'div',
+        'blockquote',
         {
-          'data-tip-type': node.attrs.type || 'info',
+          'data-alert': node.attrs.type || 'info',
         },
         0,
       ]
