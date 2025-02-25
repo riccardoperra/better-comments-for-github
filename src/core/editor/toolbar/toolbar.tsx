@@ -27,7 +27,6 @@ import LucideAlignRight from 'lucide-solid/icons/align-right'
 import LucideCog from 'lucide-solid/icons/cog'
 import LucideChevronDown from 'lucide-solid/icons/chevron-down'
 import LucideAlert from 'lucide-solid/icons/alert-octagon'
-import LucideKeyboard from 'lucide-solid/icons/keyboard'
 import { For, Match, Switch, createMemo } from 'solid-js'
 import { Dynamic } from 'solid-js/web'
 import { Popover, PopoverContent, PopoverTrigger } from '../popover/popover'
@@ -228,12 +227,6 @@ export function Toolbar() {
       </DropdownMenu>
 
       <div class={'ml-auto d-flex'}>
-        <Popover placement={'bottom-end'}>
-          <PopoverTrigger class={styles.ToolbarAction}>
-            <LucideKeyboard size={16} />
-          </PopoverTrigger>
-          <PopoverContent>Keyboard shortcuts</PopoverContent>
-        </Popover>
         <Popover placement={'bottom-end'}>
           <PopoverTrigger class={styles.ToolbarAction}>
             <LucideCog size={16} />

@@ -20,7 +20,14 @@
   line-height: inherit;
 
   > svg {
-    margin-right: var(--base-size-6);
+    position: absolute;
+    width: 15px;
+    height: 15px;
+  }
+
+  .title {
+    /* this is svg size + margin-right. this is needed to vertically align the content in a easier way. I hate fonts. */
+    margin-left: calc(15px + var(--base-size-4));
   }
 }
 

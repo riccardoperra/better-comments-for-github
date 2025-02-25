@@ -93,7 +93,7 @@ export function IssueReferenceView(props: NodeViewContextProps) {
         </Show>
         <Show when={issueIcon()}>{(icon) => icon()}</Show>
         <Show fallback={label()} when={issueTitle()}>
-          {(title) => title()}
+          {(title) => <span class={styles.title}>{title()}</span>}
         </Show>
       </HoverCardTrigger>
       <HoverCardContent>
