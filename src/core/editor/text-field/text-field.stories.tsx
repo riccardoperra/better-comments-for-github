@@ -15,7 +15,7 @@
  */
 
 import { createSignal } from 'solid-js'
-import { TextField } from './checkbox'
+import { TextField } from './text-field'
 import type { Meta, StoryObj } from 'storybook-solidjs'
 
 // More on how to set up stories at: https://storybook.js.org/docs/7.0/solid/writing-stories/introduction
@@ -24,9 +24,6 @@ const meta = {
   component: TextField,
   parameters: {
     layout: 'centered',
-  },
-  argTypes: {
-    backgroundColor: { control: 'color' },
   },
 } satisfies Meta<typeof TextField>
 

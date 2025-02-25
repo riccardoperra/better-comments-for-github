@@ -63,6 +63,13 @@ Paragraph after **hardbreak**
   },
 }
 
+export const RawHtml: Story = {
+  args: {
+    initialValue: `<p style="text-align: center">My centered content</p>
+<div style="text-align:right">My content at the rightt</div>`,
+  },
+}
+
 export const IssueReference: Story = {
   args: {
     initialValue: `[](https://github.com/riccardoperra/better-writer-for-github/issues/4)`,
