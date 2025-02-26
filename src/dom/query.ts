@@ -24,11 +24,11 @@ export function query(
   },
 ) {
   const [elements, setElements] = createSignal<Array<HTMLElement>>([], {
-    // equals: (prev, next) => {
-    //   if (prev.length !== next.length) return false
-    //   const prevSet = new Set(prev)
-    //   return next.every((el) => prevSet.has(el))
-    // },
+    equals: (prev, next) => {
+      if (prev.length !== next.length) return false
+      const prevSet = new Set(prev)
+      return next.every((el) => prevSet.has(el))
+    },
   })
 
   const onAddedListeners = new Set<(el: HTMLElement) => void>()

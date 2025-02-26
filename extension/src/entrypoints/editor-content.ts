@@ -27,12 +27,12 @@ import {
 import { createGitHubUploaderReactHandler } from '../../../src/editor/utils/reactFileUploader'
 import { SwitchButton, mountEditor } from '../../../src/render'
 import styles from './main.module.css'
+import type { Accessor, ComponentProps } from 'solid-js'
 import type {
   AttachmentHandlerElement,
   GitHubUploaderHandler,
 } from '../../../src/core/editor/image/github-file-uploader'
 import type { SuggestionData } from '../../../src/editor/utils/loadSuggestionData'
-import type { Accessor } from 'solid-js'
 import type { EditorType } from '../../../src/editor/editor'
 
 import './styles.css'
@@ -40,9 +40,29 @@ import './styles.css'
 export default defineUnlistedScript(() => {
   createRoot(() => {
     const owner = getOwner()
-    queryComment(async (element) =>
-      runWithOwner(owner, async () => {
+    queryComment(async (element) => {
+      return runWithOwner(owner, async () => {
         const [showOldEditor, setShowOldEditor] = createSignal(true)
+
+        function renderSwitch(
+          root: HTMLElement,
+          props?: Partial<ComponentProps<typeof SwitchButton>>,
+        ) {
+          render(
+            () =>
+              createComponent(SwitchButton, {
+                get open() {
+                  return showOldEditor()
+                },
+                onOpenChange: (open) => {
+                  setShowOldEditor(open)
+                },
+                size: props?.size ?? 'small',
+                variant: props?.variant ?? 'invisible',
+              }),
+            root,
+          )
+        }
 
         const jsCommentField = element.querySelector<HTMLTextAreaElement>(
           'textarea.js-comment-field',
@@ -105,39 +125,60 @@ export default defineUnlistedScript(() => {
             return
           }
 
-          const commentFooter = document.querySelector(
-            '#partial-new-comment-form-actions',
-          )
+          const newCommentForm =
+            jsCommentField.closest<HTMLFormElement>('#new_comment_form')
+
+          let mountFooter: () => void
+
+          // new comment at the bottom of the page
+          if (newCommentForm) {
+            mountFooter = () => {
+              const commentFooter = newCommentForm.querySelector(
+                '#partial-new-comment-form-actions',
+              )
+              if (commentFooter) {
+                const actionsWrapper = commentFooter.firstElementChild
+                if (actionsWrapper) {
+                  const switchRoot = document.createElement('div')
+                  actionsWrapper.prepend(switchRoot)
+                  renderSwitch(switchRoot)
+                }
+              }
+            }
+          } else {
+            // inline comment form is for thread reply
+            const inlineCommentForm = jsCommentField.closest(
+              '.js-inline-comment-form',
+            )
+            if (inlineCommentForm) {
+              mountFooter = () => {
+                const formActions =
+                  inlineCommentForm.querySelector<HTMLElement>('.form-actions')
+                if (formActions) {
+                  const switchRoot = document.createElement('div')
+                  switchRoot.style.display = 'inline'
+                  formActions.prepend(switchRoot)
+                  renderSwitch(switchRoot, {
+                    size: 'medium',
+                    variant: 'secondary',
+                  })
+                }
+              }
+            } else {
+              console.log(element)
+            }
+          }
 
           // We should create our element before the tab container
           mountElFunction = (node) => {
-            if (commentFooter) {
-              const actionsWrapper = commentFooter.firstElementChild
-              if (actionsWrapper) {
-                const switchRoot = document.createElement('div')
-                actionsWrapper.prepend(switchRoot)
+            mountFooter()
 
-                render(
-                  () =>
-                    createComponent(SwitchButton, {
-                      get open() {
-                        return showOldEditor()
-                      },
-                      onOpenChange: (open) => {
-                        setShowOldEditor(open)
-                      },
-                    }),
-                  switchRoot,
-                )
-
-                effect(() => {
-                  const show = showOldEditor()
-                  show
-                    ? tabContainer.style.setProperty('display', 'none')
-                    : tabContainer.style.removeProperty('display')
-                })
-              }
-            }
+            effect(() => {
+              const show = showOldEditor()
+              show
+                ? tabContainer.style.setProperty('display', 'none')
+                : tabContainer.style.removeProperty('display')
+            })
 
             node.classList.add(...classes)
             node.style.width = 'auto'
@@ -164,19 +205,7 @@ export default defineUnlistedScript(() => {
               if (actionsWrapper) {
                 const switchRoot = document.createElement('div')
                 actionsWrapper.prepend(switchRoot)
-
-                render(
-                  () =>
-                    createComponent(SwitchButton, {
-                      get open() {
-                        return showOldEditor()
-                      },
-                      onOpenChange: (open) => {
-                        setShowOldEditor(open)
-                      },
-                    }),
-                  switchRoot,
-                )
+                renderSwitch(switchRoot)
 
                 effect(() => {
                   const show = showOldEditor()
@@ -226,7 +255,7 @@ export default defineUnlistedScript(() => {
             type,
           })
         })
-      }),
-    )
+      })
+    })
   })
 })

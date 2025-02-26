@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-import { render } from 'solid-js/web'
+import { mergeProps, render } from 'solid-js/web'
 import { StateProvider } from 'statebuilder'
 import { Show } from 'solid-js'
+import { clsx } from 'clsx'
 import { Editor, EditorRootContext } from './editor/editor'
 import type { EditorType } from './editor/editor'
 import type { GitHubUploaderHandler } from './core/editor/image/github-file-uploader'
@@ -34,17 +35,30 @@ export interface RenderEditorProps {
 export function SwitchButton(props: {
   open: boolean
   onOpenChange: (open: boolean) => void
+  size?: 'small' | 'medium'
+  variant?: 'invisible' | 'secondary'
 }) {
+  const mergedProps = mergeProps({ size: 'small', variant: 'invisible' }, props)
+
   const label = () =>
     props.open ? 'Back to default editor' : 'Switch to a better editor'
 
   return (
     <button
       type={'button'}
-      class={'Button Button--invisible Button--small'}
-      onClick={() => props.onOpenChange(!props.open)}
+      class={clsx('Button', {
+        'Button--small': mergedProps.size === 'small',
+        'Button--medium': mergedProps.size === 'medium',
+        'Button--secondary': mergedProps.variant === 'secondary',
+        'Button--invisible': mergedProps.variant === 'invisible',
+      })}
+      onClick={() => mergedProps.onOpenChange(!mergedProps.open)}
     >
-      <span class={'fgColor-muted'}>{label()}</span>
+      <span
+        class={clsx({ 'fgColor-muted': mergedProps.variant === 'invisible' })}
+      >
+        {label()}
+      </span>
     </button>
   )
 }
