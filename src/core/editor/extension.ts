@@ -15,11 +15,13 @@
  */
 
 import {
+  Priority,
   defineBaseCommands,
   defineBaseKeymap,
   defineHistory,
   defineNodeSpec,
   union,
+  withPriority,
 } from 'prosekit/core'
 import { defineDropCursor } from 'prosekit/extensions/drop-cursor'
 import { defineGapCursor } from 'prosekit/extensions/gap-cursor'
@@ -68,7 +70,6 @@ export function defineMarkdownExtension() {
     defineBoldMarkdown(),
     defineStrikethroughMarkdown(),
     defineCodeMarkdown(),
-
     defineLinkMarkdown(),
     defineImageMarkdown(),
     defineParagraphMarkdown(),
@@ -88,6 +89,14 @@ export function defineMarkdownExtension() {
 export function defineExtension() {
   return union(
     defineMarkdownExtension(),
+    defineNodeSpec({
+      name: 'doc',
+      content: '(block|githubAlert)+',
+      topNode: true,
+    }),
+
+    // Mention should be defined before link in order to support pasting content
+    withPriority(defineMentionMarkdown(), Priority.high),
     defineTextAlign({ types: ['paragraph', 'heading'] }),
     definePlaceholder({
       placeholder: (state) => {
@@ -101,14 +110,8 @@ export function defineExtension() {
       },
     }),
     defineCodeBlock(),
-    defineMentionMarkdown(),
     defineGitHubAlert(),
     defineImageExtension(),
-    defineNodeSpec({
-      name: 'doc',
-      content: '(block|githubAlert)+',
-      topNode: true,
-    }),
   )
 }
 

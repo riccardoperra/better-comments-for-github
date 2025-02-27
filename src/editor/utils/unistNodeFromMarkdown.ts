@@ -23,10 +23,12 @@ import {
 } from '@prosedoc/markdown-schema'
 import { remarkGitHubAlert } from '../../core/editor/githubAlert/remarkGitHubAlert'
 import { remarkParseLinkToGitHubIssueReference } from '../../core/editor/issue-reference/remarkGitHubIssueReference'
+import { remarkGitHubUserReferences } from './remarkGitHubUserReferences'
 
 export function unistNodeFromMarkdown(content: string) {
   return coreUnistNodeFromMarkdown(content, {
     transformers: [
+      { type: 'remarkPlugin', handler: remarkGitHubUserReferences },
       { type: 'remarkPlugin', handler: remarkGitHubAlert },
       { type: 'remarkPlugin', handler: remarkFlatList },
       { type: 'remarkPlugin', handler: remarkHtmlImage },

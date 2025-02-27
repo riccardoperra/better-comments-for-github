@@ -127,6 +127,25 @@ export function getPullHoverCardUrl(path: string) {
   return `${path}/hovercard?pull_request:${subjectTag}&current_path=${window.location.pathname}`
 }
 
+export function getUserHoverCardUrl(username: string) {
+  // TODO: global store?
+  const subjectTag = document
+    .querySelector<HTMLMetaElement>('meta[name="hovercard-subject-tag"]')
+    ?.content.replace('issue:', '')
+    .replace('pull_request', '')
+
+  return `https://github.com/users/${username}/hovercard?subject=pull_request:${subjectTag}&current_path=${window.location.pathname}`
+}
+
+export function getUserHoverCardContent(path: string) {
+  const url = getUserHoverCardUrl(path)
+  return fetch(url, {
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+    },
+  }).then((res) => res.text())
+}
+
 export function getPullRequestHoverCardContent(path: string) {
   const url = getPullHoverCardUrl(path)
   return fetch(url, {

@@ -16,23 +16,53 @@
 
 import { defineNodeSpec, union } from 'prosekit/core'
 import { defineMention } from 'prosekit/extensions/mention'
+import { createProseMirrorNode } from 'prosemirror-transformer-markdown/prosemirror'
+import { defineSolidNodeView } from 'prosekit/solid'
+import { UserMentionView } from './UserMentionView/UserMentionView'
+import type { MentionAttrs } from 'prosekit/extensions/mention'
 import type { Text } from 'mdast'
+import type { GitHubMention } from '../../../editor/utils/remarkGitHubUserReferences'
 
 export function defineMentionMarkdown() {
   return union(
     defineMention(),
     defineNodeSpec({
       name: 'mention',
+      parseDOM: [
+        {
+          tag: 'a.user-mention',
+          priority: 1_000,
+          getAttrs: (node) => {
+            console.log(node)
+            const href = (node as HTMLLinkElement).href
+            const parts = href.split('https://github.com/')
+            const id = parts.at(-1)
+            if (!id) return false
+            return {
+              kind: 'user',
+              id,
+              value: `@${id}`,
+            } satisfies MentionAttrs
+          },
+        },
+      ],
       toUnist: (node, children): Array<Text> => {
         return [{ type: 'text', value: node.attrs.value ?? '' }]
       },
       unistToNode(node, schema, children, context) {
-        const text = node as Text
-        if (!text.value) {
-          return []
-        }
-        return [schema.text(text.value)]
+        const mention = node as GitHubMention
+        return createProseMirrorNode('mention', schema, [], {
+          kind: 'user',
+          id: mention.id,
+          value: `@${mention.id}`,
+        } satisfies MentionAttrs)
       },
+    }),
+    defineSolidNodeView({
+      name: 'mention',
+      as: 'span',
+      contentAs: 'span',
+      component: UserMentionView,
     }),
   )
 }
