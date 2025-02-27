@@ -21,15 +21,22 @@ import type { EditorView } from 'prosemirror-view'
 export function setEditorContent(
   content: string,
   view: EditorView,
-  options?: Partial<{
-    isInitialValue: boolean
-    isFromTextarea: boolean
-  }>,
+  options: {
+    isInitialValue?: boolean
+    isFromTextarea?: boolean
+    repository: string
+    owner: string
+  },
 ) {
-  const { isInitialValue = false, isFromTextarea = false } = options ?? {}
+  const {
+    isInitialValue = false,
+    isFromTextarea = false,
+    repository,
+    owner,
+  } = options
   const schema = view.state.schema
 
-  const unistNode = unistNodeFromMarkdown(content)
+  const unistNode = unistNodeFromMarkdown(content, { repository, owner })
   const result = convertUnistToProsemirror(unistNode, schema)
 
   const tr = view.state.tr

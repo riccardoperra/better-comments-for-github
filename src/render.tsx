@@ -30,6 +30,8 @@ export interface RenderEditorProps {
   uploadHandler: GitHubUploaderHandler
   textarea: HTMLTextAreaElement
   type: EditorType
+  owner: string
+  repository: string
 }
 
 export function SwitchButton(props: {
@@ -90,6 +92,12 @@ export function mountEditor(root: HTMLElement, props: RenderEditorProps) {
                 },
                 get type() {
                   return props.type
+                },
+                get repository() {
+                  return props.repository
+                },
+                get owner() {
+                  return props.owner
                 },
               }}
             >

@@ -38,6 +38,7 @@ import type { EditorType } from '../../../src/editor/editor'
 import './styles.css'
 
 export default defineUnlistedScript(() => {
+  const [, repositoryOwner, repository] = window.location.pathname.split('/')
   createRoot(() => {
     const owner = getOwner()
     queryComment(async (element) => {
@@ -253,6 +254,8 @@ export default defineUnlistedScript(() => {
               return textarea.value
             },
             type,
+            repository,
+            owner: repositoryOwner,
           })
         })
       })

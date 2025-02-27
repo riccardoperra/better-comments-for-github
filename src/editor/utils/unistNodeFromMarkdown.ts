@@ -25,16 +25,27 @@ import { remarkGitHubAlert } from '../../core/editor/githubAlert/remarkGitHubAle
 import { remarkParseLinkToGitHubIssueReference } from '../../core/editor/issue-reference/remarkGitHubIssueReference'
 import { remarkGitHubUserReferences } from './remarkGitHubUserReferences'
 
-export function unistNodeFromMarkdown(content: string) {
+export function unistNodeFromMarkdown(
+  content: string,
+  options: {
+    repository: string
+    owner: string
+  },
+) {
+  const { repository, owner } = options
   return coreUnistNodeFromMarkdown(content, {
     transformers: [
       { type: 'remarkPlugin', handler: remarkGitHubUserReferences },
+      {
+        type: 'remarkPlugin',
+        handler: () =>
+          remarkParseLinkToGitHubIssueReference({ repository, owner }),
+      },
       { type: 'remarkPlugin', handler: remarkGitHubAlert },
       { type: 'remarkPlugin', handler: remarkFlatList },
       { type: 'remarkPlugin', handler: remarkHtmlImage },
       { type: 'remarkPlugin', handler: remarkInlineImage },
       { type: 'remarkPlugin', handler: remarkHtmlHardbreak },
-      { type: 'remarkPlugin', handler: remarkParseLinkToGitHubIssueReference },
     ],
   })
 }

@@ -14,7 +14,13 @@
  * limitations under the License.
  */
 
-import { Show, createContext, createEffect, onMount } from 'solid-js'
+import {
+  Show,
+  createContext,
+  createEffect,
+  onMount,
+  useContext,
+} from 'solid-js'
 import { createEditor } from 'prosekit/core'
 import { useDocChange } from 'prosekit/solid'
 import { markdownFromUnistNode } from 'prosemirror-transformer-markdown/unified'
@@ -55,6 +61,8 @@ export const EditorRootContext = createContext<{
   initialValue: string
   uploadHandler: GitHubUploaderHandler
   type: EditorType
+  repository: string
+  owner: string
 }>()
 
 function sanitizeMarkdownValue(value: string) {
@@ -68,6 +76,7 @@ function sanitizeMarkdownValue(value: string) {
 }
 
 export function Editor(props: EditorProps) {
+  const context = useContext(EditorRootContext)!
   const configStore = ConfigStore.provide()
   const editorStore = ExtensionEditorStore.provide()
 
@@ -80,7 +89,10 @@ export function Editor(props: EditorProps) {
     props.textarea.addEventListener('input', (event) => {
       if (!(event as { fromEditor?: boolean }).fromEditor) {
         const value = props.textarea.value
-        const unistNode = unistNodeFromMarkdown(value)
+        const unistNode = unistNodeFromMarkdown(value, {
+          owner: context.owner,
+          repository: context.repository,
+        })
         const pmNode = convertUnistToProsemirror(unistNode, editor.schema)
         editor.setContent(pmNode)
       }
@@ -91,6 +103,8 @@ export function Editor(props: EditorProps) {
     setEditorContent(props.initialValue, editor.view, {
       isFromTextarea: true,
       isInitialValue: true,
+      owner: context.owner,
+      repository: context.repository,
     })
 
     const markdown = toMarkdown()

@@ -15,7 +15,9 @@
  */
 
 import { visit } from 'unist-util-visit'
+import { findAndReplace } from 'mdast-util-find-and-replace'
 import { getLinkFromIssueReferenceAttrs } from './issue-reference-utils'
+import type { ReplaceFunction } from 'mdast-util-find-and-replace'
 import type { Node, Parent, Root, Text } from 'mdast'
 
 export const githubIssueRegex =
@@ -77,8 +79,33 @@ export function matchGitHubIssueLinkReference(text: string) {
   } as const
 }
 
-export function remarkParseLinkToGitHubIssueReference() {
+export function remarkParseLinkToGitHubIssueReference(options: {
+  repository: string
+  owner: string
+}) {
+  const { repository, owner } = options
+  const replaceIssue: ReplaceFunction = (value, no, match) => {
+    if (
+      /\w/.test(match.input.charAt(match.index - 1)) ||
+      /\w/.test(match.input.charAt(match.index + value.length))
+    ) {
+      return false
+    }
+
+    const url = ['https://github.com', owner, repository, 'issues', no].join(
+      '/',
+    )
+
+    return url
+      ? { type: 'link', title: null, url, children: [{ type: 'text', value }] }
+      : false
+  }
+
   return function transformer(tree: Root) {
+    // First, we convert every # or GH- to a possible link
+    findAndReplace(tree, [[/(?:#|\bgh-)([1-9]\d*)/gi, replaceIssue]])
+    // TODO? Prefetch data?
+    // Then we parse link into a reference node
     visit(tree, 'link', (link, index, parent) => {
       const href = link.url
       const match = matchGitHubIssueLinkReference(href)
