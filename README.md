@@ -1,7 +1,7 @@
 # GitHub Better Comments
 
-Have you ever though that GitHub editor could be improved? Have you ever wasted time to write a decent comment,
-review or just markdown?
+Have you ever though that GitHub editor could be improved? Have you ever wasted time to write a decent review, or just
+to make some comment in a issue, or a discussion?
 
 This extension completely replaces the native
 editor with a new one that supports real-time preview with a WYSIWYG experience.
