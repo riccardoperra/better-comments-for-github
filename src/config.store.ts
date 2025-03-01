@@ -18,8 +18,10 @@ import { defineStore } from 'statebuilder'
 
 export interface ConfigState {
   showDebug: false | 'md' | 'node'
+  nativeSelectForLanguageSelector: boolean
 }
 
 export const ConfigStore = defineStore<ConfigState>(() => ({
   showDebug: import.meta.env.MODE === 'development' ? 'md' : false,
+  nativeSelectForLanguageSelector: false,
 }))

@@ -20,6 +20,15 @@
   border-radius: 6px;
   min-height: 100px;
 
+  .actions {
+    display: flex;
+    width: 100%;
+    gap: var(--base-size-8);
+    justify-content: space-between;
+    align-items: center;
+    padding-inline: 0 var(--base-size-4);
+  }
+
   .LanguageSelector {
     position: relative;
     user-select: none;

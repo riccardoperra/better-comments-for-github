@@ -41,7 +41,7 @@ export const SearchableSelectInput = <T extends ValidComponent = 'input'>(
             setTimeout(() => {
               ref.value = ''
               context.setInitialPopoverRender(false)
-            })
+            }, 0)
           })
         }
       }}

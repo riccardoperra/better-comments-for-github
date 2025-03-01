@@ -41,7 +41,13 @@ function defineCodeBlock(): CodeBlockExtension {
 export function defineCodeBlockMarkdown() {
   return union(
     defineCodeBlock(),
-    defineCodeBlockShiki(),
+    defineCodeBlockShiki({
+      themes: ['github-dark', 'github-light'],
+      langAlias: {
+        ts: 'typescript',
+        js: 'javascript',
+      },
+    }),
     defineNodeSpec({
       name: 'codeBlock',
       unistName: 'code',
