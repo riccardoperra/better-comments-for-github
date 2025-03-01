@@ -19,8 +19,8 @@
     padding: 0;
   }
 
-  > [data-node-view-content] > p {
-    /*margin-bottom: 0;*/
+  > [data-node-view-content] > p:last-child {
+    margin-bottom: 0;
   }
 }
 

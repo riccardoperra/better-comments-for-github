@@ -306,15 +306,28 @@
   /* src/basic/typography.css */
 }
 
-.prosemirror-flat-list {
+.ProseMirror .prosemirror-flat-list {
   padding: 0;
   margin-top: 0;
   margin-bottom: 0;
   margin-left: var(--base-size-24);
-  margin-bottom: 0;
   position: relative;
   display: list-item;
   list-style: none;
+
+  + .prosemirror-flat-list {
+    margin-top: 0.25rem;
+  }
+
+  &[data-list-kind='task'] {
+    .list-content {
+      padding-left: var(--base-size-6);
+    }
+  }
+
+  + p:first-of-type {
+    margin-top: var(--base-size-16);
+  }
 }
 
 .prosemirror-flat-list.ProseMirror-selectednode {
@@ -437,7 +450,7 @@ div.ProseMirror .prosemirror-flat-list {
 
 :is(div.ProseMirror .prosemirror-flat-list)::before,
 :is(div.ProseMirror .prosemirror-flat-list) > .list-marker {
-  top: 0.5rem;
+  /*top: 0.5rem;*/
 }
 
 :is(div.ProseMirror .prosemirror-flat-list):has(

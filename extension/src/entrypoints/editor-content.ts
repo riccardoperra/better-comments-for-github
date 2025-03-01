@@ -27,12 +27,12 @@ import {
 import { createGitHubUploaderReactHandler } from '../../../src/editor/utils/reactFileUploader'
 import { SwitchButton, mountEditor } from '../../../src/render'
 import styles from './main.module.css'
-import type { Accessor, ComponentProps } from 'solid-js'
 import type {
   AttachmentHandlerElement,
   GitHubUploaderHandler,
 } from '../../../src/core/editor/image/github-file-uploader'
 import type { SuggestionData } from '../../../src/editor/utils/loadSuggestionData'
+import type { Accessor, ComponentProps } from 'solid-js'
 import type { EditorType } from '../../../src/editor/editor'
 
 import './styles.css'
@@ -40,6 +40,7 @@ import './styles.css'
 export default defineUnlistedScript(() => {
   createRoot(() => {
     const owner = getOwner()
+
     queryComment(async (element) => {
       const { repository, repositoryOwner } = parseGitHubUrl(
         window.location.pathname,
@@ -68,19 +69,25 @@ export default defineUnlistedScript(() => {
           )
         }
 
-        const jsCommentField = element.querySelector<HTMLTextAreaElement>(
-          'textarea.js-comment-field',
-        )
         let textarea: HTMLTextAreaElement | null = null
+        let findTextarea: () => HTMLTextAreaElement
         let mountElFunction: (node: HTMLElement) => void
         let suggestionData: Accessor<SuggestionData>
         let type: EditorType
         let uploadHandler: GitHubUploaderHandler
 
+        const jsCommentField = element.querySelector<HTMLTextAreaElement>(
+          'textarea.js-comment-field',
+        )
+
         // Old comment component of GitHub, This is still present in pull requests
         if (jsCommentField) {
           type = 'native'
           textarea = jsCommentField
+          findTextarea = () =>
+            element.querySelector<HTMLTextAreaElement>(
+              'textarea.js-comment-field',
+            )!
 
           const textExpander =
             jsCommentField.closest<HTMLElement>('text-expander')
@@ -214,7 +221,9 @@ export default defineUnlistedScript(() => {
             '[class*="MarkdownEditor-module__container"]',
           )!
           textarea =
-            moduleContainer.querySelector<HTMLTextAreaElement>('textarea')
+            moduleContainer.querySelector<HTMLTextAreaElement>('textarea')!
+          findTextarea = () =>
+            moduleContainer.querySelector<HTMLTextAreaElement>('textarea')!
 
           const footerModule = element.querySelector(
             'footer[class*="Footer-module"]',
@@ -268,6 +277,13 @@ export default defineUnlistedScript(() => {
               return uploadHandler
             },
             get textarea() {
+              if (!textarea) {
+                throw new Error('Textarea must be present')
+              }
+              if (textarea.isConnected) {
+                return textarea
+              }
+              textarea = findTextarea()
               return textarea
             },
             get initialValue() {

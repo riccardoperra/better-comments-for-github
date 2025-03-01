@@ -97,6 +97,22 @@ export function Editor(props: EditorProps) {
         editor.setContent(pmNode)
       }
     })
+
+    props.textarea.addEventListener(
+      'change',
+      (event) => {
+        if ((event as any)['fromEditor']) return
+        if (event.isTrusted) return false
+        const value = props.textarea.value
+        const unistNode = unistNodeFromMarkdown(value, {
+          owner: context.owner,
+          repository: context.repository,
+        })
+        const pmNode = convertUnistToProsemirror(unistNode, editor.schema)
+        editor.setContent(pmNode)
+      },
+      { capture: true },
+    )
   })
 
   onMount(() => {

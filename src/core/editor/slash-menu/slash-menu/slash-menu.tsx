@@ -185,7 +185,9 @@ export default function SlashMenu() {
       fitViewport={false}
     >
       <AutocompleteList>
-        <AutocompleteEmpty>No results</AutocompleteEmpty>
+        <AutocompleteEmpty class={styles.slashMenuItem}>
+          No results
+        </AutocompleteEmpty>
 
         <div class={styles.slashMenuSectionGroup}>
           <For each={GroupedMenuItems}>

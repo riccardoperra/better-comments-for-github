@@ -22,6 +22,7 @@ import {
 } from 'prosekit/solid/autocomplete'
 import styles from './Autocomplete.module.css'
 import type {
+  AutocompleteEmptyProps,
   AutocompleteItemProps,
   AutocompletePopoverProps,
 } from 'prosekit/solid/autocomplete'
@@ -34,7 +35,11 @@ export const AutocompletePopover: ParentComponent<
 }
 
 export const AutocompleteList = CoreAutocompleteList
-export const AutocompleteEmpty = CoreAutocompleteEmpty
+export const AutocompleteEmpty: ParentComponent<
+  Partial<AutocompleteEmptyProps>
+> = (props) => {
+  return <CoreAutocompleteEmpty class={styles.directiveMenuItem} {...props} />
+}
 
 export const AutocompleteItem: ParentComponent<
   Partial<AutocompleteItemProps>
