@@ -3,3 +3,4 @@ packages:
   - ./markdown-schema
   - ./markdown-transformer
   - ./extension
+  - ./landing
