@@ -38,10 +38,13 @@ import type { EditorType } from '../../../src/editor/editor'
 import './styles.css'
 
 export default defineUnlistedScript(() => {
-  const [, repositoryOwner, repository] = window.location.pathname.split('/')
   createRoot(() => {
     const owner = getOwner()
     queryComment(async (element) => {
+      const { repository, repositoryOwner } = parseGitHubUrl(
+        window.location.pathname,
+      )
+
       return runWithOwner(owner, async () => {
         const [showOldEditor, setShowOldEditor] = createSignal(true)
 
@@ -126,10 +129,14 @@ export default defineUnlistedScript(() => {
             return
           }
 
+          const slashCommandSurface = tabContainer.closest(
+            '.js-slash-command-surface',
+          )
+
           const newCommentForm =
             jsCommentField.closest<HTMLFormElement>('#new_comment_form')
 
-          let mountFooter: () => void
+          let mountFooter: undefined | (() => void)
 
           // new comment at the bottom of the page
           if (newCommentForm) {
@@ -166,13 +173,26 @@ export default defineUnlistedScript(() => {
                 }
               }
             } else {
-              console.log(element)
+              if (slashCommandSurface) {
+                const el = slashCommandSurface.lastElementChild
+                mountFooter = () => {
+                  if (el) {
+                    const switchRoot = document.createElement('div')
+                    switchRoot.style.display = 'inline'
+                    el.prepend(switchRoot)
+                    renderSwitch(switchRoot, {
+                      size: 'medium',
+                      variant: 'secondary',
+                    })
+                  }
+                }
+              }
             }
           }
 
           // We should create our element before the tab container
           mountElFunction = (node) => {
-            mountFooter()
+            mountFooter?.()
 
             effect(() => {
               const show = showOldEditor()

@@ -48,7 +48,7 @@ export function SwitchButton(props: {
   return (
     <button
       type={'button'}
-      class={clsx('Button', {
+      class={clsx('Button mr-2', {
         'Button--small': mergedProps.size === 'small',
         'Button--medium': mergedProps.size === 'medium',
         'Button--secondary': mergedProps.variant === 'secondary',

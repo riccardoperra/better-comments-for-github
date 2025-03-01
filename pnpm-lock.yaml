@@ -187,6 +187,9 @@ importers:
       typescript:
         specifier: ^5.6.3
         version: 5.7.3
+      vitest:
+        specifier: ^3.0.5
+        version: 3.0.5(@types/debug@4.1.12)(@types/node@22.13.4)(@vitest/ui@3.0.5)(jiti@1.21.7)(sass@1.85.0)(yaml@2.7.0)
       wxt:
         specifier: ^0.19.13
         version: 0.19.27(@types/node@22.13.4)(rollup@4.34.8)(sass@1.85.0)(yaml@2.7.0)
