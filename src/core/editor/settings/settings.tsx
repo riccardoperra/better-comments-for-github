@@ -42,6 +42,36 @@ export function Settings() {
           </span>
         </span>
       </div>
+
+      <div class={'dropdown-divider'} />
+
+      <div class="FormControl-checkbox-wrap">
+        <input
+          type="checkbox"
+          name="enable-search-for-language-selector"
+          class={'FormControl-checkbox'}
+          checked={configStore.get.nativeSelectForLanguageSelector}
+          onChange={(event) => {
+            configStore.set(
+              'nativeSelectForLanguageSelector',
+              event.target.checked,
+            )
+          }}
+          id="enable-search-for-language-selector"
+        />
+        <span class={'FormControl-checkbox-labelWrap'}>
+          <label
+            for="enable-search-for-language-selector"
+            class={'FormControl-label'}
+          >
+            Use native select for CodeBlock language selector
+          </label>
+          <span class={'FormControl-caption'}>
+            Whether to use native select for the language selector in the code
+            block view.
+          </span>
+        </span>
+      </div>
     </div>
   )
 }

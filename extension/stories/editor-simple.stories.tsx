@@ -115,6 +115,13 @@ export const List: Story = {
   },
 }
 
+export const CodeBlock: Story = {
+  args: {
+    initialValue:
+      "```javascript\nconsole.log('Hello, World!')\n``` \n\n ```typescript\nconsole.log('Hello, World!')\n```",
+  },
+}
+
 export const Images: Story = {
   args: {
     initialValue: `<img src="https://placehold.co/600x400" alt="placeholder" /> inline text`,

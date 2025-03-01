@@ -14,14 +14,31 @@
  * limitations under the License.
  */
 
-import { defineStore } from 'statebuilder'
-
-export interface ConfigState {
-  showDebug: false | 'md' | 'node'
-  nativeSelectForLanguageSelector: boolean
+.selectTrigger {
+  text-align: left;
 }
 
-export const ConfigStore = defineStore<ConfigState>(() => ({
-  showDebug: import.meta.env.MODE === 'development' ? 'md' : false,
-  nativeSelectForLanguageSelector: false,
-}))
+.searchableSelectListboxContainer {
+  max-height: 320px;
+  overflow: auto;
+}
+
+.searchableSelectListbox {
+  margin-top: var(--base-size-6);
+}
+
+.searchableSelectMenuItem {
+  padding-inline: var(--base-size-8);
+  border-radius: var(--borderRadius-default);
+  padding-block: var(--base-size-2);
+
+  &[aria-selected='true'] {
+    background-color: var(--bgColor-accent-emphasis);
+    color: var(--fgColor-onEmphasis);
+  }
+
+  &[data-highlighted] {
+    background-color: var(--bgColor-neutral-muted);
+    color: var(--fgColor-onEmphasis);
+  }
+}

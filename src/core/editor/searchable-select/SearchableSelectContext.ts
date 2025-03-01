@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-import { defineStore } from 'statebuilder'
+import { createContext } from 'solid-js'
+import type { Accessor, Setter } from 'solid-js'
 
-export interface ConfigState {
-  showDebug: false | 'md' | 'node'
-  nativeSelectForLanguageSelector: boolean
-}
-
-export const ConfigStore = defineStore<ConfigState>(() => ({
-  showDebug: import.meta.env.MODE === 'development' ? 'md' : false,
-  nativeSelectForLanguageSelector: false,
-}))
+export const SearchableSelectContext = createContext<{
+  anchorRef: Accessor<HTMLElement | null>
+  setAnchorRef: Setter<HTMLElement | null>
+  popoverOpen: Accessor<boolean>
+  setPopoverOpen: Setter<boolean>
+  initialPopoverRender: Accessor<boolean>
+  setInitialPopoverRender: Setter<boolean>
+  onPopoverKeyDown: (event: KeyboardEvent) => void
+}>()

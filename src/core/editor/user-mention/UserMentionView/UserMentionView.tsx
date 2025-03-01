@@ -62,7 +62,6 @@ export function UserMentionView(props: NodeViewContextProps) {
 
   const label = createMemo(() => {
     const { id } = attrs()
-    console.log(attrs())
     return `@${id}`
   })
 

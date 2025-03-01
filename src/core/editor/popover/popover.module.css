@@ -16,13 +16,16 @@
 
 .popoverContent {
   --inline-menu-background: var(--menu-bgColor-active);
+  --popover-padding-inline: var(--base-size-6);
+  --popover-padding-block: var(--base-size-6);
   position: relative;
   display: flex;
   min-width: 8rem;
   overflow: auto;
   white-space: nowrap;
   border-radius: var(--borderRadius-default);
-  padding: var(--base-size-6);
+  padding-inline: var(--popover-padding-inline);
+  padding-block: var(--popover-padding-block);
   box-sizing: border-box;
   z-index: 10;
   background-color: var(--inline-menu-background);
