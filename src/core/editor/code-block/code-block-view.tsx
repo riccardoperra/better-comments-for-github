@@ -15,8 +15,7 @@
  */
 
 import { shikiBundledLanguagesInfo } from 'prosekit/extensions/code-block'
-import { createMemo, createSignal } from 'solid-js'
-import { useNodeViewContext } from '@prosemirror-adapter/solid'
+import { Show, createMemo, createSignal } from 'solid-js'
 import {
   SearchControl,
   SearchableSelectContent,
@@ -29,13 +28,14 @@ import {
   SearchableSelectRoot,
   SearchableSelectTrigger,
 } from '../searchable-select/SearchableSelect'
+import { SearchableSelectValue } from '../searchable-select/SearchableSelectControl'
+import { NodeViewWrapper } from '../nodeviews/node-view'
 import styles from './code-block-view.module.css'
 import type { NodeViewContextProps } from '@prosemirror-adapter/solid'
 import type { CodeBlockAttrs } from 'prosekit/extensions/code-block'
 
 export default function CodeBlockView(props: NodeViewContextProps) {
-  const context = useNodeViewContext()
-  const attrLanguage = createMemo(() => context().node.attrs.language)
+  const attrLanguage = createMemo(() => props.node.attrs.language)
   const language = () => {
     const lang = attrLanguage()
     switch (lang) {
@@ -54,15 +54,17 @@ export default function CodeBlockView(props: NodeViewContextProps) {
   }
 
   return (
-    <div class={`highlight ${styles.CodeBlock}`}>
-      <div class={styles.LanguageSelector}>
-        <CodeBlockLanguageSelector
-          value={attrLanguage()}
-          onValueChange={setLanguage}
-        />
+    <NodeViewWrapper>
+      <div class={`highlight ${styles.CodeBlock}`}>
+        <div class={styles.LanguageSelector}>
+          <CodeBlockLanguageSelector
+            value={attrLanguage()}
+            onValueChange={setLanguage}
+          />
+        </div>
+        <pre ref={props.contentRef} data-language={language()}></pre>
       </div>
-      <pre ref={props.contentRef} data-language={language()}></pre>
-    </div>
+    </NodeViewWrapper>
   )
 }
 
@@ -90,15 +92,22 @@ export function CodeBlockLanguageSelector(props: {
   return (
     <SearchableSelectProvider>
       <SearchableSelectPopover>
-        <SearchableSelectTrigger>My value</SearchableSelectTrigger>
+        <SearchableSelectTrigger>
+          <SearchableSelectValue value={currentValue()}>
+            {({ value }) => (
+              <Show when={value()[0]}>{(value) => <>{value().name}</>}</Show>
+            )}
+          </SearchableSelectValue>
+        </SearchableSelectTrigger>
         <SearchableSelectPopoverContent>
           <SearchableSelectRoot
-            open={true}
+            open
             value={currentValue()}
             onChange={(value) => {
               props.onValueChange(value?.id ?? null)
             }}
             optionLabel={'name'}
+            optionValue={'id'}
             options={filteredOptions()}
             onInputChange={setTerm}
             placeholder="Search a language…"
