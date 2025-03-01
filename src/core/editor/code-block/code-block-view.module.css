@@ -26,6 +26,13 @@
     overflow: visible;
     padding: var(--base-size-8);
     padding-block: var(--base-size-6);
+
+    max-width: 150px;
+
+    > * {
+      display: inline-grid;
+      min-width: 150px;
+    }
   }
 
   .Select {
@@ -43,5 +50,38 @@
     &:hover {
       background: var(--button-default-bgColor-hover);
     }
+  }
+}
+
+.LanguageSelectorPopover {
+}
+
+.LanguageListboxRef {
+  max-height: 320px;
+  overflow: auto;
+}
+
+.languageMenu {
+  margin-top: var(--base-size-6);
+  /*margin-inline: calc(-1 * var(--popover-padding-inline));*/
+}
+
+.languageTrigger {
+  text-align: left;
+}
+
+.languageMenuItem {
+  padding-inline: var(--base-size-8);
+  border-radius: var(--borderRadius-default);
+  padding-block: var(--base-size-2);
+
+  &[aria-selected='true'] {
+    background-color: var(--bgColor-accent-emphasis);
+    color: var(--fgColor-onEmphasis);
+  }
+
+  &[data-highlighted] {
+    background-color: var(--bgColor-neutral-muted);
+    color: var(--fgColor-onEmphasis);
   }
 }
