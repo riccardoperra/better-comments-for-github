@@ -28,7 +28,7 @@ export interface RenderEditorProps {
   suggestionData: SuggestionData
   initialValue: string
   uploadHandler: GitHubUploaderHandler
-  textarea: HTMLTextAreaElement
+  textarea: () => HTMLTextAreaElement
   type: EditorType
   owner: string
   repository: string
@@ -66,8 +66,8 @@ export function SwitchButton(props: {
 }
 
 export function mountEditor(root: HTMLElement, props: RenderEditorProps) {
-  return render(
-    () => (
+  return render(() => {
+    return (
       <StateProvider>
         <Show when={props.open !== false}>
           <div
@@ -85,10 +85,10 @@ export function mountEditor(root: HTMLElement, props: RenderEditorProps) {
                   return props.uploadHandler
                 },
                 get initialValue() {
-                  return props.textarea.value
+                  return props.textarea().value
                 },
                 get textarea() {
-                  return props.textarea
+                  return props.textarea()
                 },
                 get type() {
                   return props.type
@@ -103,15 +103,14 @@ export function mountEditor(root: HTMLElement, props: RenderEditorProps) {
             >
               <Editor
                 type={props.type}
+                textarea={props.textarea()}
                 suggestions={props.suggestionData}
-                textarea={props.textarea}
-                initialValue={props.textarea.value}
+                initialValue={props.textarea().value}
               />
             </EditorRootContext.Provider>
           </div>
         </Show>
       </StateProvider>
-    ),
-    root,
-  )
+    )
+  }, root)
 }

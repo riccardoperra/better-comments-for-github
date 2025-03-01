@@ -265,6 +265,21 @@ export default defineUnlistedScript(() => {
         root.className = styles.injectedEditorContent
 
         runWithOwner(owner, () => {
+          const [textareaRef, setTextareaRef] = createSignal(textarea)
+          // Since I didn't really find a good way to detect if the current textarea
+          // has been disconnected. I'll now check via mutation observer.
+          // TODO: potential perforamnce issue
+          const observer = new MutationObserver((mutation) => {
+            const ref = textareaRef()
+            if (!ref.isConnected) setTextareaRef(findTextarea())
+          })
+          observer.observe(element, {
+            childList: true,
+            subtree: true,
+            characterData: true,
+          })
+          onCleanup(() => observer.disconnect())
+
           mountElFunction(root)
           mountEditor(root, {
             get open() {
@@ -276,16 +291,7 @@ export default defineUnlistedScript(() => {
             get uploadHandler() {
               return uploadHandler
             },
-            get textarea() {
-              if (!textarea) {
-                throw new Error('Textarea must be present')
-              }
-              if (textarea.isConnected) {
-                return textarea
-              }
-              textarea = findTextarea()
-              return textarea
-            },
+            textarea: textareaRef,
             get initialValue() {
               return textarea.value
             },

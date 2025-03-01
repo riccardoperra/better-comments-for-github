@@ -18,7 +18,7 @@ import {
   Show,
   createContext,
   createEffect,
-  onMount,
+  onCleanup,
   useContext,
 } from 'solid-js'
 import { createEditor } from 'prosekit/core'
@@ -86,17 +86,32 @@ export function Editor(props: EditorProps) {
   })
 
   createEffect(() => {
-    props.textarea.addEventListener('input', (event) => {
-      if (!(event as { fromEditor?: boolean }).fromEditor) {
-        const value = props.textarea.value
-        const unistNode = unistNodeFromMarkdown(value, {
-          owner: context.owner,
-          repository: context.repository,
-        })
-        const pmNode = convertUnistToProsemirror(unistNode, editor.schema)
-        editor.setContent(pmNode)
+    const abortController = new AbortController()
+    onCleanup(() => abortController.abort('I hope a new reference of textarea'))
+
+    const observer = new ResizeObserver(([{ target }], observer) => {
+      if (!target.isConnected) {
+        observer.disconnect()
+        console.log('test')
       }
     })
+    observer.observe(props.textarea)
+
+    props.textarea.addEventListener(
+      'input',
+      (event) => {
+        if (!(event as { fromEditor?: boolean }).fromEditor) {
+          const value = props.textarea.value
+          const unistNode = unistNodeFromMarkdown(value, {
+            owner: context.owner,
+            repository: context.repository,
+          })
+          const pmNode = convertUnistToProsemirror(unistNode, editor.schema)
+          editor.setContent(pmNode)
+        }
+      },
+      { signal: abortController.signal },
+    )
 
     props.textarea.addEventListener(
       'change',
@@ -111,18 +126,17 @@ export function Editor(props: EditorProps) {
         const pmNode = convertUnistToProsemirror(unistNode, editor.schema)
         editor.setContent(pmNode)
       },
-      { capture: true },
+      { signal: abortController.signal },
     )
   })
 
-  onMount(() => {
+  createEffect(() => {
     setEditorContent(props.initialValue, editor.view, {
       isFromTextarea: true,
       isInitialValue: true,
       owner: context.owner,
       repository: context.repository,
     })
-
     const markdown = toMarkdown()
     editorStore.set('markdown', markdown)
   })
