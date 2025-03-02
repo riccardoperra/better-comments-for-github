@@ -12,7 +12,7 @@ An extension that <strong>completely replaces</strong> the GitHub native comment
 to a new <strong>block-based</strong> editor and a seamless real-time preview experience. 
 </p>
 
-<img src="./assets/promo3.png" alt="Promotional image">
+<img src="./assets/promo4.png" alt="Promotional image">
 
 > [!IMPORTANT]
 >
