@@ -1,19 +1,18 @@
 <h1 align="center">
-    GitHub Leave Better Comments
+    Leave better comments for GitHub
 </h1>
 
 <p align="center">
-Ever wasted time to write a decent review, a comment in an issue, or a discussion?
-<br>Maybe the GitHub editor could be improved.
+  <i>Ever spent too much time writing a decent review, issue comment, or discussion?
+  <br>What if the GitHub comment box could work better?</i> <span>👀</span> 
 </p>
 
 <p align="center">
-An extension that <strong>completely replaces</strong> the GitHub native editor, <br>to a new <strong>block-based</strong> editor with a real-time preview experience. 
+An extension that <strong>completely replaces</strong> the GitHub native comment box, <br>
+to a new <strong>block-based</strong> editor and a seamless real-time preview experience. 
 </p>
 
 <img src="./assets/promo3.png" alt="Promotional image">
-
----
 
 > [!IMPORTANT]
 >
