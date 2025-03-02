@@ -40,3 +40,20 @@ You can mention users in comments with `@` and the extension will suggest users 
 ### Issue references
 
 You can reference issues in comments with `#` and the extension will suggest issues to reference
+
+## Stack
+
+This project is built with the following technologies:
+
+- [WXT Extension Framework](https://github.com/wxt-dev/wxt)
+
+#### Editor
+
+- [ProseMirror](https://prosemirror.net/)
+- [prosekit](https://github.com/prosekit/prosekit)
+- [unified](https://github.com/unifiedjs/unified)
+
+#### UI
+
+- [SolidJS](https://github.com/solidjs/solid)
+- [Kobalte](https://kobalte.dev)
