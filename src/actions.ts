@@ -48,6 +48,9 @@ export const EditorActionConfig: EditorActionConfigData = {
   code: {
     shortcuts: ['mod-e'],
   },
+  underline: {
+    shortcuts: ['mod-u'],
+  },
   subscript: {
     shortcuts: ['mod-,'],
   },

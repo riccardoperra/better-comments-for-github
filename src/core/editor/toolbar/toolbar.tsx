@@ -29,6 +29,7 @@ import LucideChevronDown from 'lucide-solid/icons/chevron-down'
 import LucideAlert from 'lucide-solid/icons/alert-octagon'
 import LucideSuperscript from 'lucide-solid/icons/superscript'
 import LucideSubscript from 'lucide-solid/icons/subscript'
+import LucideUnderline from 'lucide-solid/icons/underline'
 import { For, Match, Switch, createMemo } from 'solid-js'
 import { Dynamic } from 'solid-js/web'
 import { Popover, PopoverContent, PopoverTrigger } from '../popover/popover'
@@ -118,7 +119,19 @@ export function Toolbar() {
         <LucideStrike size={16} />
       </ToolbarAction>
 
-      <div class={styles.Separator}></div>
+      <ToolbarAction
+        label={
+          <>
+            Underline (
+            <EditorTextShortcut type={'keyboard'} element={'underline'} />)
+          </>
+        }
+        isPressed={editor().marks.underline.isActive()}
+        disabled={!editor().commands.toggleUnderline.canExec()}
+        onClick={() => editor().commands.toggleUnderline()}
+      >
+        <LucideUnderline size={16} />
+      </ToolbarAction>
 
       <ToolbarAction
         label={
