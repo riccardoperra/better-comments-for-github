@@ -46,12 +46,14 @@ function convertNode(
         "text/html",
       );
       const slice = ProseMirrorDOMParser.fromSchema(schema).parse(doc.body);
+      console.dir(slice.content.toJSON(), { depth: null });
       return slice.content.content;
     }
   }
 
   const spec = map[type] as NodeSpec | MarkSpec | undefined;
   if (!spec || !spec.unistToNode) {
+    console.log(spec, unistNode);
     console.warn(
       `Couldn't find any way to convert unist node of type "${type}" to a ProseMirror node.`,
     );

@@ -42,6 +42,8 @@ import {
   defineListMarkdown,
   defineParagraphMarkdown,
   defineStrikethroughMarkdown,
+  defineSubscriptMarkdown,
+  defineSuperscriptMarkdown,
   defineTableMarkdown,
   defineTextMarkdown,
 } from '@prosedoc/markdown-schema'
@@ -72,6 +74,8 @@ export function defineMarkdownExtension() {
     defineBoldMarkdown(),
     defineStrikethroughMarkdown(),
     defineCodeMarkdown(),
+    defineSuperscriptMarkdown(),
+    defineSubscriptMarkdown(),
     defineGitHubIssueReference(), // to define before to allow copy-paste from link issue
     defineLinkMarkdown(),
     defineImageMarkdown(),

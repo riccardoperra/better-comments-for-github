@@ -28,10 +28,12 @@
     "vitest": "^3.0.5"
   },
   "dependencies": {
+    "happy-dom": "^17.1.8",
     "hast-util-to-html": "^9.0.4",
+    "mdast-util-from-markdown": "^2.0.2",
     "mdast-util-to-markdown": "^2.1.2",
+    "micromark-util-types": "^2.0.2",
     "prosekit": "^0.11.4",
-    "prosemirror-transformer-markdown": "workspace:*",
-    "unist": "^0.0.1"
+    "prosemirror-transformer-markdown": "workspace:*"
   }
 }
