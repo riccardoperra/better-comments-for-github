@@ -15,23 +15,10 @@
  */
 
 import { useEditor } from 'prosekit/solid'
-import LucideBold from 'lucide-solid/icons/bold'
-import LucideItalic from 'lucide-solid/icons/italic'
-import LucideStrike from 'lucide-solid/icons/strikethrough'
-import LucideCode from 'lucide-solid/icons/code'
-import LucideCodeBlock from 'lucide-solid/icons/code-square'
-import LucideBlockquote from 'lucide-solid/icons/text-quote'
-import LucideAlignLeft from 'lucide-solid/icons/align-left'
-import LucideAlignCenter from 'lucide-solid/icons/align-center'
-import LucideAlignRight from 'lucide-solid/icons/align-right'
 import LucideCog from 'lucide-solid/icons/cog'
-import LucideChevronDown from 'lucide-solid/icons/chevron-down'
-import LucideAlert from 'lucide-solid/icons/alert-octagon'
-import LucideSuperscript from 'lucide-solid/icons/superscript'
-import LucideSubscript from 'lucide-solid/icons/subscript'
-import LucideUnderline from 'lucide-solid/icons/underline'
-import { For, Match, Switch, createMemo } from 'solid-js'
+import { For, createMemo } from 'solid-js'
 import { Dynamic } from 'solid-js/web'
+import LucideChevronDown from 'lucide-solid/icons/chevron-down'
 import { Popover, PopoverContent, PopoverTrigger } from '../popover/popover'
 import { Tooltip, TooltipContent, TooltipTrigger } from '../tooltip/tooltip'
 import {
@@ -43,6 +30,7 @@ import {
 import { githubAlertTypeMap } from '../githubAlert/config'
 import { Settings } from '../settings/settings'
 import { EditorTextShortcut } from '../kbd/kbd'
+import { EditorActionIcon } from '../action-icon/ActionIcon'
 import styles from './toolbar.module.css'
 import type { GithubAlertType } from '../githubAlert/config'
 import type { FlowProps, JSX } from 'solid-js'
@@ -91,7 +79,7 @@ export function Toolbar() {
         disabled={!editor().commands.toggleBold.canExec()}
         onClick={() => editor().commands.toggleBold()}
       >
-        <LucideBold size={16} />
+        <EditorActionIcon actionId={'bold'} size={16} />
       </ToolbarAction>
       <ToolbarAction
         label={
@@ -103,7 +91,7 @@ export function Toolbar() {
         disabled={!editor().commands.toggleItalic.canExec()}
         onClick={() => editor().commands.toggleItalic()}
       >
-        <LucideItalic size={16} />
+        <EditorActionIcon actionId={'italic'} size={16} />
       </ToolbarAction>
       <ToolbarAction
         label={
@@ -116,7 +104,7 @@ export function Toolbar() {
         disabled={!editor().commands.toggleStrike.canExec()}
         onClick={() => editor().commands.toggleStrike()}
       >
-        <LucideStrike size={16} />
+        <EditorActionIcon actionId={'strikethrough'} size={16} />
       </ToolbarAction>
 
       <ToolbarAction
@@ -130,7 +118,7 @@ export function Toolbar() {
         disabled={!editor().commands.toggleUnderline.canExec()}
         onClick={() => editor().commands.toggleUnderline()}
       >
-        <LucideUnderline size={16} />
+        <EditorActionIcon actionId={'underline'} size={16} />
       </ToolbarAction>
 
       <ToolbarAction
@@ -144,7 +132,7 @@ export function Toolbar() {
         disabled={!editor().commands.toggleSubscript.canExec()}
         onClick={() => editor().commands.toggleSubscript()}
       >
-        <LucideSubscript size={16} />
+        <EditorActionIcon actionId={'subscript'} size={16} />
       </ToolbarAction>
 
       <ToolbarAction
@@ -158,7 +146,7 @@ export function Toolbar() {
         disabled={!editor().commands.toggleSuperscript.canExec()}
         onClick={() => editor().commands.toggleSuperscript()}
       >
-        <LucideSuperscript size={16} />
+        <EditorActionIcon actionId={'superscript'} size={16} />
       </ToolbarAction>
 
       <div class={styles.Separator}></div>
@@ -174,16 +162,21 @@ export function Toolbar() {
         disabled={!editor().commands.toggleBlockquote.canExec()}
         onClick={() => editor().commands.toggleBlockquote()}
       >
-        <LucideBlockquote size={16} />
+        <EditorActionIcon actionId={'blockquote'} size={16} />
       </ToolbarAction>
 
       <ToolbarAction
-        label={'Code block'}
+        label={
+          <>
+            Code block (
+            <EditorTextShortcut type={'keyboard'} element={'codeBlock'} />)
+          </>
+        }
         isPressed={editor().nodes.codeBlock.isActive()}
         disabled={!editor().commands.toggleCodeBlock.canExec()}
         onClick={() => editor().commands.toggleCodeBlock()}
       >
-        <LucideCodeBlock size={16} />
+        <EditorActionIcon actionId={'codeBlock'} size={16} />
       </ToolbarAction>
 
       <ToolbarAction
@@ -197,7 +190,7 @@ export function Toolbar() {
         disabled={!editor().commands.toggleCode.canExec()}
         onClick={() => editor().commands.toggleCode()}
       >
-        <LucideCode size={16} />
+        <EditorActionIcon actionId={'code'} size={16} />
       </ToolbarAction>
 
       <div class={styles.Separator}></div>
@@ -205,18 +198,10 @@ export function Toolbar() {
       <DropdownMenu>
         <Tooltip>
           <TooltipTrigger as={DropdownMenuTrigger} class={styles.ToolbarAction}>
-            <Switch>
-              <Match when={currentTextAlign() === 'left'}>
-                <LucideAlignLeft size={16} />
-              </Match>
-              <Match when={currentTextAlign() === 'center'}>
-                <LucideAlignCenter size={16} />
-              </Match>
-              <Match when={currentTextAlign() === 'right'}>
-                <LucideAlignRight size={16} />
-              </Match>
-            </Switch>
-            <LucideChevronDown size={14} />
+            <EditorActionIcon
+              actionId={`textAlign>${currentTextAlign()}`}
+              size={16}
+            />
           </TooltipTrigger>
           <TooltipContent>Align text</TooltipContent>
         </Tooltip>
@@ -250,7 +235,7 @@ export function Toolbar() {
       <DropdownMenu>
         <Tooltip>
           <TooltipTrigger as={DropdownMenuTrigger} class={styles.ToolbarAction}>
-            <LucideAlert size={16} />
+            <EditorActionIcon actionId={'alert'} size={16} />
             <LucideChevronDown size={14} />
           </TooltipTrigger>
           <TooltipContent>Alert</TooltipContent>
@@ -283,12 +268,6 @@ export function Toolbar() {
       </div>
     </div>
   )
-}
-
-const alignIcons = {
-  left: LucideAlignLeft,
-  center: LucideAlignCenter,
-  right: LucideAlignRight,
 }
 
 export function ToolbarAction(
