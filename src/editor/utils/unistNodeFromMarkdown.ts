@@ -20,6 +20,8 @@ import {
   remarkHtmlHardbreak,
   remarkHtmlImage,
   remarkInlineImage,
+  remarkSubscript,
+  remarkSuperscript,
 } from '@prosedoc/markdown-schema'
 import { remarkGitHubAlert } from '../../core/editor/githubAlert/remarkGitHubAlert'
 import { remarkParseLinkToGitHubIssueReference } from '../../core/editor/issue-reference/remarkGitHubIssueReference'
@@ -41,6 +43,8 @@ export function unistNodeFromMarkdown(
         handler: () =>
           remarkParseLinkToGitHubIssueReference({ repository, owner }),
       },
+      { type: 'remarkPlugin', handler: remarkSubscript },
+      { type: 'remarkPlugin', handler: remarkSuperscript },
       { type: 'remarkPlugin', handler: remarkGitHubAlert },
       { type: 'remarkPlugin', handler: remarkFlatList },
       { type: 'remarkPlugin', handler: remarkHtmlImage },

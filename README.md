@@ -100,8 +100,8 @@ This project is built with the following technologies:
 | Strikethrough                       | ✅      |                                      |
 | Bold and nested italic              | ✅      |                                      |
 | All bold and italic                 | ⚠️     | Input rule `***` not supported yet   |
-| Subscript                           | ❌️     |                                      |
-| Superscript                         | ❌️     |                                      |
+| Subscript                           | ✅      |                                      |
+| Superscript                         | ✅      |                                      |
 | Underline                           | ❌️     |                                      |
 | Quoting text                        | ✅      |                                      |
 | Quoting code                        | ✅      |                                      |

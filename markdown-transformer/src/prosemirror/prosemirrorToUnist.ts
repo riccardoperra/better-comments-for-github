@@ -46,6 +46,7 @@ function convertNode(
         "text/html",
       );
       const slice = ProseMirrorDOMParser.fromSchema(schema).parse(doc.body);
+      console.dir(slice.content.toJSON(), { depth: null });
       return slice.content.content;
     }
   }
