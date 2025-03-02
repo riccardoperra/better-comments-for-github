@@ -53,7 +53,6 @@ function convertNode(
 
   const spec = map[type] as NodeSpec | MarkSpec | undefined;
   if (!spec || !spec.unistToNode) {
-    console.log(spec, unistNode);
     console.warn(
       `Couldn't find any way to convert unist node of type "${type}" to a ProseMirror node.`,
     );

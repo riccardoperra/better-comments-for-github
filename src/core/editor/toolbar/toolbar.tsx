@@ -28,6 +28,7 @@ import LucideCog from 'lucide-solid/icons/cog'
 import LucideChevronDown from 'lucide-solid/icons/chevron-down'
 import LucideAlert from 'lucide-solid/icons/alert-octagon'
 import LucideSuperscript from 'lucide-solid/icons/superscript'
+import LucideSubscript from 'lucide-solid/icons/subscript'
 import { For, Match, Switch, createMemo } from 'solid-js'
 import { Dynamic } from 'solid-js/web'
 import { Popover, PopoverContent, PopoverTrigger } from '../popover/popover'
@@ -122,6 +123,20 @@ export function Toolbar() {
       <ToolbarAction
         label={
           <>
+            Subscript (
+            <EditorTextShortcut type={'keyboard'} element={'subscript'} />)
+          </>
+        }
+        isPressed={editor().marks.subscript.isActive()}
+        disabled={!editor().commands.toggleSubscript.canExec()}
+        onClick={() => editor().commands.toggleSubscript()}
+      >
+        <LucideSubscript size={16} />
+      </ToolbarAction>
+
+      <ToolbarAction
+        label={
+          <>
             Superscript (
             <EditorTextShortcut type={'keyboard'} element={'superscript'} />)
           </>
@@ -129,20 +144,6 @@ export function Toolbar() {
         isPressed={editor().marks.superscript.isActive()}
         disabled={!editor().commands.toggleSuperscript.canExec()}
         onClick={() => editor().commands.toggleSuperscript()}
-      >
-        <LucideSuperscript size={16} />
-      </ToolbarAction>
-
-      <ToolbarAction
-        label={
-          <>
-            Subscript (
-            <EditorTextShortcut type={'keyboard'} element={'superscript'} />)
-          </>
-        }
-        isPressed={editor().marks.subscript.isActive()}
-        disabled={!editor().commands.toggleSubscript.canExec()}
-        onClick={() => editor().commands.toggleSubscript()}
       >
         <LucideSuperscript size={16} />
       </ToolbarAction>

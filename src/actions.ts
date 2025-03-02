@@ -48,6 +48,12 @@ export const EditorActionConfig: EditorActionConfigData = {
   code: {
     shortcuts: ['mod-e'],
   },
+  subscript: {
+    shortcuts: ['mod-,'],
+  },
+  superscript: {
+    shortcuts: ['mod-.'],
+  },
   // nodes
   blockquote: {
     shortcuts: ['mod-shift-b', '>'],

@@ -15,12 +15,15 @@
  */
 
 import {
+  canUseRegexLookbehind,
   defineCommands,
+  defineKeymap,
   defineMarkSpec,
   toggleMark,
   union,
 } from 'prosekit/core'
 import { toHtml } from 'hast-util-to-html'
+import { defineMarkInputRule } from 'prosekit/extensions/input-rule'
 import type { Html } from 'mdast'
 
 export function defineSuperscriptMarkdown() {
@@ -51,6 +54,15 @@ export function defineSuperscriptMarkdown() {
     }),
     defineCommands({
       toggleSuperscript: () => toggleMark({ type: 'superscript' }),
+    }),
+    defineMarkInputRule({
+      regex: canUseRegexLookbehind()
+        ? /(?<=\s|^)<sup>([^\s<]|[^\s<][^<]*[^\s<])<\/sup>$/
+        : /<sup>([^\s<]|[^\s<][^<]*[^\s<])<\/sup>$/,
+      type: 'superscript',
+    }),
+    defineKeymap({
+      'mod-.': toggleMark({ type: 'superscript' }),
     }),
   )
 }
