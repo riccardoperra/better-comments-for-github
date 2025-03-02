@@ -1,16 +1,22 @@
-# GitHub Better Comments
+<h1 align="center">
+    GitHub Leave Better Comments
+</h1>
 
-Have you ever though that GitHub editor could be improved? Have you ever wasted time to write a decent review, or just
-to make some comment in a issue, or a discussion?
+<p align="center">
+Ever wasted time to write a decent review, a comment in an issue, or a discussion?
+<br>Maybe the GitHub editor could be improved.
+</p>
 
-This extension completely replaces the native
-editor with a new one that supports real-time preview with a WYSIWYG experience.
+<p align="center">
+An extension that completely replaces the GitHub native editor, <br>with a new block-based with a real-time preview experience. 
+</p>
+
 
 > [!IMPORTANT]
-> 
+>
 > This project is not affiliated with GitHub, Inc. in any way. It is an open source project that just aims to
 > improve commenting on GitHub.
-> 
+>
 > Some data is retrieved via http calls, but no http calls are made using personal data or anything else.
 
 ## Features
