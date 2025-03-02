@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import type { Accessor } from 'solid-js'
 import {
   Show,
   createContext,
@@ -39,11 +40,11 @@ import { forceGithubTextAreaSync } from './utils/forceGithubTextAreaSync'
 import type { SuggestionData } from './utils/loadSuggestionData'
 
 import './editor.css'
-import { unistNodeFromMarkdown } from './utils/unistNodeFromMarkdown'
-import type { GitHubUploaderHandler } from '../core/editor/image/github-file-uploader'
-import { DebugNode } from './DebugNode'
 import { remarkGitHubIssueReferenceSupport } from '../core/editor/issue-reference/remarkGitHubIssueReference'
 import { ExtensionEditorStore } from '../editor.store'
+import { DebugNode } from './DebugNode'
+import { unistNodeFromMarkdown } from './utils/unistNodeFromMarkdown'
+import type { GitHubUploaderHandler } from '../core/editor/image/github-file-uploader'
 import type { Root } from 'mdast'
 
 export interface EditorProps {
@@ -61,6 +62,7 @@ export const EditorRootContext = createContext<{
   initialValue: string
   uploadHandler: GitHubUploaderHandler
   type: EditorType
+  currentUsername: Accessor<string>
   repository: string
   owner: string
 }>()

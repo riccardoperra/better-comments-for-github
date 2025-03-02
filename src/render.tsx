@@ -26,6 +26,7 @@ import type { SuggestionData } from './editor/utils/loadSuggestionData'
 
 export interface RenderEditorProps {
   open?: boolean
+  currentUsername: Accessor<string>
   suggestionData: Accessor<SuggestionData>
   initialValue: string
   uploadHandler: GitHubUploaderHandler
@@ -79,6 +80,7 @@ export function mountEditor(root: HTMLElement, props: RenderEditorProps) {
           >
             <EditorRootContext.Provider
               value={{
+                currentUsername: props.currentUsername,
                 get data() {
                   return props.suggestionData()
                 },
