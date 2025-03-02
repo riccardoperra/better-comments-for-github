@@ -23,23 +23,25 @@ to a new <strong>block-based</strong> editor and a seamless real-time preview ex
 ## Install
 
 <a href="">
-    
-![Chrome Web Store Version](https://img.shields.io/chrome-web-store/v/leave-better-comments-for-github?style=flat&label=%20&color=%230d61b5) Install on Chrome and other chromium browsers
+
+![Chrome Web Store Version](https://img.shields.io/chrome-web-store/v/leave-better-comments-for-github?style=flat&label=%20&color=%230d61b5)
+Install on Chrome and other chromium browsers
 
 </a>
 
 <a href="">
-    
-![Chrome Web Store Version](https://img.shields.io/chrome-web-store/v/leave-better-comments-for-github?style=flat&label=%20&color=%230d61b5) Install on Firefox
+
+![Chrome Web Store Version](https://img.shields.io/chrome-web-store/v/leave-better-comments-for-github?style=flat&label=%20&color=%230d61b5)
+Install on Firefox
 
 </a>
 
 <a href="">
-    
-![Chrome Web Store Version](https://img.shields.io/chrome-web-store/v/leave-better-comments-for-github?style=flat&label=%20&color=%230d61b5) Install on Safari (Mac, iOS and iPadOS)
+
+![Chrome Web Store Version](https://img.shields.io/chrome-web-store/v/leave-better-comments-for-github?style=flat&label=%20&color=%230d61b5)
+Install on Safari (Mac, iOS and iPadOS)
 
 </a>
-
 
 ## Features
 
@@ -85,3 +87,56 @@ This project is built with the following technologies:
 
 - [SolidJS](https://github.com/solidjs/solid)
 - [Kobalte](https://kobalte.dev)
+
+## Features mapping
+
+### Basic formatting syntax
+
+| Feature                             | Status | Notes                                |
+|-------------------------------------|--------|--------------------------------------|
+| Headings                            | ✅      |                                      |
+| Bold                                | ✅      |                                      |
+| Italic                              | ✅      |                                      |
+| Strikethrough                       | ✅      |                                      |
+| Bold and nested italic              | ✅      |                                      |
+| All bold and italic                 | ⚠️     | Input rule `***` not supported yet   |
+| Subscript                           | ❌️     |                                      |
+| Superscript                         | ❌️     |                                      |
+| Underline                           | ❌️     |                                      |
+| Quoting text                        | ✅      |                                      |
+| Quoting code                        | ✅      |                                      |
+| Color models                        | ❌️     |                                      |
+| Links                               | ✅      |                                      |
+| Autolink for valid url              | ✅️     |                                      |
+| Section links                       | ❌️     | I don't think this will be supported |
+| Relative links                      | ❌️     |                                      |
+| Custom anchors                      | ❌️     |                                      |
+| Line breaks                         | ✅️     |                                      |
+| Images                              | ✅️     |                                      |
+| Lists                               | ✅️     |                                      |
+| Nested lists                        | ✅️     |                                      |
+| Task lists                          | ✅️     |                                      |
+| Mentioning                          | ✅️     |                                      |
+| References issues and pull requests | ⚠️     |                                      |
+| Referencing external resources      | ❌️     |                                      |
+| Uploading assets                    | ✅️     |                                      |
+| Emoji                               | ❌️     |                                      |
+| Paragraphs                          | ✅️     |                                      |
+| Footnotes                           | ❌️     |                                      |
+| Alerts                              | ✅️     |                                      |
+| Hiding content with comments        | ❌️     |                                      |
+
+### Advanced formatting
+
+| Feature                 | Status | Notes |
+|-------------------------|--------|-------|
+| Table                   | ❌️     |       |
+| Collapsed section       | ❌️     |       |
+| Code blocks             | ✅️     |       |
+| Diagrams                | ❌️     |       |
+| Auto linked references  | ⚠️     |       |
+| Attach files            | ✅️     |       |
+| Permanent links to code | ❌️     |       |
+| Saved replies           | ❌️     |       |
+
+
