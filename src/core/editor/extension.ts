@@ -72,6 +72,7 @@ export function defineMarkdownExtension() {
     defineBoldMarkdown(),
     defineStrikethroughMarkdown(),
     defineCodeMarkdown(),
+    defineGitHubIssueReference(), // to define before to allow copy-paste from link issue
     defineLinkMarkdown(),
     defineImageMarkdown(),
     defineParagraphMarkdown(),
@@ -84,7 +85,6 @@ export function defineMarkdownExtension() {
     defineVirtualSelection(),
     defineModClickPrevention(),
     defineTableMarkdown(),
-    defineGitHubIssueReference(),
   )
 }
 

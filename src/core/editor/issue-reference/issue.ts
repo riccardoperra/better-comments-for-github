@@ -15,12 +15,10 @@
  */
 
 import {
-  Priority,
   defineCommands,
   defineNodeSpec,
   insertNode,
   union,
-  withPriority,
 } from 'prosekit/core'
 import { createProseMirrorNode } from 'prosemirror-transformer-markdown/prosemirror'
 import { defineSolidNodeView } from 'prosekit/solid'
@@ -89,6 +87,7 @@ export function defineIssueReferenceSpec() {
     parseDOM: [
       {
         tag: `a[href]`,
+        priority: 1000,
         getAttrs: (dom: HTMLElement): GitHubIssueReferenceAttrs | false => {
           const href = (dom as HTMLAnchorElement).href
           const match = matchGitHubIssueLinkReference(href)
@@ -147,8 +146,8 @@ export function defineIssueReferenceCommands() {
  */
 export function defineGitHubIssueReference() {
   return union(
-    withPriority(defineIssueReferenceSpec(), Priority.high),
-    withPriority(defineIssueReferencePasteRule(), Priority.high),
+    defineIssueReferenceSpec(),
+    defineIssueReferencePasteRule(),
     defineIssueReferenceCommands(),
     defineSolidNodeView({
       name: 'gh-issue-reference',

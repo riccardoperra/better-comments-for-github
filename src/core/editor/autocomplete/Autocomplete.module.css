@@ -14,31 +14,16 @@
  * limitations under the License.
  */
 
-.directiveMenu {
-  --slash-menu-background: var(--overlay-bgColor);
-  --slash-menu-width: 185px;
-  --slash-menuitem-focused-background: var(--color-accent-emphasis);
-  --slash-menuitem-focused-text: white;
-  --slash-menuitem-text-size: 14.5px;
-  --slash-menuitem-gap: 12px;
-
-  outline: none;
-  position: relative;
-  display: block;
-  max-height: 300px;
-  min-width: var(--slash-menu-width);
-  user-select: none;
-  overflow: auto;
-  white-space: nowrap;
-  padding: var(--base-size-4);
-  z-index: 10;
-  box-sizing: border-box;
-  border-radius: var(--borderRadius-medium);
-  border: none;
-  transition: opacity 75ms ease-in-out;
-  opacity: 0;
-  background-color: var(--slash-menu-background);
-  box-shadow: var(
+.autocompleteMenu {
+  --autocomplete-menu-background: var(--overlay-bgColor);
+  --autocomplete-menu-min-width: 185px;
+  --autocomplete-menu-max-height: 300px;
+  --autocomplete-menu-max-width: 600px;
+  --autocomplete-menu-padding-inline: var(--base-size-6);
+  --autocomplete-menu-padding-block: var(--base-size-6);
+  --autocomplete-menu-zindex: 10;
+  --autocomplete-menu-border-radius: var(--borderRadius-large);
+  --autocomplete-menu-shadow: var(
     --shadow-floating-small,
     var(
       --color-overlay-shadow,
@@ -46,32 +31,72 @@
       0 16px 32px rgba(1, 4, 9, 0.85)
     )
   );
+  --autocomplete-menuitem-text-size: 14.5px;
+  --autocomplete-menuitem-gap: 12px;
+  --autocomplete-menuitem-height: 30px;
+  --autocomplete-menuitem-min-width: 8rem;
+  --autocomplete-menuitem-border-radius: var(--borderRadius-medium);
+  --autocomplete-menuitem-padding-inline: var(--base-size-12);
+  --autocomplete-menuitem-padding-block: var(--base-size-6);
+  --autocomplete-menuitem-lh: 16px;
+  --autocomplete-menuitem-text-color: var(
+    --fgColor-default,
+    var(--color-fg-default, #e6edf3)
+  );
+  --autocomplete-menuitem-focused-background: var(--control-bgColor-active);
+  --autocomplete-menuitem-focused-text: white;
+
+  outline: none;
+  position: relative;
+  display: block;
+  padding-inline: var(--autocomplete-menu-padding-inline);
+  padding-block: var(--autocomplete-menu-padding-block);
+  max-height: var(--autocomplete-menu-max-height);
+  min-width: var(--autocomplete-menu-min-width);
+  max-width: var(--autocomplete-menu-max-width);
+  user-select: none;
+  overflow: auto;
+  white-space: nowrap;
+  z-index: var(--autocomplete-menu-zindex);
+  box-sizing: border-box;
+  border-radius: var(--autocomplete-menu-border-radius);
+  border: none;
+  transition: opacity 150ms ease-in-out;
+  opacity: 0;
+  background-color: var(--autocomplete-menu-background);
+  box-shadow: var(--autocomplete-menu-shadow);
+
+  &[data-state='closed'] {
+    opacity: 0;
+  }
 
   &[data-state='open'] {
     opacity: 1;
   }
 }
 
-.directiveMenuItem {
+.autocompleteMenuList {
+  overflow: auto;
+}
+
+.autocompleteMenuItem {
   position: relative;
   display: flex;
-  gap: var(--slash-menuitem-gap);
+  gap: var(--autocomplete-menuitem-gap);
   align-items: center;
-  min-width: 8rem;
-  height: 30px;
-  border-radius: 4px;
-  padding-inline: var(--base-size-12);
+  min-width: var(--autocomplete-menuitem-min-width);
+  min-height: var(--autocomplete-menuitem-height);
+  border-radius: var(--autocomplete-menuitem-border-radius);
+  padding-inline: var(--autocomplete-menuitem-padding-inline);
+  padding-block: var(--autocomplete-menuitem-padding-block);
   box-sizing: border-box;
-  font-size: var(--slash-menuitem-text-size);
+  font-size: var(--autocomplete-menuitem-text-size);
   cursor: default;
   user-select: none;
-  white-space: nowrap;
   outline: none;
-  padding: 6px 8px;
-  line-height: 16px;
-  min-height: 5px;
+  line-height: var(--autocomplete-menuitem-lh);
   transition: background 33.333ms linear;
-  color: var(--fgColor-default, var(--color-fg-default, #e6edf3));
+  color: var(--autocomplete-menuitem-text-color);
   appearance: none;
   background: unset;
   border: unset;
@@ -79,14 +104,15 @@
   text-align: unset;
   margin-top: unset;
   margin-bottom: unset;
+  white-space: nowrap;
 
   &[data-focused] {
-    background-color: var(--control-bgColor-active);
-    color: var(--slash-menuitem-focused-text);
+    background-color: var(--autocomplete-menuitem-focused-background);
+    color: var(--autocomplete-menuitem-focused-text);
   }
 }
 
-.directiveMenuItemAvatar {
+.autocompleteMenuItemAvatar {
   border-radius: 50%;
   width: 20px;
   height: 20px;

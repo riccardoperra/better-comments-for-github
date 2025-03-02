@@ -285,9 +285,7 @@ export default defineUnlistedScript(() => {
             get open() {
               return showOldEditor()
             },
-            get suggestionData() {
-              return suggestionData()
-            },
+            suggestionData,
             get uploadHandler() {
               return uploadHandler
             },

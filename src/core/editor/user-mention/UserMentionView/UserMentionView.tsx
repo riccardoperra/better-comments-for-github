@@ -42,7 +42,7 @@ export function UserMentionView(props: NodeViewContextProps) {
   const attrs = () => context().node.attrs as MentionAttrs
   const username = createMemo(() => attrs().id)
 
-  const link = createMemo(() => `https://github.com/users/${username()}`)
+  const link = createMemo(() => `https://github.com/${username()}`)
 
   const [hoverContent] = createResource(username, (username) => {
     const linkValue = untrack(link)

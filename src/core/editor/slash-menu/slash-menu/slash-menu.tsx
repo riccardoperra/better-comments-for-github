@@ -1,10 +1,4 @@
 import { useEditor } from 'prosekit/solid'
-import {
-  AutocompleteEmpty,
-  AutocompleteItem,
-  AutocompleteList,
-  AutocompletePopover,
-} from 'prosekit/solid/autocomplete'
 
 import LucideHeading1 from 'lucide-solid/icons/heading-1'
 import LucideHeading2 from 'lucide-solid/icons/heading-2'
@@ -18,6 +12,12 @@ import LucideDivider from 'lucide-solid/icons/minus'
 import LucideListOrdered from 'lucide-solid/icons/list-ordered'
 import LucideCodeBlock from 'lucide-solid/icons/code-square'
 import { For, Show } from 'solid-js'
+import {
+  AutocompleteEmpty,
+  AutocompleteItem,
+  AutocompleteList,
+  AutocompletePopover,
+} from '../../autocomplete/Autocomplete'
 
 import { githubAlertTypeMap } from '../../githubAlert/config'
 import { EditorTextShortcut } from '../../kbd/kbd'
@@ -181,13 +181,11 @@ export default function SlashMenu() {
   return (
     <AutocompletePopover
       regex={/(?:^|(?<=\s))\/(?!\/)[^/]*$/iu}
-      class={styles.slashMenu}
       fitViewport={false}
+      class={styles.slashMenu}
     >
       <AutocompleteList>
-        <AutocompleteEmpty class={styles.slashMenuItem}>
-          No results
-        </AutocompleteEmpty>
+        <AutocompleteEmpty>No results</AutocompleteEmpty>
 
         <div class={styles.slashMenuSectionGroup}>
           <For each={GroupedMenuItems}>
@@ -203,7 +201,10 @@ export default function SlashMenu() {
                       <AutocompleteItem
                         class={styles.slashMenuItem}
                         value={item.label}
-                        onSelect={() => item.command(editor())}
+                        onSelect={() => {
+                          // hacky workaround to wait for '/ (slash)' to be removed before inserting a new element
+                          queueMicrotask(() => item.command(editor()))
+                        }}
                       >
                         <Show when={item.icon}>
                           {(icon) => {
