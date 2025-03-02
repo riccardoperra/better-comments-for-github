@@ -177,16 +177,6 @@ export default defineUnlistedScript(() => {
               return
             }
 
-            const slashCommandSurface = await t(
-              'Get slash command surface',
-              () => {
-                return (
-                  tabContainer.closest('.js-slash-command-surface') ??
-                  new DomAssertionError('No slash command surface')
-                )
-              },
-            )
-
             let mountFooter: undefined | (() => void)
 
             const mountFooterResult = await t(
@@ -263,6 +253,15 @@ export default defineUnlistedScript(() => {
                   return result
                 }
 
+                const slashCommandSurface = await t(
+                  'Get footer from slash command surface',
+                  () => {
+                    return (
+                      tabContainer.closest('.js-slash-command-surface') ??
+                      new DomAssertionError('No slash command surface')
+                    )
+                  },
+                )
                 if (!isAssertionError(slashCommandSurface)) {
                   const el = slashCommandSurface.lastElementChild
                   return () => {

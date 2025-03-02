@@ -79,7 +79,20 @@ export function suite(name: string): TestHandler & { collect: () => void } {
       collect: () => {
         console.group(`Test suite - ${name}`)
         for (const assertion of assertions) {
+          let res = ''
+          const originalGroupStart = console.group
+          const originalGroupEnd = console.group
+          const originalLog = console.log
+          console.log = (arg0) => {
+            res += `${arg0} ${COLORS.reset}\n`
+          }
+          console.group = (args) => (res += `${args}\n`)
+          console.groupEnd = () => (res += ``)
           log(assertion, 0)
+          console.log = originalLog
+          console.group = originalGroupStart
+          console.groupEnd = originalGroupEnd
+          console.log(res)
         }
         console.groupEnd()
       },
@@ -99,16 +112,16 @@ const COLORS = {
 
 function log(assertion: AssertionResult, depth: number = 0) {
   if (assertion.isGroup) {
-    console.group(`${assertion.name}`)
+    console.group(`${logDepth(depth)}▶ ${assertion.name}`)
     for (const nestedAssertion of assertion.assertions) {
       log(nestedAssertion, depth + 1)
     }
     console.groupEnd()
   } else {
     if (assertion.error) {
-      logError(assertion.name, assertion.error)
+      logError(assertion.name, assertion.error, depth)
     } else {
-      logPass(assertion.name)
+      logPass(assertion.name, depth)
     }
   }
 }
@@ -124,6 +137,5 @@ function logPass(name: string, depth: number = 0) {
 }
 
 function logDepth(depth: number) {
-  if (depth === 0) return ''
   return ' '.repeat(depth * 2)
 }
