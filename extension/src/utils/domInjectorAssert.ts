@@ -1,172 +1,129 @@
-/*
- * Copyright 2025 Riccardo Perra
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-declare const tag: unique symbol
-
-export const FAILED = Symbol('failed') as unknown as {
-  message: string
-  [tag]: '__failed__'
-}
-
 export class DomAssertionError {
   message: string
+
   constructor(message: string) {
     this.message = message
   }
 }
 
-export type DomAssertionFailed = typeof FAILED
+class AssertionResult {
+  name: string
+  error: DomAssertionError | null = null
 
-type AssertFn = <T>(
-  name: string,
-  check: (_: {
-    fail: (_: string | Error) => typeof FAILED
-    assert: AssertFn
-    step: (message: string) => void
-  }) => T,
-) => T | typeof FAILED
+  assertions: Array<AssertionResult> = []
 
-export class InjectDomAssertion {
-  readonly id: string
-
-  constructor(id: string) {
-    this.id = id
+  get isGroup() {
+    return this.assertions.length > 0
   }
 
-  isFailed(data: unknown): data is typeof FAILED {
-    return data === FAILED
-  }
-
-  assert: AssertFn = (name, check) => {
-    const fail = (message: string | Error) => message as never
-    const assertFactory: (depth: number) => AssertFn =
-      (depth) => (name, check) => {
-        const step = (step: string) =>
-          console.info(
-            `[${this.id}] ${depth ? ' '.repeat(depth * 2) : ''} ℹ️ ${step}`,
-          )
-
-        try {
-          const data = check({ fail, assert: assertFactory(depth + 1), step })
-          console.log(
-            '\x1b[32m%s\x1b[0m',
-            `[${this.id}] ${depth ? ' '.repeat(depth * 2) : ''} ✅ ${name}`,
-          )
-          return data
-        } catch (e) {
-          console.log(
-            '\x1b[31m%s\x1b[0m',
-            `[${this.id}] ${depth ? ' '.repeat(depth * 2) : ''} ❌ Assertion failed: ${String(e)}`,
-          )
-        }
-        return FAILED
-      }
-
-    return assertFactory(0)(name, check)
-  }
-}
-
-export function createSuite(id: string, name: string) {
-  return new DescribeExecutor(id, name, 0)
-}
-
-class DescribeExecutor {
-  readonly id: string
-  readonly name: string
-  readonly depth: number = 0
-
-  readonly entries: Array<DescribeExecutor | TestExecutor<unknown>> = []
-
-  constructor(id: string, name: string, depth = 0) {
-    this.id = id
+  constructor(name: string) {
     this.name = name
-    this.depth = depth
   }
+}
 
-  isFailed(value: unknown): value is DomAssertionError {
-    return value instanceof DomAssertionError
+type TestHandlerFnResult<T> = T | DomAssertionError
+
+async function tAssert<T>(
+  this: { assertions: Array<any> },
+  name: string,
+  fn: (
+    child: TestHandler,
+  ) => Promise<TestHandlerFnResult<T>> | TestHandlerFnResult<T>,
+): Promise<TestHandlerFnResult<T>> {
+  const assertion = new AssertionResult(name)
+  this.assertions.push(assertion)
+  try {
+    const childAssert = tAssert.bind({
+      assertions: assertion.assertions,
+    }) as TestHandler
+    const result = await fn(childAssert)
+    if (result instanceof DomAssertionError) {
+      assertion.error = result
+    }
+    return result
+  } catch (e) {
+    if (e instanceof DomAssertionError) {
+      assertion.error = e
+      return e
+    }
+    throw e
   }
+}
 
-  test<T>(
-    name: string,
-    condition: (_: { fail: (_: string | Error) => DomAssertionFailed }) => T,
-  ): DomAssertionFailed | T {
-    const fail = (message: string | Error): any =>
-      typeof message === 'string'
-        ? new DomAssertionError(message)
-        : new DomAssertionError(String(message))
-    const test = new TestExecutor(this.id, name, this, () =>
-      condition({
-        fail,
-      }),
-    )
-    this.entries.push(test)
-    return test.run()
-  }
+export function isAssertionError(value: unknown): value is DomAssertionError {
+  return value instanceof DomAssertionError
+}
 
-  collect(): void {
-    console.group(`Test result for ${this.id}`)
-    for (const entry of this.entries) {
-      if (entry instanceof DescribeExecutor) {
-        entry.collect()
-      } else {
-        entry.log()
-      }
+type TestHandler = (<T>(
+  name: string,
+  fn: (
+    child: TestHandler,
+  ) => TestHandlerFnResult<T> | Promise<TestHandlerFnResult<T>>,
+) => Promise<TestHandlerFnResult<T>>) & {
+  collect: () => void
+}
+
+export function suite(name: string): TestHandler & { collect: () => void } {
+  const assertions = [] as Array<AssertionResult>
+
+  return Object.assign(
+    function <T>(
+      name: string,
+      fn: (
+        child: TestHandler,
+      ) => TestHandlerFnResult<T> | Promise<TestHandlerFnResult<T>>,
+    ): Promise<TestHandlerFnResult<T>> {
+      return tAssert.call({ assertions }, name, fn) as any
+    },
+    {
+      collect: () => {
+        console.group(`Test suite - ${name}`)
+        for (const assertion of assertions) {
+          log(assertion, 0)
+        }
+        console.groupEnd()
+      },
+    },
+  )
+}
+
+const COLORS = {
+  reset: '\x1b[0m',
+  red: '\x1b[31m',
+  green: '\x1b[32m',
+  yellow: '\x1b[33m',
+  blue: '\x1b[34m',
+  cyan: '\x1b[36m',
+  bold: '\x1b[1m',
+}
+
+function log(assertion: AssertionResult, depth: number = 0) {
+  if (assertion.isGroup) {
+    console.group(`${assertion.name}`)
+    for (const nestedAssertion of assertion.assertions) {
+      log(nestedAssertion, depth + 1)
     }
     console.groupEnd()
-  }
-}
-
-class TestExecutor<T> {
-  readonly id: string
-  readonly name: string
-  readonly describe: DescribeExecutor
-  readonly condition: () => T
-
-  result: T | DomAssertionFailed | null = null
-
-  constructor(
-    id: string,
-    name: string,
-    describe: DescribeExecutor,
-    condition: () => T,
-  ) {
-    this.id = id
-    this.name = name
-    this.describe = describe
-    this.condition = condition
-  }
-
-  log(): void {
-    if (this.result === FAILED) {
-      console.log('\x1b[31m%s\x1b[0m', `[${this.name}] ❌ Failed`)
+  } else {
+    if (assertion.error) {
+      logError(assertion.name, assertion.error)
     } else {
-      console.log('\x1b[32m%s\x1b[0m', `[${this.name}] ✅ Ok`)
-    }
-  }
-
-  run(): DomAssertionFailed | T {
-    try {
-      this.result = this.condition()
-      return this.result
-    } catch (e) {
-      this.result = e as DomAssertionFailed
-      return this.result
+      logPass(assertion.name)
     }
   }
 }
 
-function t() {}
+function logError(name: string, result: DomAssertionError, depth: number = 0) {
+  console.log(
+    `${logDepth(depth)}${COLORS.red}✗ ${name}: ${COLORS.reset}${result.message}`,
+  )
+}
+
+function logPass(name: string, depth: number = 0) {
+  console.log(`${logDepth(depth)}${COLORS.green}✓ ${name}`)
+}
+
+function logDepth(depth: number) {
+  if (depth === 0) return ''
+  return ' '.repeat(depth * 2)
+}

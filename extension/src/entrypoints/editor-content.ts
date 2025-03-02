@@ -36,8 +36,10 @@ import type { Accessor, ComponentProps } from 'solid-js'
 import type { EditorType } from '../../../src/editor/editor'
 
 import './styles.css'
+import { isAssertionError, suite } from '@/utils/domInjectorAssert'
 
 export default defineUnlistedScript(() => {
+  let id = 0
   createRoot(() => {
     const owner = getOwner()
 
@@ -46,7 +48,11 @@ export default defineUnlistedScript(() => {
         window.location.pathname,
       )
 
-      return runWithOwner(owner, async () => {
+      const currentId = id++
+
+      const t = suite(`Editor ${currentId}`)
+
+      await runWithOwner(owner, async () => {
         const [showOldEditor, setShowOldEditor] = createSignal(true)
 
         function renderSwitch(
@@ -76,182 +82,289 @@ export default defineUnlistedScript(() => {
         let type: EditorType
         let uploadHandler: GitHubUploaderHandler
 
-        const jsCommentField = element.querySelector<HTMLTextAreaElement>(
-          'textarea.js-comment-field',
+        const isNativeTextarea = await t(
+          'Check is using native textarea instead of React component',
+          async (t) => {
+            const jsCommentField = element.querySelector<HTMLTextAreaElement>(
+              'textarea.js-comment-field',
+            )
+
+            if (!jsCommentField) {
+              return new DomAssertionError('No native textarea found')
+            }
+
+            type = 'native'
+            textarea = jsCommentField
+            findTextarea = () =>
+              element.querySelector<HTMLTextAreaElement>(
+                'textarea.js-comment-field',
+              )!
+
+            await t('Check for text-expander element', async () => {
+              const textExpander =
+                jsCommentField.closest<HTMLElement>('text-expander')
+
+              if (textExpander) {
+                const { emojiUrl, issueUrl, mentionUrl } = textExpander.dataset
+
+                const [issues, mentionableUsers] = await Promise.all([
+                  await tryGetReferences(issueUrl!),
+                  await fetchMentionableUsers(mentionUrl!),
+                ])
+
+                suggestionData = () => ({
+                  mentions: mentionableUsers.map((data) => ({
+                    avatarUrl: getUserAvatarId(data.id),
+                    identifier: data.login,
+                    description: data.name,
+                    participant: data.participant,
+                  })),
+                  emojis: [],
+                  references: issues,
+                  savedReplies: [],
+                })
+              }
+            })
+
+            const fileAttachmentTransfer = await t(
+              'Check for file attachment element',
+              async () =>
+                jsCommentField.closest<AttachmentHandlerElement>(
+                  'file-attachment',
+                ) ?? new DomAssertionError('No file attachment element found'),
+            )
+            if (!isAssertionError(fileAttachmentTransfer)) {
+              uploadHandler = new GitHubUploaderNativeHandler(
+                fileAttachmentTransfer,
+              )
+            }
+
+            const classes = [] as Array<string>
+
+            const tabContainer = await t(
+              'Search for closest tab-container of the textarea',
+              async (t) => {
+                // Search for closest tab-container of the textarea.
+                // This element is the wrapper of the entire comment box.
+                let tabContainer = await t(
+                  'Search for closest tab-container',
+                  async () => {
+                    return (
+                      jsCommentField.closest<HTMLElement>('tab-container') ??
+                      new DomAssertionError('No tab-container found')
+                    )
+                  },
+                )
+                if (isAssertionError(tabContainer)) {
+                  tabContainer = await t(
+                    'Search for closest CommentBox',
+                    async () => {
+                      return (
+                        jsCommentField.closest<HTMLElement>('.CommentBox') ??
+                        new DomAssertionError('No .CommentBox found')
+                      )
+                    },
+                  )
+                  if (tabContainer) {
+                    classes.push('m-2')
+                  }
+                }
+                return tabContainer
+              },
+            )
+
+            if (isAssertionError(tabContainer)) {
+              return
+            }
+
+            const slashCommandSurface = await t(
+              'Get slash command surface',
+              () => {
+                return (
+                  tabContainer.closest('.js-slash-command-surface') ??
+                  new DomAssertionError('No slash command surface')
+                )
+              },
+            )
+
+            let mountFooter: undefined | (() => void)
+
+            const mountFooterResult = await t(
+              'Retrieve footer element to mount switch button',
+              async (t) => {
+                let result = await t(
+                  'Get footer from #new_comment_form',
+                  async (t) => {
+                    const newCommentForm = await t(
+                      'Get #new_comment_form',
+                      () =>
+                        jsCommentField.closest<HTMLFormElement>(
+                          '#new_comment_form',
+                        ) ?? new DomAssertionError('No #new_comment_form'),
+                    )
+
+                    if (isAssertionError(newCommentForm)) return newCommentForm
+
+                    const newCommentFormActions = await t(
+                      'Get #partial-new-comment-form-actions',
+                      () => {
+                        return (
+                          newCommentForm.querySelector(
+                            '#partial-new-comment-form-actions',
+                          ) ?? new DomAssertionError('')
+                        )
+                      },
+                    )
+
+                    if (isAssertionError(newCommentFormActions))
+                      return newCommentFormActions
+
+                    return () => {
+                      const actionsWrapper =
+                        newCommentFormActions.firstElementChild
+                      if (actionsWrapper) {
+                        const switchRoot = document.createElement('div')
+                        actionsWrapper.prepend(switchRoot)
+                        renderSwitch(switchRoot)
+                      }
+                    }
+                  },
+                )
+                if (!isAssertionError(result)) {
+                  return result
+                }
+
+                result = await t(
+                  'Get footer from .js-inline-comment-form',
+                  () => {
+                    const commentForm = jsCommentField.closest(
+                      '.js-inline-comment-form',
+                    )
+                    if (!commentForm)
+                      return new DomAssertionError('No comment form')
+
+                    return () => {
+                      const formActions =
+                        commentForm.querySelector<HTMLElement>('.form-actions')
+                      if (formActions) {
+                        const switchRoot = document.createElement('div')
+                        switchRoot.style.display = 'inline'
+                        formActions.prepend(switchRoot)
+                        renderSwitch(switchRoot, {
+                          size: 'medium',
+                          variant: 'secondary',
+                        })
+                      }
+                    }
+                  },
+                )
+
+                if (!isAssertionError(result)) {
+                  return result
+                }
+
+                if (!isAssertionError(slashCommandSurface)) {
+                  const el = slashCommandSurface.lastElementChild
+                  return () => {
+                    if (el) {
+                      const switchRoot = document.createElement('div')
+                      switchRoot.style.display = 'inline'
+                      el.prepend(switchRoot)
+                      renderSwitch(switchRoot, {
+                        size: 'medium',
+                        variant: 'secondary',
+                      })
+                    }
+                  }
+                }
+
+                return result
+              },
+            )
+
+            if (!isAssertionError(mountFooterResult)) {
+              mountFooter = mountFooterResult
+            }
+
+            // We should create our element before the tab container
+            mountElFunction = (node) => {
+              mountFooter?.()
+
+              effect(() => {
+                const show = showOldEditor()
+                show
+                  ? tabContainer.style.setProperty('display', 'none')
+                  : tabContainer.style.removeProperty('display')
+              })
+
+              node.classList.add(...classes)
+              node.style.width = 'auto'
+              tabContainer.insertAdjacentElement('beforebegin', node)
+            }
+          },
         )
 
         // Old comment component of GitHub, This is still present in pull requests
-        if (jsCommentField) {
-          type = 'native'
-          textarea = jsCommentField
-          findTextarea = () =>
-            element.querySelector<HTMLTextAreaElement>(
-              'textarea.js-comment-field',
-            )!
-
-          const textExpander =
-            jsCommentField.closest<HTMLElement>('text-expander')
-          if (textExpander) {
-            const { emojiUrl, issueUrl, mentionUrl } = textExpander.dataset
-
-            const [issues, mentionableUsers] = await Promise.all([
-              await tryGetReferences(issueUrl!),
-              await fetchMentionableUsers(mentionUrl!),
-            ])
-
-            suggestionData = () => ({
-              mentions: mentionableUsers.map((data) => ({
-                avatarUrl: getUserAvatarId(data.id),
-                identifier: data.login,
-                description: data.name,
-                participant: data.participant,
-              })),
-              emojis: [],
-              references: issues,
-              savedReplies: [],
-            })
-          }
-
-          const fileAttachmentTransfer =
-            jsCommentField.closest<AttachmentHandlerElement>('file-attachment')
-          if (fileAttachmentTransfer) {
-            uploadHandler = new GitHubUploaderNativeHandler(
-              fileAttachmentTransfer,
-            )
-          }
-
-          const classes = [] as Array<string>
-          // Search for closest tab-container of the textarea.
-          // This element is the wrapper of the entire comment box.
-          let tabContainer =
-            jsCommentField.closest<HTMLElement>('tab-container')
-          if (!tabContainer) {
-            // When tab container is not present, user is trying to edit an existing pull request comment
-            tabContainer = jsCommentField.closest<HTMLElement>('.CommentBox')
-            classes.push('m-2')
-          }
-
-          if (!tabContainer) {
-            // TODO: add log
-            return
-          }
-
-          const slashCommandSurface = tabContainer.closest(
-            '.js-slash-command-surface',
-          )
-
-          const newCommentForm =
-            jsCommentField.closest<HTMLFormElement>('#new_comment_form')
-
-          let mountFooter: undefined | (() => void)
-
-          // new comment at the bottom of the page
-          if (newCommentForm) {
-            mountFooter = () => {
-              const commentFooter = newCommentForm.querySelector(
-                '#partial-new-comment-form-actions',
-              )
-              if (commentFooter) {
-                const actionsWrapper = commentFooter.firstElementChild
-                if (actionsWrapper) {
-                  const switchRoot = document.createElement('div')
-                  actionsWrapper.prepend(switchRoot)
-                  renderSwitch(switchRoot)
-                }
-              }
-            }
-          } else {
-            // inline comment form is for thread reply
-            const inlineCommentForm = jsCommentField.closest(
-              '.js-inline-comment-form',
-            )
-            if (inlineCommentForm) {
-              mountFooter = () => {
-                const formActions =
-                  inlineCommentForm.querySelector<HTMLElement>('.form-actions')
-                if (formActions) {
-                  const switchRoot = document.createElement('div')
-                  switchRoot.style.display = 'inline'
-                  formActions.prepend(switchRoot)
-                  renderSwitch(switchRoot, {
-                    size: 'medium',
-                    variant: 'secondary',
-                  })
-                }
-              }
-            } else {
-              if (slashCommandSurface) {
-                const el = slashCommandSurface.lastElementChild
-                mountFooter = () => {
-                  if (el) {
-                    const switchRoot = document.createElement('div')
-                    switchRoot.style.display = 'inline'
-                    el.prepend(switchRoot)
-                    renderSwitch(switchRoot, {
-                      size: 'medium',
-                      variant: 'secondary',
-                    })
-                  }
-                }
-              }
-            }
-          }
-
-          // We should create our element before the tab container
-          mountElFunction = (node) => {
-            mountFooter?.()
-
-            effect(() => {
-              const show = showOldEditor()
-              show
-                ? tabContainer.style.setProperty('display', 'none')
-                : tabContainer.style.removeProperty('display')
-            })
-
-            node.classList.add(...classes)
-            node.style.width = 'auto'
-            tabContainer.insertAdjacentElement('beforebegin', node)
-          }
-        } else {
+        if (isAssertionError(isNativeTextarea)) {
           type = 'react'
           const suggestionDataResult = createSuggestionData(element)
           uploadHandler = createGitHubUploaderReactHandler(element)
           suggestionData = suggestionDataResult.suggestionData
-          const moduleContainer = element.querySelector(
-            '[class*="MarkdownEditor-module__container"]',
-          )!
-          textarea =
-            moduleContainer.querySelector<HTMLTextAreaElement>('textarea')!
-          findTextarea = () =>
-            moduleContainer.querySelector<HTMLTextAreaElement>('textarea')!
 
-          const footerModule = element.querySelector(
-            'footer[class*="Footer-module"]',
+          const moduleContainer = await t(
+            'Check has markdown module container',
+            () => {
+              const moduleContainer = element.querySelector<HTMLElement>(
+                '[class*="MarkdownEditor-module__container"]',
+              )
+              if (!moduleContainer) throw new DomAssertionError('')
+              return moduleContainer
+            },
           )
 
-          mountElFunction = (node) => {
-            if (footerModule) {
-              const actionsWrapper = footerModule.firstElementChild
-              if (actionsWrapper) {
-                const switchRoot = document.createElement('div')
-                actionsWrapper.prepend(switchRoot)
-                renderSwitch(switchRoot)
+          if (!isAssertionError(moduleContainer)) {
+            const _textarea = await t(
+              'Check for textarea',
+              () =>
+                moduleContainer.querySelector<HTMLTextAreaElement>(
+                  'textarea',
+                ) ?? new DomAssertionError(''),
+            )
 
-                effect(() => {
-                  const show = showOldEditor()
-                  const wrapper = element.querySelector<HTMLElement>(
-                    '[class*="MarkdownEditor-module__inputWrapper"]',
-                  )
-                  if (wrapper) {
-                    show
-                      ? wrapper.style.setProperty('display', 'none')
-                      : wrapper.style.removeProperty('display')
-                  }
-                })
+            findTextarea = () =>
+              moduleContainer.querySelector<HTMLTextAreaElement>('textarea')!
+
+            if (!isAssertionError(_textarea)) textarea = _textarea
+
+            const footerModule = await t('Check for footer module', () => {
+              return (
+                element.querySelector('footer[class*="Footer-module"]') ??
+                new DomAssertionError('')
+              )
+            })
+            if (!isAssertionError(footerModule)) {
+              mountElFunction = (node) => {
+                const actionsWrapper = footerModule.firstElementChild
+                if (actionsWrapper) {
+                  const switchRoot = document.createElement('div')
+                  actionsWrapper.prepend(switchRoot)
+                  renderSwitch(switchRoot)
+
+                  effect(() => {
+                    const show = showOldEditor()
+                    const wrapper = element.querySelector<HTMLElement>(
+                      '[class*="MarkdownEditor-module__inputWrapper"]',
+                    )
+                    if (wrapper) {
+                      show
+                        ? wrapper.style.setProperty('display', 'none')
+                        : wrapper.style.removeProperty('display')
+                    }
+                  })
+                }
+                moduleContainer.prepend(node)
               }
             }
-
-            moduleContainer.prepend(node)
           }
         }
 
@@ -264,6 +377,8 @@ export default defineUnlistedScript(() => {
         root.id = 'github-better-comment'
         root.className = styles.injectedEditorContent
 
+        console.log('set root')
+
         runWithOwner(owner, () => {
           const [textareaRef, setTextareaRef] = createSignal(textarea)
           // Since I didn't really find a good way to detect if the current textarea
@@ -271,7 +386,7 @@ export default defineUnlistedScript(() => {
           // TODO: potential perforamnce issue
           const observer = new MutationObserver((mutation) => {
             const ref = textareaRef()
-            if (!ref.isConnected) setTextareaRef(findTextarea())
+            if (!ref?.isConnected) setTextareaRef(findTextarea())
           })
           observer.observe(element, {
             childList: true,
@@ -301,6 +416,8 @@ export default defineUnlistedScript(() => {
           })
         })
       })
+
+      t.collect()
     })
   })
 })
