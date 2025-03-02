@@ -137,6 +137,8 @@ export default defineUnlistedScript(() => {
               uploadHandler = new GitHubUploaderNativeHandler(
                 fileAttachmentTransfer,
               )
+
+              const x = 0
             }
 
             const classes = [] as Array<string>
