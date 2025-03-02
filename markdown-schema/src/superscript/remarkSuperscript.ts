@@ -15,7 +15,8 @@
  */
 
 import { visit } from 'unist-util-visit'
-import type { Html, Paragraph, PhrasingContent, Root } from 'mdast'
+import { wrapMixedHtmlContent } from '../internal/wrapHtml'
+import type { PhrasingContent, Root } from 'mdast'
 
 export const superscriptType = 'superscript'
 
@@ -38,30 +39,11 @@ export function remarkSuperscript() {
   return (root: Root) => {
     visit(root, 'html', (node, index, parent) => {
       if (!parent || index === undefined) return
-      if (node.value === '<sup>') {
-        let endNode: Html | null = null
-        const size = parent.children.length
-        let nodeIndex: number | null = null
-        const nodeChildren = [] as Array<any>
-        let i = index + 1
-        while (i < size) {
-          const el = parent.children.at(i)
-          if (el && el.type === 'html' && el.value === '</sup>') {
-            nodeIndex = i
-            endNode = parent.children[i] as Html
-            break
-          }
-          nodeChildren.push(el)
-          i++
-        }
-
-        if (endNode && nodeIndex !== null) {
-          ;(parent as Paragraph).children.splice(index, nodeIndex, {
-            type: 'superscript',
-            children: nodeChildren,
-          } as any)
-        }
-      }
+      wrapMixedHtmlContent(node, index, parent, {
+        type: superscriptType,
+        enterTag: '<sup>',
+        exitTag: '</sup>',
+      })
     })
   }
 }

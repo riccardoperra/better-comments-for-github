@@ -46,6 +46,7 @@ import {
   defineSuperscriptMarkdown,
   defineTableMarkdown,
   defineTextMarkdown,
+  defineUnderlineMarkdown,
 } from '@prosedoc/markdown-schema'
 import { defineTextAlign } from 'prosekit/extensions/text-align'
 import { defineSolidNodeView } from 'prosekit/solid'
@@ -76,6 +77,7 @@ export function defineMarkdownExtension() {
     defineCodeMarkdown(),
     defineSuperscriptMarkdown(),
     defineSubscriptMarkdown(),
+    defineUnderlineMarkdown(),
     defineGitHubIssueReference(), // to define before to allow copy-paste from link issue
     defineLinkMarkdown(),
     defineImageMarkdown(),

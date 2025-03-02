@@ -18,31 +18,32 @@ import { visit } from 'unist-util-visit'
 import { wrapMixedHtmlContent } from '../internal/wrapHtml'
 import type { PhrasingContent, Root } from 'mdast'
 
-export const subscriptType = 'subscript'
+export const underlineType = 'underline'
 
-export interface Subscript extends Node {
+export interface Underline extends Node {
   /**
    * Node type of mdast list.
    */
-  type: typeof subscriptType
+  type: typeof underlineType
 
   children: Array<PhrasingContent>
 }
 
 declare module 'mdast' {
   interface PhrasingContentMap {
-    subscript: Subscript
+    underline: Underline
   }
 }
 
-export function remarkSubscript() {
+export function remarkUnderline() {
   return (root: Root) => {
     visit(root, 'html', (node, index, parent) => {
       if (!parent || index === undefined) return
+
       wrapMixedHtmlContent(node, index, parent, {
-        type: subscriptType,
-        enterTag: '<sub>',
-        exitTag: '</sub>',
+        type: underlineType,
+        enterTag: '<ins>',
+        exitTag: '</ins>',
       })
     })
   }
