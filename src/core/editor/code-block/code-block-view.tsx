@@ -34,6 +34,7 @@ import { SearchableSelectValue } from '../searchable-select/SearchableSelectCont
 import { NodeViewWrapper } from '../nodeviews/node-view'
 import { ConfigStore } from '../../../config.store'
 import styles from './code-block-view.module.css'
+import { CodeMirrorView } from './codemirror-view'
 import type {
   CodeBlockAttrs,
   ShikiBundledLanguageInfo,
@@ -118,13 +119,21 @@ export default function CodeBlockView(props: NodeViewContextProps) {
             </Show>
           </button>
         </div>
-        <pre ref={props.contentRef} data-language={language()}></pre>
+
+        <Show
+          fallback={
+            <>
+              <pre ref={props.contentRef} data-language={language()}></pre>
+            </>
+          }
+          when={language() === 'typescript'}
+        >
+          <CodeMirrorView />
+        </Show>
       </div>
     </NodeViewWrapper>
   )
 }
-
-const cacheMap = new WeakMap()
 
 export function CodeBlockLanguageSelector(props: {
   value: ShikiBundledLanguageInfo | null

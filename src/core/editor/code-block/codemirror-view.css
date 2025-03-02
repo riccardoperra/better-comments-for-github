@@ -14,16 +14,32 @@
  * limitations under the License.
  */
 
-import { defineStore } from 'statebuilder'
-
-export interface ConfigState {
-  showDebug: false | 'md' | 'node'
-  nativeSelectForLanguageSelector: boolean
-  useCodeMirrorForTypescriptCode: boolean
+.quick-info-punctuation {
+  color: #ccc;
 }
 
-export const ConfigStore = defineStore<ConfigState>(() => ({
-  showDebug: import.meta.env.MODE === 'development' ? 'md' : false,
-  nativeSelectForLanguageSelector: false,
-  useCodeMirrorForTypescriptCode: true,
-}))
+.quick-info-functionName {
+  color: indigo;
+}
+
+.quick-info-keyword {
+  color: blue;
+}
+
+.quick-info-parameterName {
+  color: green;
+}
+
+.cm-twoslash {
+  color: gray;
+  background-color: #eee;
+  padding: 0 0.25em;
+}
+
+.CodeMirror {
+  border: 1px solid #eee;
+  height: auto;
+}
+.CodeMirror pre {
+  white-space: pre !important;
+}
