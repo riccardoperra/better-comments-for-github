@@ -94,19 +94,19 @@ This project is built with the following technologies:
 
 | Feature                             | Status | Notes                                |
 |-------------------------------------|--------|--------------------------------------|
-| Headings                            | ✅      |                                      |
-| Bold                                | ✅      |                                      |
-| Italic                              | ✅      |                                      |
-| Strikethrough                       | ✅      |                                      |
-| Bold and nested italic              | ✅      |                                      |
+| Headings                            | ✅     |                                      |
+| Bold                                | ✅     |                                      |
+| Italic                              | ✅     |                                      |
+| Strikethrough                       | ✅     |                                      |
+| Bold and nested italic              | ✅     |                                      |
 | All bold and italic                 | ⚠️     | Input rule `***` not supported yet   |
-| Subscript                           | ✅      |                                      |
-| Superscript                         | ✅      |                                      |
-| Underline                           | ❌️     |                                      |
-| Quoting text                        | ✅      |                                      |
-| Quoting code                        | ✅      |                                      |
+| Subscript                           | ✅     |                                      |
+| Superscript                         | ✅     |                                      |
+| Underline                           | ✅     |                                      |
+| Quoting text                        | ✅     |                                      |
+| Quoting code                        | ✅     |                                      |
 | Color models                        | ❌️     |                                      |
-| Links                               | ✅      |                                      |
+| Links                               | ✅     |                                      |
 | Autolink for valid url              | ✅️     |                                      |
 | Section links                       | ❌️     | I don't think this will be supported |
 | Relative links                      | ❌️     |                                      |
