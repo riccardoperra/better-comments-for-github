@@ -11,7 +11,7 @@ Ever wasted time to write a decent review, a comment in an issue, or a discussio
 An extension that completely replaces the GitHub native editor, <br>with a new block-based with a real-time preview experience. 
 </p>
 
-<img src="./assets/promo1.png" alt="Promotional image">
+<img src="./assets/promo2.png" alt="Promotional image">
 
 ---
 
