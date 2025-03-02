@@ -11,13 +11,34 @@ Ever wasted time to write a decent review, a comment in an issue, or a discussio
 An extension that completely replaces the GitHub native editor, <br>with a new block-based with a real-time preview experience. 
 </p>
 
+---
 
 > [!IMPORTANT]
 >
 > This project is not affiliated with GitHub, Inc. in any way. It is an open source project that just aims to
 > improve commenting on GitHub.
->
 > Some data is retrieved via http calls, but no http calls are made using personal data or anything else.
+
+## Install
+
+<a href="">
+    
+![Chrome Web Store Version](https://img.shields.io/chrome-web-store/v/leave-better-comments-for-github?style=flat&label=%20&color=%230d61b5) Install on Chrome and other chromium browsers
+
+</a>
+
+<a href="">
+    
+![Chrome Web Store Version](https://img.shields.io/chrome-web-store/v/leave-better-comments-for-github?style=flat&label=%20&color=%230d61b5) Install on Firefox
+
+</a>
+
+<a href="">
+    
+![Chrome Web Store Version](https://img.shields.io/chrome-web-store/v/leave-better-comments-for-github?style=flat&label=%20&color=%230d61b5) Install on Safari (Mac, iOS and iPadOS)
+
+</a>
+
 
 ## Features
 
