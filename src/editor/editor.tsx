@@ -42,10 +42,10 @@ import type { SuggestionData } from './utils/loadSuggestionData'
 import './editor.css'
 import { remarkGitHubIssueReferenceSupport } from '../core/editor/issue-reference/remarkGitHubIssueReference'
 import { ExtensionEditorStore } from '../editor.store'
-import { DebugNode } from './DebugNode'
 import { unistNodeFromMarkdown } from './utils/unistNodeFromMarkdown'
-import type { GitHubUploaderHandler } from '../core/editor/image/github-file-uploader'
+import { DebugNode } from './DebugNode'
 import type { Root } from 'mdast'
+import type { GitHubUploaderHandler } from '../core/editor/image/github-file-uploader'
 
 export interface EditorProps {
   suggestions: SuggestionData
@@ -170,6 +170,7 @@ export function Editor(props: EditorProps) {
     <div data-editor-wrapper={''}>
       <ProsekitEditor
         editor={editor}
+        emojis={props.suggestions.emojis}
         mentions={props.suggestions.mentions ?? []}
         issues={props.suggestions.references ?? []}
       />

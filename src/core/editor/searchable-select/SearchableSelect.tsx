@@ -18,6 +18,7 @@ import { createSignal, onCleanup, splitProps, useContext } from 'solid-js'
 
 import * as SearchPrimitive from '@kobalte/core/search'
 import { clsx } from 'clsx'
+import { createControllableBooleanSignal } from '@kobalte/core'
 import { Popover, PopoverContent, PopoverTrigger } from '../popover/popover'
 import styles from './SearchableSelect.module.css'
 import { SearchableSelectContext } from './SearchableSelectContext'
@@ -61,12 +62,29 @@ const SearchControl = <T, U extends ValidComponent = 'div'>(
   props: PolymorphicProps<U, SearchControlProps<T>>,
 ) => {
   const [local, others] = splitProps(props as SearchControlProps<T>, ['class'])
-  return <SearchPrimitive.Control class={clsx(local.class)} {...others} />
+  return (
+    <SearchPrimitive.Control
+      class={clsx(local.class)}
+      {...others}
+      onKeyDown={(x) => {
+        console.log(x)
+      }}
+    />
+  )
 }
 
-export function SearchableSelectProvider(props: FlowProps) {
+export function SearchableSelectProvider(
+  props: FlowProps<{
+    popoverOpen?: boolean
+    onPopoverOpen?: (value: boolean) => void
+  }>,
+) {
   const [initialPopoverRender, setInitialPopoverRender] = createSignal(true)
-  const [popoverOpen, setPopoverOpen] = createSignal(false)
+  const [popoverOpen, setPopoverOpen] = createControllableBooleanSignal({
+    value: () => props.popoverOpen,
+    onChange: (value) => props.onPopoverOpen?.(value),
+    defaultValue: () => false,
+  })
   const [anchorRef, setAnchorRef] = createSignal<HTMLElement | null>(null)
 
   const onPopoverKeyDown = (event: KeyboardEvent) => {
@@ -132,7 +150,7 @@ export function SearchableSelectRoot<
   OptGroup = never,
   T extends ValidComponent = 'div',
 >(props: PolymorphicProps<T, SearchRootProps<Option, OptGroup, T>>) {
-  const context = useContext(SearchableSelectContext)!
+  const context = useContext(SearchableSelectContext)
 
   onCleanup(() => {
     props.onInputChange?.('')
@@ -143,13 +161,13 @@ export function SearchableSelectRoot<
       {...props}
       open
       onInputChange={(value) => {
-        if (context.initialPopoverRender()) {
+        if (context?.initialPopoverRender()) {
           return
         }
         props.onInputChange?.(value)
       }}
       onChange={(value) => {
-        context.setPopoverOpen(false)
+        context?.setPopoverOpen(false)
         props.onChange?.(value as any)
       }}
     />

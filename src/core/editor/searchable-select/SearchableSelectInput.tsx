@@ -22,13 +22,17 @@ import type { ValidComponent } from 'solid-js'
 import type { PolymorphicProps } from '@kobalte/core/polymorphic'
 
 type SearchInputProps<T extends ValidComponent = 'input'> =
-  SearchPrimitive.SearchInputProps<T> & { class?: string | undefined }
+  SearchPrimitive.SearchInputProps<T> & {
+    class?: string | undefined
+    autofocus?: boolean
+  }
 
 export const SearchableSelectInput = <T extends ValidComponent = 'input'>(
   props: PolymorphicProps<T, SearchInputProps<T>>,
 ) => {
   const [local, others] = splitProps(props as SearchInputProps, ['class'])
-  const context = useContext(SearchableSelectContext)!
+  const context = useContext(SearchableSelectContext)
+
   return (
     <SearchPrimitive.Input
       class={clsx(
@@ -36,13 +40,19 @@ export const SearchableSelectInput = <T extends ValidComponent = 'input'>(
         local.class,
       )}
       ref={(ref) => {
-        if (untrack(context.initialPopoverRender)) {
-          onMount(() => {
-            setTimeout(() => {
-              ref.value = ''
-              context.setInitialPopoverRender(false)
-            }, 0)
-          })
+        if (props.autofocus) {
+          ref.focus()
+        }
+
+        if (context?.initialPopoverRender) {
+          if (untrack(context.initialPopoverRender)) {
+            onMount(() => {
+              setTimeout(() => {
+                ref.value = ''
+                context.setInitialPopoverRender(false)
+              }, 0)
+            })
+          }
         }
       }}
       {...others}
