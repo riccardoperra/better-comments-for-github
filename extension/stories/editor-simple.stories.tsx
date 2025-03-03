@@ -87,6 +87,7 @@ export const Alert: Story = {
 > Useful information that users should know, even when skimming content.
 
 > [!TIP]
+>
 > Helpful advice for doing things better or more easily.
 
 > [!IMPORTANT]
