@@ -19,15 +19,18 @@
     "@eslint/js": "^9.20.0",
     "@primer/css": "^21.5.1",
     "@tanstack/config": "^0.16.2",
+    "@testing-library/jest-dom": "^6.6.3",
     "eslint": "^9.20.1",
     "eslint-plugin-unused-imports": "^4.1.4",
+    "jsdom": "^26.0.0",
     "prettier": "^3.5.1",
     "sass": "^1.85.0",
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.24.1",
     "vite": "^6.1.0",
     "vite-plugin-solid": "^2.11.1",
-    "vite-plugin-web-extension": "^4.4.3"
+    "vite-plugin-web-extension": "^4.4.3",
+    "vitest": "^3.0.5"
   },
   "dependencies": {
     "@floating-ui/dom": "^1.6.13",

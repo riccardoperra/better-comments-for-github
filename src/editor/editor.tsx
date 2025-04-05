@@ -56,8 +56,7 @@ export interface EditorProps {
 }
 
 export type EditorType = 'native' | 'react'
-
-export const EditorRootContext = createContext<{
+export type EditorRootContextProps = {
   data: SuggestionData
   textarea: HTMLTextAreaElement
   initialValue: string
@@ -66,7 +65,9 @@ export const EditorRootContext = createContext<{
   currentUsername: Accessor<string>
   repository: string
   owner: string
-}>()
+}
+
+export const EditorRootContext = createContext<EditorRootContextProps>()
 
 function sanitizeMarkdownValue(value: string) {
   return (
