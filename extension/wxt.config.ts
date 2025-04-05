@@ -3,8 +3,9 @@ import { statebuilder } from 'statebuilder/compiler'
 
 // See https://wxt.dev/api/config.html
 export default defineConfig({
-  extensionApi: 'chrome',
-  srcDir: './src',
+  srcDir: 'src',
+  publicDir: 'src/public',
+  modulesDir: 'src/modules',
   outDir: './dist',
   vite: (env) => ({
     plugins: [
