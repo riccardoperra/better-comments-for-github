@@ -16,28 +16,27 @@
 
 import { defineNodeSpec, union } from 'prosekit/core'
 import { defineHeading } from 'prosekit/extensions/heading'
-import { createProseMirrorNode } from 'prosemirror-transformer-markdown/prosemirror'
-import type { HeadingAttrs } from 'prosekit/extensions/heading'
-import type { Heading, PhrasingContent } from 'mdast'
+import {
+  fromProseMirrorNode,
+  toProseMirrorNode,
+} from '@prosemirror-processor/unist/mdast'
+import type { Heading } from 'mdast'
 
 export function defineHeadingMarkdown() {
   return union(
     defineHeading(),
     defineNodeSpec({
       name: 'heading',
-      toUnist: (node, children): Array<Heading> => [
-        {
-          type: 'heading',
-          children: children as Array<PhrasingContent>,
-          depth: node.attrs.level,
-        },
-      ],
-      unistToNode(node, schema, children, context) {
-        const heading = node as Heading
-        return createProseMirrorNode('heading', schema, children, {
-          level: heading.depth,
-        } satisfies HeadingAttrs)
-      },
+      // @ts-expect-error TODO: fix types
+      __toUnist: fromProseMirrorNode('heading', (node) => ({
+        depth: node.attrs.level,
+      })),
+      __fromUnist: toProseMirrorNode('heading', (node) => {
+        const _node = node as Heading
+        return {
+          level: _node.depth,
+        }
+      }),
     }),
   )
 }

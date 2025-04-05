@@ -15,7 +15,10 @@
  */
 
 import { useStateUpdate } from 'prosekit/solid'
-import { createSignal, onMount } from 'solid-js'
+import { For, Match, Switch, onMount } from 'solid-js'
+import { clsx } from 'clsx'
+import { ConfigStore } from '../config.store'
+import { ExtensionEditorStore } from '../editor.store'
 import styles from './DebugNode.module.css'
 import type { Accessor } from 'solid-js'
 import type { Editor } from 'prosekit/core'
@@ -27,7 +30,10 @@ export interface DebugNodeProps {
 }
 
 export function DebugNode(props: DebugNodeProps) {
-  const [value, setValue] = createSignal<any>()
+  const configStore = ConfigStore.provide()
+  const editorStore = ExtensionEditorStore.provide()
+  const mode = () => configStore.get.showDebug
+  const setMode = (mode: 'md' | 'node') => configStore.set('showDebug', mode)
 
   onMount(() => {
     const tree = debugNodeTree(
@@ -35,7 +41,8 @@ export function DebugNode(props: DebugNodeProps) {
       props.editor.state,
       () => props.editor.state.selection,
     )
-    setValue(formatTree(tree))
+
+    editorStore.set('nodeString', formatTree(tree))
   })
 
   useStateUpdate(
@@ -45,14 +52,49 @@ export function DebugNode(props: DebugNodeProps) {
         props.editor.state,
         () => props.editor.state.selection,
       )
-      setValue(formatTree(tree))
+      editorStore.set('nodeString', formatTree(tree))
     },
     { editor: props.editor },
   )
 
   return (
-    <div class={styles.DebugAnchor}>
-      <pre innerHTML={value()} />
+    <div class={styles.debugAnchor}>
+      <div
+        class={`SegmentedControl SegmentedControl--small ${styles.toggleMode}`}
+      >
+        <For
+          each={
+            [
+              { label: 'Tree', type: 'node' },
+              { label: 'Markdown', type: 'md' },
+            ] as const
+          }
+        >
+          {(item) => (
+            <div
+              class={clsx('SegmentedControl-item', {
+                'SegmentedControl-item--selected': mode() === item.type,
+              })}
+            >
+              <button
+                class={'Button Button--invisible'}
+                onClick={() => setMode(item.type)}
+              >
+                {item.label}
+              </button>
+            </div>
+          )}
+        </For>
+      </div>
+
+      <Switch>
+        <Match when={mode() === 'node'}>
+          <pre innerHTML={editorStore.get.nodeString} />
+        </Match>
+        <Match when={mode() === 'md'}>
+          <pre innerHTML={editorStore.get.markdown} />
+        </Match>
+      </Switch>
     </div>
   )
 }

@@ -15,20 +15,10 @@
  */
 
 import { useEditor } from 'prosekit/solid'
-import LucideBold from 'lucide-solid/icons/bold'
-import LucideItalic from 'lucide-solid/icons/italic'
-import LucideStrike from 'lucide-solid/icons/strikethrough'
-import LucideCode from 'lucide-solid/icons/code'
-import LucideCodeBlock from 'lucide-solid/icons/code-square'
-import LucideBlockquote from 'lucide-solid/icons/text-quote'
-import LucideAlignLeft from 'lucide-solid/icons/align-left'
-import LucideAlignCenter from 'lucide-solid/icons/align-center'
-import LucideAlignRight from 'lucide-solid/icons/align-right'
 import LucideCog from 'lucide-solid/icons/cog'
-import LucideChevronDown from 'lucide-solid/icons/chevron-down'
-import LucideAlert from 'lucide-solid/icons/alert-octagon'
-import { For, Match, Switch, createMemo } from 'solid-js'
+import { For, createMemo } from 'solid-js'
 import { Dynamic } from 'solid-js/web'
+import LucideChevronDown from 'lucide-solid/icons/chevron-down'
 import { Popover, PopoverContent, PopoverTrigger } from '../popover/popover'
 import { Tooltip, TooltipContent, TooltipTrigger } from '../tooltip/tooltip'
 import {
@@ -38,9 +28,12 @@ import {
   DropdownMenuTrigger,
 } from '../dropdown-menu/dropdown-menu'
 import { githubAlertTypeMap } from '../githubAlert/config'
+import { Settings } from '../settings/settings'
+import { EditorTextShortcut } from '../kbd/kbd'
+import { EditorActionIcon } from '../action-icon/ActionIcon'
 import styles from './toolbar.module.css'
 import type { GithubAlertType } from '../githubAlert/config'
-import type { FlowProps } from 'solid-js'
+import type { FlowProps, JSX } from 'solid-js'
 import type { NodeAction } from 'prosekit/core'
 import type { EditorExtension } from '../extension'
 
@@ -77,57 +70,127 @@ export function Toolbar() {
   return (
     <div class={styles.Toolbar}>
       <ToolbarAction
-        label={'Bold'}
+        label={
+          <>
+            Bold (<EditorTextShortcut type={'keyboard'} element={'bold'} />)
+          </>
+        }
         isPressed={editor().marks.bold.isActive()}
         disabled={!editor().commands.toggleBold.canExec()}
         onClick={() => editor().commands.toggleBold()}
       >
-        <LucideBold size={16} />
+        <EditorActionIcon actionId={'bold'} size={16} />
       </ToolbarAction>
       <ToolbarAction
-        label={'Italic'}
+        label={
+          <>
+            Italic (<EditorTextShortcut type={'keyboard'} element={'italic'} />)
+          </>
+        }
         isPressed={editor().marks.italic.isActive()}
         disabled={!editor().commands.toggleItalic.canExec()}
         onClick={() => editor().commands.toggleItalic()}
       >
-        <LucideItalic size={16} />
+        <EditorActionIcon actionId={'italic'} size={16} />
       </ToolbarAction>
       <ToolbarAction
-        label={'Strike'}
+        label={
+          <>
+            Strike (
+            <EditorTextShortcut type={'keyboard'} element={'strikethrough'} />)
+          </>
+        }
         isPressed={editor().marks.strike.isActive()}
         disabled={!editor().commands.toggleStrike.canExec()}
         onClick={() => editor().commands.toggleStrike()}
       >
-        <LucideStrike size={16} />
+        <EditorActionIcon actionId={'strikethrough'} size={16} />
+      </ToolbarAction>
+
+      <ToolbarAction
+        label={
+          <>
+            Underline (
+            <EditorTextShortcut type={'keyboard'} element={'underline'} />)
+          </>
+        }
+        isPressed={editor().marks.underline.isActive()}
+        disabled={!editor().commands.toggleUnderline.canExec()}
+        onClick={() => editor().commands.toggleUnderline()}
+      >
+        <EditorActionIcon actionId={'underline'} size={16} />
+      </ToolbarAction>
+
+      <ToolbarAction
+        label={
+          <>
+            Subscript (
+            <EditorTextShortcut type={'keyboard'} element={'subscript'} />)
+          </>
+        }
+        isPressed={editor().marks.subscript.isActive()}
+        disabled={!editor().commands.toggleSubscript.canExec()}
+        onClick={() => editor().commands.toggleSubscript()}
+      >
+        <EditorActionIcon actionId={'subscript'} size={16} />
+      </ToolbarAction>
+
+      <ToolbarAction
+        label={
+          <>
+            Superscript (
+            <EditorTextShortcut type={'keyboard'} element={'superscript'} />)
+          </>
+        }
+        isPressed={editor().marks.superscript.isActive()}
+        disabled={!editor().commands.toggleSuperscript.canExec()}
+        onClick={() => editor().commands.toggleSuperscript()}
+      >
+        <EditorActionIcon actionId={'superscript'} size={16} />
       </ToolbarAction>
 
       <div class={styles.Separator}></div>
 
       <ToolbarAction
-        label={'Code block'}
-        isPressed={editor().nodes.codeBlock.isActive()}
-        disabled={!editor().commands.toggleCodeBlock.canExec()}
-        onClick={() => editor().commands.toggleCodeBlock()}
-      >
-        <LucideCodeBlock size={16} />
-      </ToolbarAction>
-
-      <ToolbarAction
-        label={'Blockquote'}
+        label={
+          <>
+            Blockquote (
+            <EditorTextShortcut type={'keyboard'} element={'blockquote'} />)
+          </>
+        }
         isPressed={editor().nodes.blockquote.isActive()}
         disabled={!editor().commands.toggleBlockquote.canExec()}
         onClick={() => editor().commands.toggleBlockquote()}
       >
-        <LucideBlockquote size={16} />
+        <EditorActionIcon actionId={'blockquote'} size={16} />
       </ToolbarAction>
 
       <ToolbarAction
-        label={'Code'}
+        label={
+          <>
+            Code block (
+            <EditorTextShortcut type={'keyboard'} element={'codeBlock'} />)
+          </>
+        }
+        isPressed={editor().nodes.codeBlock.isActive()}
+        disabled={!editor().commands.toggleCodeBlock.canExec()}
+        onClick={() => editor().commands.toggleCodeBlock()}
+      >
+        <EditorActionIcon actionId={'codeBlock'} size={16} />
+      </ToolbarAction>
+
+      <ToolbarAction
+        label={
+          <>
+            Code (
+            <EditorTextShortcut type={'keyboard'} element={'code'} />)
+          </>
+        }
         isPressed={editor().marks.code.isActive()}
         disabled={!editor().commands.toggleCode.canExec()}
         onClick={() => editor().commands.toggleCode()}
       >
-        <LucideCode size={16} />
+        <EditorActionIcon actionId={'code'} size={16} />
       </ToolbarAction>
 
       <div class={styles.Separator}></div>
@@ -135,18 +198,10 @@ export function Toolbar() {
       <DropdownMenu>
         <Tooltip>
           <TooltipTrigger as={DropdownMenuTrigger} class={styles.ToolbarAction}>
-            <Switch>
-              <Match when={currentTextAlign() === 'left'}>
-                <LucideAlignLeft size={16} />
-              </Match>
-              <Match when={currentTextAlign() === 'center'}>
-                <LucideAlignCenter size={16} />
-              </Match>
-              <Match when={currentTextAlign() === 'right'}>
-                <LucideAlignRight size={16} />
-              </Match>
-            </Switch>
-            <LucideChevronDown size={14} />
+            <EditorActionIcon
+              actionId={`textAlign>${currentTextAlign()}`}
+              size={16}
+            />
           </TooltipTrigger>
           <TooltipContent>Align text</TooltipContent>
         </Tooltip>
@@ -163,7 +218,14 @@ export function Toolbar() {
                 >
                   <Dynamic component={alignIcons[value]} size={16} />
                 </TooltipTrigger>
-                <TooltipContent>Align {value}</TooltipContent>
+                <TooltipContent>
+                  Align {value} (
+                  <EditorTextShortcut
+                    type={'keyboard'}
+                    element={`textAlign>${value}`}
+                  />
+                  )
+                </TooltipContent>
               </Tooltip>
             )}
           </For>
@@ -173,10 +235,10 @@ export function Toolbar() {
       <DropdownMenu>
         <Tooltip>
           <TooltipTrigger as={DropdownMenuTrigger} class={styles.ToolbarAction}>
-            <LucideAlert size={16} />
+            <EditorActionIcon actionId={'alert'} size={16} />
             <LucideChevronDown size={14} />
           </TooltipTrigger>
-          <TooltipContent>Align text</TooltipContent>
+          <TooltipContent>Alert</TooltipContent>
         </Tooltip>
         <DropdownMenuContent>
           <For each={Object.keys(githubAlertTypeMap) as Array<GithubAlertType>}>
@@ -194,28 +256,26 @@ export function Toolbar() {
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <Popover>
-        <PopoverTrigger class={styles.ToolbarAction}>
-          <LucideCog size={16} />
-        </PopoverTrigger>
-        <PopoverContent>My content</PopoverContent>
-      </Popover>
+      <div class={'ml-auto d-flex'}>
+        <Popover placement={'bottom-end'}>
+          <PopoverTrigger class={styles.ToolbarAction}>
+            <LucideCog size={16} />
+          </PopoverTrigger>
+          <PopoverContent>
+            <Settings />
+          </PopoverContent>
+        </Popover>
+      </div>
     </div>
   )
-}
-
-const alignIcons = {
-  left: LucideAlignLeft,
-  center: LucideAlignCenter,
-  right: LucideAlignRight,
 }
 
 export function ToolbarAction(
   props: FlowProps<{
     isPressed: boolean
     disabled: boolean
-    onClick: () => void
-    label: string
+    onClick?: () => void
+    label: JSX.Element
   }>,
 ) {
   return (
@@ -223,7 +283,8 @@ export function ToolbarAction(
       <TooltipTrigger
         data-pressed={props.isPressed}
         disabled={props.disabled}
-        onClick={() => props.onClick()}
+        type={'button'}
+        onClick={() => props.onClick?.()}
         class={styles.ToolbarAction}
       >
         {props.children}

@@ -74,3 +74,92 @@ export async function tryGetReferences(
 export function getUserAvatarId(userId: number) {
   return `https://avatars.githubusercontent.com/u/${userId}?v=4`
 }
+
+export async function getImagePreviewUrl(
+  href: string,
+  project: string,
+  repository: string,
+): Promise<string> {
+  return new Promise<string>((resolve, reject) => {
+    const formData = new FormData()
+    formData.set('text', `<img src="${href}" />`)
+    formData.set('project', project)
+    formData.set('issue', project)
+    formData.set('repository', repository)
+    formData.set('subject_type', 'issue')
+
+    fetch('/preview', {
+      body: formData,
+      method: 'POST',
+      headers: { 'GitHub-Verified-Fetch': 'true' },
+    }).then(async (response) => {
+      if (!response.ok) {
+        reject(new Error('Failed to parse response'))
+      }
+      const htmlText = await response.text()
+
+      const getUrlFromHtml = (html: string) => {
+        const regex = /https:\/\/[^"'\s]+/i
+        const match = html.match(regex)
+        return match ? match[0] : null
+      }
+
+      resolve(getUrlFromHtml(htmlText)!)
+    })
+  })
+}
+
+export function getIssueHoverCardUrl(path: string) {
+  // TODO: global store?
+  const subjectTag = document
+    .querySelector<HTMLMetaElement>('meta[name="hovercard-subject-tag"]')
+    ?.content.replace('issue:', '')
+    .replace('pull_request', '')
+  return `${path}/hovercard?subject=issue:${subjectTag}&current_path=${window.location.pathname}`
+}
+
+export function getPullHoverCardUrl(path: string) {
+  // TODO: global store?
+  const subjectTag = document
+    .querySelector<HTMLMetaElement>('meta[name="hovercard-subject-tag"]')
+    ?.content.replace('issue:', '')
+    .replace('pull_request', '')
+  return `${path}/hovercard?pull_request:${subjectTag}&current_path=${window.location.pathname}`
+}
+
+export function getUserHoverCardUrl(username: string) {
+  // TODO: global store?
+  const subjectTag = document
+    .querySelector<HTMLMetaElement>('meta[name="hovercard-subject-tag"]')
+    ?.content.replace('issue:', '')
+    .replace('pull_request', '')
+
+  return `https://github.com/users/${username}/hovercard?subject=pull_request:${subjectTag}&current_path=${window.location.pathname}`
+}
+
+export function getUserHoverCardContent(path: string) {
+  const url = getUserHoverCardUrl(path)
+  return fetch(url, {
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+    },
+  }).then((res) => res.text())
+}
+
+export function getPullRequestHoverCardContent(path: string) {
+  const url = getPullHoverCardUrl(path)
+  return fetch(url, {
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+    },
+  }).then((res) => res.text())
+}
+
+export function getIssueHoverCardContent(path: string) {
+  const url = getIssueHoverCardUrl(path)
+  return fetch(url, {
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+    },
+  }).then((res) => res.text())
+}

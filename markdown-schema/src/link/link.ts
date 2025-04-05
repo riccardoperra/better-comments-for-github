@@ -14,10 +14,16 @@
  * limitations under the License.
  */
 
-import { defineMarkSpec, union } from 'prosekit/core'
+import { addMark, defineCommands, defineMarkSpec, union } from 'prosekit/core'
 import { defineLink } from 'prosekit/extensions/link'
-import type { LinkAttrs } from 'prosekit/extensions/link'
-import type { Link, PhrasingContent } from 'mdast'
+import {
+  fromProseMirrorMark,
+  toProseMirrorMark,
+} from '@prosemirror-processor/unist/mdast'
+import type { LinkAttrs as $LinkAttrs } from 'prosekit/extensions/link'
+import { Link } from 'mdast'
+
+export type LinkAttrs = $LinkAttrs & { title?: string | null }
 
 export function defineLinkMarkdown() {
   return union(
@@ -29,28 +35,31 @@ export function defineLinkMarkdown() {
           default: null,
         },
       },
-      toUnist(node, mark): Link {
-        const attrs = mark.attrs as LinkAttrs & { title?: string }
-        return {
-          type: 'link',
-          children: [node] as Array<PhrasingContent>,
-          url: attrs.href,
-          title: attrs.title,
-        }
-      },
-      unistToNode(node, schema, children, context) {
-        const link = node as Link
-        return children.map((child) =>
-          child.mark(
-            child.marks.concat(
-              schema.marks.link.create({
-                href: link.url,
-                title: link.title,
-              }),
-            ),
-          ),
+      __toUnist: (mark, node, children, context) => {
+        return fromProseMirrorMark('link', (mark) => {
+          const attrs = mark.attrs as LinkAttrs & { title?: string }
+          return {
+            url: attrs.href,
+            title: attrs.title,
+          }
+        })(
+          mark,
+          node,
+          children,
+          // @ts-expect-error TODO: fix context type
+          context,
         )
       },
+      __fromUnist: toProseMirrorMark('link', (link) => {
+        const _link = link as Link
+        return {
+          href: _link.url,
+          title: _link.title,
+        }
+      }),
+    }),
+    defineCommands({
+      addLink: (attrs: LinkAttrs) => addMark({ type: 'link', attrs }),
     }),
   )
 }

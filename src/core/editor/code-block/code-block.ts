@@ -18,6 +18,7 @@ import { defineKeymap, union } from 'prosekit/core'
 import { defineCodeBlockKeymap } from 'prosekit/extensions/code-block'
 import { defineSolidNodeView } from 'prosekit/solid'
 import { defineCodeBlockMarkdown } from '@prosedoc/markdown-schema'
+import { TextSelection } from 'prosemirror-state'
 import CodeBlockView from './code-block-view'
 
 const TAB_CHAR = '\u00A0\u00A0'
@@ -32,6 +33,31 @@ export function defineCodeBlock() {
     }),
     defineCodeBlockKeymap(),
     defineKeymap({
+      'Mod-a': (state, dispatch) => {
+        const { $head, from, to } = state.selection
+        const parent = $head.parent
+        if (parent.isTextblock && parent.type.spec.code) {
+          const start = $head.start($head.depth)
+          const end = $head.end()
+          const isSelectingAll = from === start && to === end
+          if (isSelectingAll) {
+            return false
+          }
+          if (from >= start && to <= end) {
+            if (dispatch) {
+              const tr = state.tr.setSelection(
+                TextSelection.create(state.doc, start, end),
+              )
+              dispatch(tr)
+            }
+            return true
+          }
+
+          return false
+        }
+
+        return false
+      },
       Tab: (state, dispatch) => {
         if (!state.selection.empty) {
           return false

@@ -14,7 +14,14 @@
  * limitations under the License.
  */
 
-import { createContext, createEffect, onMount } from 'solid-js'
+import type { Accessor } from 'solid-js'
+import {
+  Show,
+  createContext,
+  createEffect,
+  onCleanup,
+  useContext,
+} from 'solid-js'
 import { createEditor } from 'prosekit/core'
 import { useDocChange } from 'prosekit/solid'
 import { markdownFromUnistNode } from 'prosemirror-transformer-markdown/unified'
@@ -27,13 +34,18 @@ import { ProsekitEditor } from '../core/editor/editor'
 import { defineExtension } from '../core/editor/extension'
 
 import 'prosemirror-example-setup/style/style.css'
+import { ConfigStore } from '../config.store'
 import { setEditorContent } from './utils/setContent'
 import { forceGithubTextAreaSync } from './utils/forceGithubTextAreaSync'
 import type { SuggestionData } from './utils/loadSuggestionData'
 
 import './editor.css'
+import { remarkGitHubIssueReferenceSupport } from '../core/editor/issue-reference/remarkGitHubIssueReference'
+import { ExtensionEditorStore } from '../editor.store'
 import { DebugNode } from './DebugNode'
 import { unistNodeFromMarkdown } from './utils/unistNodeFromMarkdown'
+import type { GitHubUploaderHandler } from '../core/editor/image/github-file-uploader'
+import type { Root } from 'mdast'
 
 export interface EditorProps {
   suggestions: SuggestionData
@@ -48,64 +60,122 @@ export const EditorRootContext = createContext<{
   data: SuggestionData
   textarea: HTMLTextAreaElement
   initialValue: string
+  uploadHandler: GitHubUploaderHandler
   type: EditorType
+  currentUsername: Accessor<string>
+  repository: string
+  owner: string
 }>()
 
+function sanitizeMarkdownValue(value: string) {
+  return (
+    value
+      // Handle Alerts:  > [!NOTE]
+      .replaceAll('> \\[!', '> [!')
+      // Handle github links: https:\//github.com
+      .replaceAll('https\\://github', 'https://github')
+  )
+}
+
 export function Editor(props: EditorProps) {
+  const context = useContext(EditorRootContext)!
+  const configStore = ConfigStore.provide()
+  const editorStore = ExtensionEditorStore.provide()
+
   const extension = defineExtension()
   const editor = createEditor({
     extension,
   })
 
   createEffect(() => {
-    props.textarea.addEventListener('input', (event) => {
-      if (!(event as { fromEditor?: boolean }).fromEditor) {
-        const value = props.textarea.value
-        const unistNode = unistNodeFromMarkdown(value)
-        const pmNode = convertUnistToProsemirror(unistNode, editor.schema)
-        editor.setContent(pmNode)
+    const abortController = new AbortController()
+    onCleanup(() => abortController.abort('I hope a new reference of textarea'))
+
+    const observer = new ResizeObserver(([{ target }], observer) => {
+      if (!target.isConnected) {
+        observer.disconnect()
+        console.log('test')
       }
     })
+    observer.observe(props.textarea)
+
+    props.textarea.addEventListener(
+      'input',
+      (event) => {
+        if (!(event as { fromEditor?: boolean }).fromEditor) {
+          const value = props.textarea.value
+          const unistNode = unistNodeFromMarkdown(value, {
+            owner: context.owner,
+            repository: context.repository,
+          })
+          const pmNode = convertUnistToProsemirror(unistNode, editor.schema)
+          editor.setContent(pmNode)
+        }
+      },
+      { signal: abortController.signal },
+    )
+
+    props.textarea.addEventListener(
+      'change',
+      (event) => {
+        if ((event as any)['fromEditor']) return
+        if (event.isTrusted) return false
+        const value = props.textarea.value
+        const unistNode = unistNodeFromMarkdown(value, {
+          owner: context.owner,
+          repository: context.repository,
+        })
+        const pmNode = convertUnistToProsemirror(unistNode, editor.schema)
+        editor.setContent(pmNode)
+      },
+      { signal: abortController.signal },
+    )
   })
 
-  onMount(() => {
+  createEffect(() => {
     setEditorContent(props.initialValue, editor.view, {
       isFromTextarea: true,
       isInitialValue: true,
+      owner: context.owner,
+      repository: context.repository,
     })
+    const markdown = toMarkdown()
+    editorStore.set('markdown', markdown)
   })
+
+  function toMarkdown() {
+    const unistNode = convertPmSchemaToUnist(editor.state.doc, editor.schema, {
+      postProcess: (node) => {
+        unistMergeAdjacentList(node)
+        remarkGitHubIssueReferenceSupport()(node)
+      },
+    })
+    return sanitizeMarkdownValue(markdownFromUnistNode(unistNode as Root))
+  }
 
   useDocChange(
     (node) => {
       setTimeout(() => {
-        const unistNode = convertPmSchemaToUnist(
-          editor.state.doc,
-          editor.schema,
-          {
-            postProcess: (node) => {
-              unistMergeAdjacentList(node)
-            },
-          },
-        )
-
-        forceGithubTextAreaSync(
-          props.textarea,
-          markdownFromUnistNode(unistNode as any),
-          { behavior: props.type },
-        )
+        const markdown = toMarkdown()
+        editorStore.set('markdown', markdown)
+        forceGithubTextAreaSync(props.textarea, markdown, {
+          behavior: props.type,
+        })
       }, 150)
     },
     { editor },
   )
 
   return (
-    <div>
+    <div data-editor-wrapper={''}>
       <ProsekitEditor
         editor={editor}
         mentions={props.suggestions.mentions ?? []}
         issues={props.suggestions.references ?? []}
       />
-      <DebugNode editor={editor} />
+      <Show when={configStore.get.showDebug}>
+        <DebugNode editor={editor} />
+      </Show>
     </div>
   )
 }

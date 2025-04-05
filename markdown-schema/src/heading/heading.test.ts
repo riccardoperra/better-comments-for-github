@@ -20,8 +20,8 @@ import {
   convertPmSchemaToUnist,
   convertUnistToProsemirror,
 } from 'prosemirror-transformer-markdown/prosemirror'
-import { unistNodeFromMarkdown } from 'prosemirror-transformer-markdown/unified'
 import { builders } from 'prosemirror-test-builder'
+import { markdownToUnist } from '@prosemirror-processor/markdown'
 import {
   getEditorInstance,
   getNodesBaseExtensions,
@@ -44,18 +44,12 @@ const { doc, p, h1, h2, h3, h4, h5, h6 } = builders(extension.schema!, {
 
 test('markdown -> prosemirror', () => {
   const editor = getEditorInstance(extension)
-  const unist = unistNodeFromMarkdown(`
-    # Heading 1
-    
-    ## Heading 2
-    
-    ### Heading 3
-    
-    #### Heading 4
-    
-    #### Heading 5
-    
-    ##### Heading 6    
+  const unist = markdownToUnist(`# Heading 1
+## Heading 2
+### Heading 3
+#### Heading 4
+##### Heading 5
+###### Heading 6    
   `)
 
   const result = convertUnistToProsemirror(unist, editor.schema)

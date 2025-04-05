@@ -15,11 +15,13 @@
  */
 
 import {
+  Priority,
   defineBaseCommands,
   defineBaseKeymap,
   defineHistory,
   defineNodeSpec,
   union,
+  withPriority,
 } from 'prosekit/core'
 import { defineDropCursor } from 'prosekit/extensions/drop-cursor'
 import { defineGapCursor } from 'prosekit/extensions/gap-cursor'
@@ -40,14 +42,21 @@ import {
   defineListMarkdown,
   defineParagraphMarkdown,
   defineStrikethroughMarkdown,
+  defineSubscriptMarkdown,
+  defineSuperscriptMarkdown,
   defineTableMarkdown,
   defineTextMarkdown,
+  defineUnderlineMarkdown,
 } from '@prosedoc/markdown-schema'
 import { defineTextAlign } from 'prosekit/extensions/text-align'
+import { defineSolidNodeView } from 'prosekit/solid'
 import { defineCodeBlock } from './code-block/code-block'
 import { defineHardbreak } from './hardbreak/hardbreak'
 import { defineMentionMarkdown } from './user-mention/mention'
 import { defineGitHubAlert } from './githubAlert/alert'
+import { defineImageExtension } from './image/extension'
+import { defineGitHubIssueReference } from './issue-reference/issue'
+import { UserMentionView } from './user-mention/UserMentionView/UserMentionView'
 import type { HeadingAttrs } from 'prosekit/extensions/heading'
 
 export function defineMarkdownExtension() {
@@ -66,7 +75,10 @@ export function defineMarkdownExtension() {
     defineBoldMarkdown(),
     defineStrikethroughMarkdown(),
     defineCodeMarkdown(),
-
+    defineSuperscriptMarkdown(),
+    defineSubscriptMarkdown(),
+    defineUnderlineMarkdown(),
+    defineGitHubIssueReference(), // to define before to allow copy-paste from link issue
     defineLinkMarkdown(),
     defineImageMarkdown(),
     defineParagraphMarkdown(),
@@ -85,6 +97,13 @@ export function defineMarkdownExtension() {
 export function defineExtension() {
   return union(
     defineMarkdownExtension(),
+    defineNodeSpec({
+      name: 'doc',
+      content: '(block|githubAlert)+',
+      topNode: true,
+    }),
+    // Mention should be defined before link in order to support pasting content
+    withPriority(defineMentionMarkdown(), Priority.high),
     defineTextAlign({ types: ['paragraph', 'heading'] }),
     definePlaceholder({
       placeholder: (state) => {
@@ -98,12 +117,13 @@ export function defineExtension() {
       },
     }),
     defineCodeBlock(),
-    defineMentionMarkdown(),
     defineGitHubAlert(),
-    defineNodeSpec({
-      name: 'doc',
-      content: '(block|githubAlert)+',
-      topNode: true,
+    defineImageExtension(),
+    defineSolidNodeView({
+      name: 'mention',
+      as: 'span',
+      contentAs: 'span',
+      component: UserMentionView,
     }),
   )
 }

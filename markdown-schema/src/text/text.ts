@@ -27,6 +27,9 @@ export function defineTextMarkdown() {
       ],
       unistToNode(node, schema, children, context) {
         const text = node as Text
+        if (!text.value) {
+          return []
+        }
         return [schema.text(text.value)]
       },
     }),

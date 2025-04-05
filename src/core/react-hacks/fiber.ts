@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-type Fiber = any
+export type Fiber = any
 
 export function traverseFiber<T = any>(
   fiber: Fiber,
@@ -71,7 +71,6 @@ export async function waitForReactFiber(
         return
       }
       const fiber = getFiber(element)
-      console.log('check fiber', element, fiber)
       if (fiber) {
         resolve(fiber)
         return

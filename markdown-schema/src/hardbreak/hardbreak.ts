@@ -16,8 +16,10 @@
 
 import { defineNodeSpec, union } from 'prosekit/core'
 import { defineHeading } from 'prosekit/extensions/heading'
-import { createProseMirrorNode } from 'prosemirror-transformer-markdown/prosemirror'
-import type { Heading } from 'mdast'
+import {
+  fromProseMirrorNode,
+  toProseMirrorNode,
+} from '@prosemirror-processor/unist/mdast'
 
 export function defineHardbreakMarkdown() {
   return union(
@@ -26,16 +28,17 @@ export function defineHardbreakMarkdown() {
       name: 'hardbreak',
       inline: true,
       group: 'inline',
+      unistName: 'break',
       selectable: false,
       parseDOM: [{ tag: 'br' }],
       toDOM() {
         return ['br']
       },
-      // @ts-ignore
-      toUnist: (node, children): Array<Heading> => [{ type: 'break' }],
-      unistToNode(node, schema, children, context) {
-        return createProseMirrorNode('hardbreak', schema, children, context)
-      },
+      // @ts-expect-error TODO: fix hast type
+      __toUnist: fromProseMirrorNode('break'),
+      __fromUnist: toProseMirrorNode('hardbreak'),
     }),
   )
 }
+
+export { remarkHtmlHardbreak } from './remarkHtmlHardbreak'

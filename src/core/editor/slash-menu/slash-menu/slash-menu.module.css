@@ -1,37 +1,9 @@
 .slashMenu {
-  --slash-menu-background: var(--overlay-bgColor);
-  --slash-menu-width: 250px;
-  --slash-menuitem-focused-background: var(--color-accent-emphasis);
-  --slash-menuitem-focused-text: white;
-  --slash-menuitem-text-size: 14.5px;
-  --slash-menuitem-gap: 12px;
+  --autocomplete-menu-max-width: 250px;
+  --autocomplete-menu-max-height: 400px;
+  --autocomplete-menuitem-gap: 12px;
 
-  position: relative;
-  display: block;
-  max-height: 400px;
-  min-width: var(--slash-menu-width);
-  user-select: none;
-  overflow: auto;
-  white-space: nowrap;
-  padding: var(--base-size-4);
-  z-index: 10;
-  box-sizing: border-box;
-  border-radius: var(--borderRadius-medium);
-  border: none;
-  transition: opacity 75ms ease-in-out;
-  opacity: 0;
-  background-color: var(--slash-menu-background);
-  box-shadow: var(
-    --shadow-floating-small,
-    var(
-      --color-overlay-shadow,
-      0 0 0 1px #30363d,
-      0 16px 32px rgba(1, 4, 9, 0.85)
-    )
-  );
-
-  &[data-state='open'] {
-    opacity: 1;
+  .slashMenuItem {
   }
 }
 
@@ -44,6 +16,10 @@
 .slashMenuSection {
   display: flex;
   flex-direction: column;
+
+  &:not(:has(.slashMenuItem:not([aria-hidden='true']))) {
+    display: none;
+  }
 
   &:not(:last-child) {
     padding-bottom: var(--base-size-4);
@@ -71,26 +47,4 @@
   justify-content: center;
   border-radius: 4px;
   min-width: 26px;
-}
-
-.slashMenuItem {
-  position: relative;
-  display: flex;
-  gap: var(--slash-menuitem-gap);
-  align-items: center;
-  min-width: 8rem;
-  height: 30px;
-  border-radius: 4px;
-  padding-inline: var(--base-size-12);
-  box-sizing: border-box;
-  font-size: var(--slash-menuitem-text-size);
-  cursor: default;
-  user-select: none;
-  white-space: nowrap;
-  outline: none;
-
-  &[data-focused] {
-    background-color: var(--control-bgColor-active);
-    color: var(--slash-menuitem-focused-text);
-  }
 }

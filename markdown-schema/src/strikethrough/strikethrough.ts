@@ -16,7 +16,10 @@
 
 import { defineMarkSpec, union } from 'prosekit/core'
 import { defineStrike } from 'prosekit/extensions/strike'
-import type { Delete, PhrasingContent } from 'mdast'
+import {
+  fromProseMirrorMark,
+  toProseMirrorMark,
+} from '@prosemirror-processor/unist/mdast'
 
 export function defineStrikethroughMarkdown() {
   return union(
@@ -24,14 +27,9 @@ export function defineStrikethroughMarkdown() {
     defineMarkSpec({
       name: 'strike',
       unistName: 'delete',
-      toUnist(node): Delete {
-        return { type: 'delete', children: [node] as Array<PhrasingContent> }
-      },
-      unistToNode(node, schema, children, context) {
-        return children.map((child) =>
-          child.mark(child.marks.concat(schema.marks.strike.create())),
-        )
-      },
+      // @ts-expect-error TODO: fix types
+      __toUnist: fromProseMirrorMark('delete'),
+      __fromUnist: toProseMirrorMark('strike'),
     }),
   )
 }

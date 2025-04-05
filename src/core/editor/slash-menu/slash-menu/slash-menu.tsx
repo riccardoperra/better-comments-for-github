@@ -1,26 +1,16 @@
 import { useEditor } from 'prosekit/solid'
+
+import { For, Show } from 'solid-js'
 import {
   AutocompleteEmpty,
   AutocompleteItem,
   AutocompleteList,
   AutocompletePopover,
-} from 'prosekit/solid/autocomplete'
-
-import LucideHeading1 from 'lucide-solid/icons/heading-1'
-import LucideHeading2 from 'lucide-solid/icons/heading-2'
-import LucideHeading3 from 'lucide-solid/icons/heading-3'
-import LucideHeading4 from 'lucide-solid/icons/heading-4'
-import LucideHeading5 from 'lucide-solid/icons/heading-5'
-import LucideHeading6 from 'lucide-solid/icons/heading-6'
-import LucideList from 'lucide-solid/icons/list'
-import LucideListCollapse from 'lucide-solid/icons/list-collapse'
-import LucideQuote from 'lucide-solid/icons/text-quote'
-import LucideDivider from 'lucide-solid/icons/minus'
-import LucideListOrdered from 'lucide-solid/icons/list-ordered'
-import LucideCodeBlock from 'lucide-solid/icons/code-square'
-import { For, Show } from 'solid-js'
+} from '../../autocomplete/Autocomplete'
 
 import { githubAlertTypeMap } from '../../githubAlert/config'
+import { EditorTextShortcut } from '../../kbd/kbd'
+import { EditorActionIcon } from '../../action-icon/ActionIcon'
 import styles from './slash-menu.module.css'
 import type { JSX } from 'solid-js'
 import type { LucideProps } from 'lucide-solid'
@@ -36,16 +26,8 @@ export interface SlashMenuItem {
   icon?: (props: LucideProps) => JSX.Element
   sectionId?: string
   shortcut?: string
+  actionId?: string
 }
-
-const icons = [
-  LucideHeading1,
-  LucideHeading2,
-  LucideHeading3,
-  LucideHeading4,
-  LucideHeading5,
-  LucideHeading6,
-]
 
 const SlashMenuItems: Array<SlashMenuItem> = [
   ...[1, 2, 3, 4, 5, 6].map(
@@ -54,40 +36,43 @@ const SlashMenuItems: Array<SlashMenuItem> = [
         label: `Heading ${level}`,
         canExec: (editor) => editor.commands.toggleHeading.canExec({ level }),
         command: (editor) => editor.commands.setHeading({ level: level }),
-        icon: icons[level - 1],
-        shortcut: '#'.repeat(level),
+        actionId: `heading>${level}`,
       }) as SlashMenuItem,
   ),
   {
     label: 'Horizontal divider',
     canExec: (editor) => editor.commands.insertHorizontalRule.canExec(),
     command: (editor) => editor.commands.insertHorizontalRule(),
-    shortcut: '---',
-    icon: LucideDivider,
+    actionId: 'horizontalRule',
   },
   ...[
-    { label: 'Task', kind: 'task', shortcut: '[]', icon: LucideList },
-    { label: 'Bullet', kind: 'bullet', shortcut: '[]', icon: LucideList },
+    {
+      label: 'Task',
+      actionId: 'taskList',
+      kind: 'task',
+    },
+    {
+      label: 'Bullet',
+      actionId: 'bulletList',
+      kind: 'bullet',
+    },
     {
       label: 'Numbered',
       kind: 'ordered',
-      shortcut: '[]',
-      icon: LucideListOrdered,
     },
-    {
-      label: 'Toggle',
-      kind: 'toggle',
-      shortcut: '>>',
-      icon: LucideListCollapse,
-    },
+    // {
+    //   label: 'Toggle',
+    //   kind: 'toggle',
+    //   shortcut: '>>',
+    //   icon: LucideListCollapse,
+    // },
   ].map(
     (listType) =>
       ({
         label: `${listType.label} list`,
         command: (editor) =>
           editor.commands.wrapInList({ kind: listType.kind }),
-        icon: listType.icon,
-        shortcut: listType.shortcut,
+        actionId: `${listType.kind}List`,
         canExec: (editor) =>
           editor.commands.wrapInList.canExec({ kind: listType.kind }),
         sectionId: 'list',
@@ -97,15 +82,13 @@ const SlashMenuItems: Array<SlashMenuItem> = [
     label: 'Blockquote',
     command: (editor) => editor.commands.toggleBlockquote(),
     canExec: (editor) => editor.commands.toggleBlockquote.canExec(),
-    icon: LucideQuote,
-    shortcut: '>',
+    actionId: 'blockquote',
   },
   ...Object.values(githubAlertTypeMap).map(
     (alert) =>
       ({
         label: `${alert.label}`,
-        icon: alert.icon,
-        shortcut: `>${alert.label}`,
+        actionId: `alert>${alert.type}`,
         command: (editor) => editor.commands.setAlert(alert.type),
         canExec: (editor) => editor.commands.toggleAlert.canExec(alert.type),
         sectionId: 'alerts',
@@ -115,8 +98,7 @@ const SlashMenuItems: Array<SlashMenuItem> = [
     label: 'Code block',
     command: (editor) => editor.commands.toggleCodeBlock(),
     canExec: (editor) => editor.commands.toggleCodeBlock.canExec(),
-    icon: LucideCodeBlock,
-    shortcut: '```',
+    actionId: 'codeBlock',
   },
 ]
 
@@ -170,9 +152,9 @@ export default function SlashMenu() {
   const editor = useEditor<EditorExtension>()
   return (
     <AutocompletePopover
-      regex={/\/.*$/iu}
-      class={styles.slashMenu}
+      regex={/(?:^|(?<=\s))\/(?!\/)[^/]*$/iu}
       fitViewport={false}
+      class={styles.slashMenu}
     >
       <AutocompleteList>
         <AutocompleteEmpty>No results</AutocompleteEmpty>
@@ -191,19 +173,37 @@ export default function SlashMenu() {
                       <AutocompleteItem
                         class={styles.slashMenuItem}
                         value={item.label}
-                        onSelect={() => item.command(editor())}
+                        onSelect={() => {
+                          // hacky workaround to wait for '/ (slash)' to be removed before inserting a new element
+                          queueMicrotask(() => item.command(editor()))
+                        }}
                       >
-                        <Show when={item.icon}>
-                          {(icon) => {
-                            const Icon = icon()
-                            return <Icon size={17} strokeWidth={2} />
-                          }}
+                        <Show
+                          fallback={
+                            <>
+                              <Show when={item.icon}>
+                                {(icon) => {
+                                  const Icon = icon()
+                                  return <Icon size={17} strokeWidth={2} />
+                                }}
+                              </Show>
+                            </>
+                          }
+                          when={item.actionId}
+                        >
+                          {(actionId) => (
+                            <EditorActionIcon actionId={actionId()} size={17} />
+                          )}
                         </Show>
+
                         {item.label}
 
-                        <Show when={item.shortcut}>
+                        <Show when={item.actionId}>
                           <span class={styles.slashMenuItemShortcut}>
-                            {item.shortcut}
+                            <EditorTextShortcut
+                              element={item.actionId!}
+                              type={'inputRule'}
+                            />
                           </span>
                         </Show>
                       </AutocompleteItem>

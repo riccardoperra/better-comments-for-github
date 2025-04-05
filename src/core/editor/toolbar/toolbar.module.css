@@ -41,11 +41,11 @@
   color: var(--fgColor-muted);
   font-size: var(--text-body-size-small, 0.75rem);
   gap: var(--control-small-gap, 0.25rem);
-  height: var(--control-small-size, 1.75rem);
   padding: 0 var(--control-small-paddingInline-condensed, 0.5rem);
   border-color: transparent;
   box-shadow: none;
   width: 32px;
+  height: 28px;
 
   &:disabled {
     background: var(--button-invisible-bgColor-disabled);
@@ -58,6 +58,7 @@
   }
 
   &[data-pressed='true'] {
+    background: var(--button-default-bgColor-active);
     border-color: var(--button-default-borderColor-active);
   }
 }

@@ -20,24 +20,48 @@ import {
   AutocompleteList as CoreAutocompleteList,
   AutocompletePopover as CoreAutocompletePopopover,
 } from 'prosekit/solid/autocomplete'
+import { clsx } from 'clsx'
 import styles from './Autocomplete.module.css'
 import type {
+  AutocompleteEmptyProps,
   AutocompleteItemProps,
+  AutocompleteListProps,
   AutocompletePopoverProps,
 } from 'prosekit/solid/autocomplete'
 import type { ParentComponent } from 'solid-js'
 
 export const AutocompletePopover: ParentComponent<
-  Partial<AutocompletePopoverProps>
+  Partial<AutocompletePopoverProps & { class?: string }>
 > = (props) => {
-  return <CoreAutocompletePopopover class={styles.directiveMenu} {...props} />
+  return (
+    <CoreAutocompletePopopover
+      {...props}
+      class={clsx(props.class, styles.autocompleteMenu)}
+    />
+  )
 }
 
-export const AutocompleteList = CoreAutocompleteList
-export const AutocompleteEmpty = CoreAutocompleteEmpty
+export const AutocompleteList: ParentComponent<
+  Partial<AutocompleteListProps>
+> = (props) => {
+  return <CoreAutocompleteList class={styles.autocompleteMenuList} {...props} />
+}
+
+export const AutocompleteEmpty: ParentComponent<
+  Partial<AutocompleteEmptyProps>
+> = (props) => {
+  return (
+    <CoreAutocompleteEmpty class={styles.autocompleteMenuItem} {...props} />
+  )
+}
 
 export const AutocompleteItem: ParentComponent<
-  Partial<AutocompleteItemProps>
+  Partial<AutocompleteItemProps & { class?: string }>
 > = (props) => {
-  return <CoreAutocompleteItem class={styles.directiveMenuItem} {...props} />
+  return (
+    <CoreAutocompleteItem
+      {...props}
+      class={clsx(props.class, styles.autocompleteMenuItem)}
+    />
+  )
 }

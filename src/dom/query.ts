@@ -14,15 +14,21 @@
  * limitations under the License.
  */
 
-import { createEffect, createSignal } from 'solid-js'
+import { createRenderEffect, createSignal } from 'solid-js'
 
-export function query(selector: string, parentNode: HTMLElement | null = null) {
+export function query(
+  selector: string,
+  parentNode: HTMLElement | null = null,
+  options?: {
+    onAdded?: (el: HTMLElement) => void
+  },
+) {
   const [elements, setElements] = createSignal<Array<HTMLElement>>([], {
-    // equals: (prev, next) => {
-    //   if (prev.length !== next.length) return false
-    //   const prevSet = new Set(prev)
-    //   return next.every((el) => prevSet.has(el))
-    // },
+    equals: (prev, next) => {
+      if (prev.length !== next.length) return false
+      const prevSet = new Set(prev)
+      return next.every((el) => prevSet.has(el))
+    },
   })
 
   const onAddedListeners = new Set<(el: HTMLElement) => void>()
@@ -85,7 +91,7 @@ export function query(selector: string, parentNode: HTMLElement | null = null) {
 
   let previousElements: Array<HTMLElement> = []
 
-  createEffect(() => {
+  createRenderEffect(() => {
     const updatedElements = elements()
     const addedEls: Array<HTMLElement> = []
     const removedEls: Array<HTMLElement> = []
@@ -101,6 +107,7 @@ export function query(selector: string, parentNode: HTMLElement | null = null) {
     }
 
     for (const addedEl of addedEls) {
+      options?.onAdded?.(addedEl)
       onAddedListeners.forEach((fn) => fn(addedEl))
     }
     for (const removedEl of removedEls) {

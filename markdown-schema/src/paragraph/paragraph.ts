@@ -21,9 +21,10 @@ import {
   union,
   withPriority,
 } from 'prosekit/core'
-import { createProseMirrorNode } from 'prosemirror-transformer-markdown/prosemirror'
-import { toHtml } from 'hast-util-to-html'
-import type { Paragraph, PhrasingContent } from 'mdast'
+import {
+  fromProseMirrorNode,
+  toProseMirrorNode,
+} from '@prosemirror-processor/unist/mdast'
 
 export function defineParagraphMarkdown() {
   return withPriority(
@@ -31,29 +32,10 @@ export function defineParagraphMarkdown() {
       defineParagraph(),
       defineNodeSpec({
         name: 'paragraph',
-        toUnist: (node, children): Array<Paragraph> => {
-          if (node.attrs.textAlign && node.attrs.textAlign !== 'left') {
-            return [
-              {
-                type: 'html',
-                value: toHtml({
-                  type: 'element',
-                  tagName: 'p',
-                  properties: {
-                    align: node.attrs.textAlign,
-                  },
-                  children: children as any,
-                }),
-              } as any,
-            ]
-          }
-          return [
-            { type: 'paragraph', children: children as Array<PhrasingContent> },
-          ]
-        },
-        unistToNode(node, schema, children, context) {
-          return createProseMirrorNode('paragraph', schema, children)
-        },
+        unistName: 'paragraph',
+        // @ts-expect-error TODO: fix types
+        __toUnist: fromProseMirrorNode('paragraph'),
+        __fromUnist: toProseMirrorNode('paragraph'),
       }),
     ),
     Priority.highest,

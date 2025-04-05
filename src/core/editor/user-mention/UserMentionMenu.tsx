@@ -35,7 +35,6 @@ export function UserMentionMenu(props: UserMentionMenuProps) {
   const editor = useEditor<EditorExtension>()
 
   const handleUserInsert = (user: SuggestionData['mentions'][number]) => {
-    console.log(user)
     editor().commands.insertMention({
       id: user.identifier.toString(),
       value: '@' + user.identifier,
@@ -72,10 +71,7 @@ export function UserMentionMenu(props: UserMentionMenuProps) {
 
         <For each={filteredUsers()}>
           {(user) => (
-            <AutocompleteItem
-              key={user.identifier}
-              onSelect={() => handleUserInsert(user)}
-            >
+            <AutocompleteItem onSelect={() => handleUserInsert(user)}>
               <img
                 src={user.avatarUrl}
                 class={styles.directiveMenuItemAvatar}

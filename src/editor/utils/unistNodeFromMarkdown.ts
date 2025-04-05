@@ -14,15 +14,40 @@
  * limitations under the License.
  */
 
-import { unistNodeFromMarkdown as coreUnistNodeFromMarkdown } from 'prosemirror-transformer-markdown/unified'
-import { remarkFlatList } from '@prosedoc/markdown-schema'
+import {
+  remarkFlatList,
+  remarkHtmlHardbreak,
+  remarkHtmlImage,
+  remarkInlineImage,
+  remarkSubscript,
+  remarkSuperscript,
+  remarkUnderline,
+} from '@prosedoc/markdown-schema'
+import { markdownToUnist } from '@prosemirror-processor/markdown'
 import { remarkGitHubAlert } from '../../core/editor/githubAlert/remarkGitHubAlert'
+import { remarkParseLinkToGitHubIssueReference } from '../../core/editor/issue-reference/remarkGitHubIssueReference'
+import { remarkGitHubUserReferences } from './remarkGitHubUserReferences'
 
-export function unistNodeFromMarkdown(content: string) {
-  return coreUnistNodeFromMarkdown(content, {
+export function unistNodeFromMarkdown(
+  content: string,
+  options: {
+    repository: string
+    owner: string
+  },
+) {
+  const { repository, owner } = options
+  return markdownToUnist(content, {
     transformers: [
-      { type: 'remarkPlugin', handler: remarkGitHubAlert },
-      { type: 'remarkPlugin', handler: remarkFlatList },
+      remarkGitHubUserReferences,
+      () => remarkParseLinkToGitHubIssueReference({ repository, owner }),
+      remarkSubscript,
+      remarkSuperscript,
+      remarkUnderline,
+      remarkGitHubAlert,
+      remarkFlatList,
+      remarkHtmlImage,
+      remarkInlineImage,
+      remarkHtmlHardbreak,
     ],
   })
 }

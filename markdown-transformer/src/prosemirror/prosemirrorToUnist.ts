@@ -1,56 +1,57 @@
-import type {
-  Attrs,
-  MarkSpec,
-  Node as ProsemirrorNode,
-  NodeSpec,
-  Schema,
+import {
+  type Attrs,
+  type Node as ProsemirrorNode,
+  type Schema,
 } from "prosemirror-model";
 import type { UnistNode } from "./types.js";
+import type { Root as MdastRoot } from "mdast";
 
-type SchemaMap = Record<string, MarkSpec | NodeSpec>;
+import {
+  fromMdastToProseMirror,
+  type ToProseMirrorNodeHandlers,
+} from "@prosemirror-processor/unist/mdast";
 
 export function convertUnistToProsemirror(
   unistNode: UnistNode,
   schema: Schema,
 ): ProsemirrorNode {
-  const context: Partial<NonNullable<unknown>> = {};
-  const schemaMap = {} as SchemaMap;
+  const defaultHandlers: ToProseMirrorNodeHandlers = {
+    root(node, _, context) {
+      const children = context.handleAll(node);
+      return schema.topNodeType.create(null, children);
+    },
+    text(node) {
+      return schema.text(String(node.value ?? ""));
+    },
+  };
+
+  const nodeHandlers: ToProseMirrorNodeHandlers = {
+    ...defaultHandlers,
+  };
+
   schema.spec.marks.forEach((key, mark) => {
-    schemaMap[mark.unistName ?? key] = mark;
-  });
-  schema.spec.nodes.forEach((key, node) => {
-    schemaMap[node.unistName ?? key] = node;
-  });
-  const rootNode = convertNode(unistNode, schema, schemaMap, context);
-  if (rootNode.length !== 1) {
-    throw new Error("Couldn't find any way to convert the root unist node.");
-  }
-  return rootNode[0];
-}
-
-function convertNode(
-  unistNode: UnistNode,
-  schema: Schema,
-  map: SchemaMap,
-  context: Partial<NonNullable<unknown>>,
-) {
-  let type = unistNode.type;
-  const spec = map[type] as NodeSpec | MarkSpec | undefined;
-  if (!spec || !spec.unistToNode) {
-    console.warn(
-      `Couldn't find any way to convert unist node of type "${type}" to a ProseMirror node.`,
-    );
-    return [];
-  }
-  const convertedChildren = [] as ProsemirrorNode[];
-  if ("children" in unistNode && Array.isArray(unistNode.children)) {
-    for (const child of unistNode.children as UnistNode[]) {
-      convertedChildren.push(...convertNode(child, schema, map, context));
+    if (mark.__fromUnist) {
+      // @ts-expect-error for now ignore
+      nodeHandlers[mark.unistName ?? key] = mark.__fromUnist!;
     }
-  }
-  return spec.unistToNode(unistNode, schema, convertedChildren, context);
+  });
+
+  schema.spec.nodes.forEach((key, node) => {
+    if (node.__fromUnist) {
+      // @ts-expect-error for now ignore
+      nodeHandlers[node.unistName ?? key] = node.__fromUnist!;
+    }
+  });
+
+  return fromMdastToProseMirror(unistNode as MdastRoot, {
+    schema,
+    nodeHandlers,
+  })!;
 }
 
+/**
+ * @deprecated Use @prosemirror-processor instead
+ */
 export function createProseMirrorNode(
   nodeName: string | null,
   schema: Schema<string, string>,

@@ -23,10 +23,14 @@ import {
   defineCodeBlockShiki,
   defineCodeBlockSpec,
 } from 'prosekit/extensions/code-block'
-import { createProseMirrorNode } from 'prosemirror-transformer-markdown/prosemirror'
+import { pmNode } from '@prosemirror-processor/unist'
+import type {
+  ProseMirrorNodeToMdastHandler,
+  ToProseMirrorNodeHandler,
+} from '@prosemirror-processor/unist/mdast'
 import type { CodeBlockExtension } from 'prosekit/extensions/code-block'
 
-import type { Code, Text } from 'mdast'
+import type { Code, Nodes as MdastNodes, Text } from 'mdast'
 
 function defineCodeBlock(): CodeBlockExtension {
   return union(
@@ -41,30 +45,36 @@ function defineCodeBlock(): CodeBlockExtension {
 export function defineCodeBlockMarkdown() {
   return union(
     defineCodeBlock(),
-    defineCodeBlockShiki(),
+    defineCodeBlockShiki({
+      themes: ['github-dark', 'github-light'],
+      langAlias: {
+        ts: 'typescript',
+        js: 'javascript',
+      },
+    }),
     defineNodeSpec({
       name: 'codeBlock',
       unistName: 'code',
-      toUnist(node, children): Array<Code> {
-        return [
-          {
-            type: 'code',
-            value: children
-              .map((child) => (child as Text | undefined)?.value ?? '')
-              .join(''),
-            lang: node.attrs.language,
-          },
-        ]
-      },
-      unistToNode(node, schema, children, context) {
-        const code = node as Code
-        return createProseMirrorNode(
-          'codeBlock',
-          schema,
-          [schema.text(code.value)],
+      __toUnist: ((node, parent, context) => {
+        const children = context.handleAll(node)
+        return {
+          type: 'code',
+          value: children
+            .filter((child): child is Text => child.type === 'text')
+            .map((child) => child.value)
+            .join(''),
+          lang: node.attrs.language,
+        }
+      }) satisfies ProseMirrorNodeToMdastHandler<MdastNodes, MdastNodes>,
+      __fromUnist: ((node, children, context) => {
+        const code = node as Code,
+          schema = context.schema
+        return pmNode(
+          context.schema.nodes.codeBlock,
+          code.value ? [schema.text(code.value)] : [],
           { language: code.lang },
         )
-      },
+      }) satisfies ToProseMirrorNodeHandler<MdastNodes>,
     }),
   )
 }

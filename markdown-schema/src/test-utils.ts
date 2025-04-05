@@ -30,7 +30,7 @@ import type {
 } from 'prosemirror-transformer-markdown/prosemirror'
 
 export function sameNode(node: ProseMirrorNode, expected: ProseMirrorNode) {
-  assert.equal(node.toString(), expected.toString())
+  assert.deepEqual(node.toJSON(), expected.toJSON())
 }
 
 export function sameMarkdown(result: UnistNode, expected: string) {
@@ -54,8 +54,9 @@ export function getNodesBaseExtensions<
 >(extensions: TExtension) {
   return union(
     defineDocMarkdown(),
-    ...extensions,
     defineTextMarkdown(),
+
+    ...extensions,
     defineParagraphMarkdown(),
   )
 }
