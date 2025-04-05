@@ -14,24 +14,9 @@
  * limitations under the License.
  */
 
-import { defineNodeSpec, defineText, union } from 'prosekit/core'
-import type { Text } from 'mdast'
+import { union } from 'prosekit/core'
+import { defineText } from 'prosekit/extensions/text'
 
 export function defineTextMarkdown() {
-  return union(
-    defineText(),
-    defineNodeSpec({
-      name: 'text',
-      toUnist: (node, children): Array<Text> => [
-        { type: 'text', value: node.text ?? '' },
-      ],
-      unistToNode(node, schema, children, context) {
-        const text = node as Text
-        if (!text.value) {
-          return []
-        }
-        return [schema.text(text.value)]
-      },
-    }),
-  )
+  return union(defineText())
 }

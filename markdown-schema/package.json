@@ -37,7 +37,7 @@
     "mdast-util-from-markdown": "^2.0.2",
     "mdast-util-to-markdown": "^2.1.2",
     "micromark-util-types": "^2.0.2",
-    "prosekit": "^0.12.0",
+    "prosekit": "^0.12.1",
     "prosemirror-transformer-markdown": "workspace:*"
   }
 }

@@ -14,13 +14,8 @@
  * limitations under the License.
  */
 
-import {
-  Priority,
-  defineNodeSpec,
-  defineParagraph,
-  union,
-  withPriority,
-} from 'prosekit/core'
+import { Priority, defineNodeSpec, union, withPriority } from 'prosekit/core'
+import { defineParagraph } from 'prosekit/extensions/paragraph'
 import {
   fromProseMirrorNode,
   toProseMirrorNode,

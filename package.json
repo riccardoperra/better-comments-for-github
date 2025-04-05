@@ -46,7 +46,7 @@
     "lucide-solid": "^0.483.0",
     "mdast-util-find-and-replace": "^3.0.2",
     "mdast-util-to-markdown": "^2.1.2",
-    "prosekit": "^0.12.0",
+    "prosekit": "^0.12.1",
     "prosemirror-commands": "^1.7.0",
     "prosemirror-example-setup": "^1.2.3",
     "prosemirror-inputrules": "^1.5.0",
