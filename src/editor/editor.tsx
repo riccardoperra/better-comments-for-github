@@ -29,7 +29,6 @@ import {
   convertPmSchemaToUnist,
   convertUnistToProsemirror,
 } from 'prosemirror-transformer-markdown/prosemirror'
-import { unistMergeAdjacentList } from '@prosedoc/markdown-schema'
 import { ProsekitEditor } from '../core/editor/editor'
 import { defineExtension } from '../core/editor/extension'
 
@@ -40,7 +39,6 @@ import { forceGithubTextAreaSync } from './utils/forceGithubTextAreaSync'
 import type { SuggestionData } from './utils/loadSuggestionData'
 
 import './editor.css'
-import { remarkGitHubIssueReferenceSupport } from '../core/editor/issue-reference/remarkGitHubIssueReference'
 import { ExtensionEditorStore } from '../editor.store'
 import { DebugNode } from './DebugNode'
 import { unistNodeFromMarkdown } from './utils/unistNodeFromMarkdown'
@@ -146,8 +144,8 @@ export function Editor(props: EditorProps) {
   function toMarkdown() {
     const unistNode = convertPmSchemaToUnist(editor.state.doc, editor.schema, {
       postProcess: (node) => {
-        unistMergeAdjacentList(node)
-        remarkGitHubIssueReferenceSupport()(node)
+        // unistMergeAdjacentList(node)
+        // remarkGitHubIssueReferenceSupport()(node)
       },
     })
     return sanitizeMarkdownValue(markdownFromUnistNode(unistNode as Root))

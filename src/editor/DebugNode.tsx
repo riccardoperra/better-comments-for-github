@@ -77,6 +77,7 @@ export function DebugNode(props: DebugNodeProps) {
               })}
             >
               <button
+                type={'button'}
                 class={'Button Button--invisible'}
                 onClick={() => setMode(item.type)}
               >

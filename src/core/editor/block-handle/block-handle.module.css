@@ -14,16 +14,21 @@
  * limitations under the License.
  */
 
-import { defineNodeSpec, union } from 'prosekit/core'
-import { defineDoc } from 'prosekit/extensions/doc'
+.blockHandle {
+  display: flex;
+}
 
-export function defineDocMarkdown() {
-  return union(
-    defineDoc(),
-    defineNodeSpec({
-      name: 'doc',
-      topNode: true,
-      content: 'block+',
-    }),
-  )
+.draggable {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  cursor: grab;
+  width: 20px;
+  height: 20px;
+  transition: background 150ms ease;
+
+  &:hover {
+    background: var(--control-bgColor-hover);
+  }
 }
