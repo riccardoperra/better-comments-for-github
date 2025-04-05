@@ -1,20 +1,15 @@
 import {
   type Attrs,
-  type MarkSpec,
   type Node as ProsemirrorNode,
-  type NodeSpec,
   type Schema,
 } from "prosemirror-model";
 import type { UnistNode } from "./types.js";
-import type { Html, Root as MdastRoot } from "mdast";
-import { DOMParser as ProseMirrorDOMParser } from "prosekit/pm/model";
+import type { Root as MdastRoot } from "mdast";
 
 import {
-  type ToProseMirrorNodeHandlers,
   fromMdastToProseMirror,
+  type ToProseMirrorNodeHandlers,
 } from "@prosemirror-processor/unist/mdast";
-
-type SchemaMap = Record<string, MarkSpec | NodeSpec>;
 
 export function convertUnistToProsemirror(
   unistNode: UnistNode,
@@ -54,43 +49,9 @@ export function convertUnistToProsemirror(
   })!;
 }
 
-function convertNode(
-  unistNode: UnistNode,
-  schema: Schema,
-  map: SchemaMap,
-  context: Partial<NonNullable<unknown>>,
-) {
-  let type = unistNode.type;
-
-  if (type === "html") {
-    const value = (unistNode as Html).value;
-    if (globalThis.DOMParser) {
-      const doc = new globalThis.DOMParser().parseFromString(
-        value,
-        "text/html",
-      );
-      const slice = ProseMirrorDOMParser.fromSchema(schema).parse(doc.body);
-      console.dir(slice.content.toJSON(), { depth: null });
-      return slice.content.content;
-    }
-  }
-
-  const spec = map[type] as NodeSpec | MarkSpec | undefined;
-  if (!spec || !spec.unistToNode) {
-    console.warn(
-      `Couldn't find any way to convert unist node of type "${type}" to a ProseMirror node.`,
-    );
-    return [];
-  }
-  const convertedChildren = [] as ProsemirrorNode[];
-  if ("children" in unistNode && Array.isArray(unistNode.children)) {
-    for (const child of unistNode.children as UnistNode[]) {
-      convertedChildren.push(...convertNode(child, schema, map, context));
-    }
-  }
-  return spec.unistToNode(unistNode, schema, convertedChildren, context);
-}
-
+/**
+ * @deprecated Use @prosemirror-processor instead
+ */
 export function createProseMirrorNode(
   nodeName: string | null,
   schema: Schema<string, string>,
