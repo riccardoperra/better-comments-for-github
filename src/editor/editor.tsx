@@ -29,21 +29,24 @@ import {
   convertPmSchemaToUnist,
   convertUnistToProsemirror,
 } from 'prosemirror-transformer-markdown/prosemirror'
-import { ProsekitEditor } from '../core/editor/editor'
-import { defineExtension } from '../core/editor/extension'
 
 import 'prosemirror-example-setup/style/style.css'
-import { ConfigStore } from '../config.store'
-import { setEditorContent } from './utils/setContent'
-import { forceGithubTextAreaSync } from './utils/forceGithubTextAreaSync'
-import type { SuggestionData } from './utils/loadSuggestionData'
 
 import './editor.css'
+
+import { unistMergeAdjacentList } from '@prosedoc/markdown-schema'
 import { ExtensionEditorStore } from '../editor.store'
-import { DebugNode } from './DebugNode'
+import { ConfigStore } from '../config.store'
+import { defineExtension } from '../core/editor/extension'
+import { ProsekitEditor } from '../core/editor/editor'
+import { remarkGitHubIssueReferenceSupport } from '../core/editor/issue-reference/remarkGitHubIssueReference'
 import { unistNodeFromMarkdown } from './utils/unistNodeFromMarkdown'
-import type { GitHubUploaderHandler } from '../core/editor/image/github-file-uploader'
+import { DebugNode } from './DebugNode'
+import { forceGithubTextAreaSync } from './utils/forceGithubTextAreaSync'
+import { setEditorContent } from './utils/setContent'
 import type { Root } from 'mdast'
+import type { GitHubUploaderHandler } from '../core/editor/image/github-file-uploader'
+import type { SuggestionData } from './utils/loadSuggestionData'
 
 export interface EditorProps {
   suggestions: SuggestionData
@@ -144,8 +147,8 @@ export function Editor(props: EditorProps) {
   function toMarkdown() {
     const unistNode = convertPmSchemaToUnist(editor.state.doc, editor.schema, {
       postProcess: (node) => {
-        // unistMergeAdjacentList(node)
-        // remarkGitHubIssueReferenceSupport()(node)
+        unistMergeAdjacentList(node)
+        remarkGitHubIssueReferenceSupport()(node)
       },
     })
     return sanitizeMarkdownValue(markdownFromUnistNode(unistNode as Root))
