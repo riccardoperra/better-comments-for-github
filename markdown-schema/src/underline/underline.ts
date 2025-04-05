@@ -24,7 +24,7 @@ import {
 } from 'prosekit/core'
 import { toHtml } from 'hast-util-to-html'
 import { defineMarkInputRule } from 'prosekit/extensions/input-rule'
-import type { Html } from 'mdast'
+import { toProseMirrorMark } from '@prosemirror-processor/unist/mdast'
 
 export function defineUnderlineMarkdown() {
   return union(
@@ -35,22 +35,19 @@ export function defineUnderlineMarkdown() {
       parseDOM: [{ tag: 'ins' }, { tag: 'u' }],
       toDOM: () => ['ins', {}, 0],
 
-      toUnist(node): Html {
+      __toUnist: (mark, parent, nodes, context) => {
         return {
           type: 'html',
           value: toHtml({
             type: 'element',
             tagName: 'ins',
             properties: {},
-            children: [node as any],
+            // @ts-expect-error TODO: fix hast type
+            children: nodes,
           }),
         }
       },
-      unistToNode(node, schema, children, context) {
-        return children.map((child) =>
-          child.mark(child.marks.concat(schema.marks.underline.create())),
-        )
-      },
+      __fromUnist: toProseMirrorMark('underline'),
     }),
     defineCommands({
       toggleUnderline: () => toggleMark({ type: 'underline' }),

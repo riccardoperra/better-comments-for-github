@@ -24,7 +24,7 @@ import {
 } from 'prosekit/core'
 import { toHtml } from 'hast-util-to-html'
 import { defineMarkInputRule } from 'prosekit/extensions/input-rule'
-import type { Html } from 'mdast'
+import { toProseMirrorMark } from '@prosemirror-processor/unist/mdast'
 
 export function defineSuperscriptMarkdown() {
   return union(
@@ -35,22 +35,20 @@ export function defineSuperscriptMarkdown() {
       parseDOM: [{ tag: 'sup' }],
       toDOM: () => ['sup', {}, 0],
 
-      toUnist(node): Html {
+      __toUnist: (node, parent, children) => {
         return {
           type: 'html',
           value: toHtml({
             type: 'element',
             tagName: 'sup',
             properties: {},
-            children: [node as any],
+            // @ts-expect-error TODO: fix types
+            children,
           }),
         }
       },
-      unistToNode(node, schema, children, context) {
-        return children.map((child) =>
-          child.mark(child.marks.concat(schema.marks.superscript.create())),
-        )
-      },
+
+      __fromUnist: toProseMirrorMark('superscript'),
     }),
     defineCommands({
       toggleSuperscript: () => toggleMark({ type: 'superscript' }),

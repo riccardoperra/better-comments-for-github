@@ -24,7 +24,8 @@ import {
 } from 'prosekit/core'
 import { toHtml } from 'hast-util-to-html'
 import { defineMarkInputRule } from 'prosekit/extensions/input-rule'
-import type { Html } from 'mdast'
+import { toProseMirrorMark } from '@prosemirror-processor/unist/mdast'
+import type { ProseMirrorMarkToMdastHandler } from '@prosemirror-processor/unist/mdast'
 
 export function defineSubscriptMarkdown() {
   return union(
@@ -35,22 +36,20 @@ export function defineSubscriptMarkdown() {
       parseDOM: [{ tag: 'sub' }],
       toDOM: () => ['sub', {}, 0],
 
-      toUnist(node): Html {
+      __toUnist: (node, parent, children) => {
         return {
           type: 'html',
           value: toHtml({
             type: 'element',
             tagName: 'sub',
             properties: {},
-            children: [node as any],
+            // @ts-expect-error TODO: fix hast type
+            children: children,
           }),
         }
       },
-      unistToNode(node, schema, children, context) {
-        return children.map((child) =>
-          child.mark(child.marks.concat(schema.marks.subscript.create())),
-        )
-      },
+
+      __fromUnist: toProseMirrorMark('subscript'),
     }),
     defineCommands({
       toggleSubscript: () => toggleMark({ type: 'subscript' }),

@@ -20,8 +20,8 @@ import {
   convertPmSchemaToUnist,
   convertUnistToProsemirror,
 } from 'prosemirror-transformer-markdown/prosemirror'
-import { unistNodeFromMarkdown } from 'prosemirror-transformer-markdown/unified'
 import { builders } from 'prosemirror-test-builder'
+import { markdownToUnist } from '@prosemirror-processor/markdown'
 import {
   getEditorInstance,
   getNodesBaseExtensions,
@@ -40,9 +40,9 @@ const { doc, p, hardbreak } = builders(extension.schema!, {
 
 test('markdown -> prosemirror (html tag)', () => {
   const editor = getEditorInstance(extension)
-  const unist = unistNodeFromMarkdown(
+  const unist = markdownToUnist(
     `This is a text<br>This is a text with hardbreak`,
-    { transformers: [{ type: 'remarkPlugin', handler: remarkHtmlHardbreak }] },
+    { transformers: [remarkHtmlHardbreak] },
   )
 
   const result = convertUnistToProsemirror(unist, editor.schema)
@@ -56,9 +56,9 @@ test('markdown -> prosemirror (html tag)', () => {
 
 test('markdown -> prosemirror (html tag)', () => {
   const editor = getEditorInstance(extension)
-  const unist = unistNodeFromMarkdown(
+  const unist = markdownToUnist(
     `This is a text<br>This is a text with hardbreak`,
-    { transformers: [{ type: 'remarkPlugin', handler: remarkHtmlHardbreak }] },
+    { transformers: [remarkHtmlHardbreak] },
   )
 
   const result = convertUnistToProsemirror(unist, editor.schema)
