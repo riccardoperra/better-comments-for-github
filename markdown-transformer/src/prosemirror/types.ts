@@ -15,21 +15,7 @@ export type ProseMirrorNode = $ProseMirrorNode;
 declare module "prosemirror-model" {
   interface NodeSpec {
     unistName?: string;
-    unistToNode?: (
-      node: UnistNode,
-      schema: Schema<string, string>,
-      children: ProseMirrorNode[],
-      context: Record<string, unknown>,
-    ) => ProseMirrorNode[];
-
-    toUnist?: (
-      node: ProseMirrorNode,
-      children: UnistNode[],
-      schema: Schema<string, string>,
-    ) => UnistNode[];
-
     __fromUnist?: ToProseMirrorNodeHandler<Mdast.Nodes>;
-
     __toUnist?: ProseMirrorNodeToMdastHandler<Mdast.Nodes, Mdast.Nodes>;
   }
 
