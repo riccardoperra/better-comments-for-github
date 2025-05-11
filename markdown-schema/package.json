@@ -29,15 +29,16 @@
     "vitest": "^3.0.5"
   },
   "dependencies": {
-    "@prosemirror-processor/markdown": "^0.0.1-alpha.0",
-    "@prosemirror-processor/unist": "^0.0.1-alpha.0",
+    "@prosemirror-processor/markdown": "^0.0.1-alpha.3",
+    "@prosemirror-processor/unist": "^0.0.1-alpha.3",
+
     "happy-dom": "^17.4.4",
     "hast-util-to-html": "^9.0.5",
     "remark-gfm": "^4.0.1",
     "mdast-util-from-markdown": "^2.0.2",
     "mdast-util-to-markdown": "^2.1.2",
     "micromark-util-types": "^2.0.2",
-    "prosekit": "^0.12.1",
+    "prosekit": "^0.13.2",
     "prosemirror-transformer-markdown": "workspace:*"
   }
 }

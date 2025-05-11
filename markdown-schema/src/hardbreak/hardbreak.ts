@@ -15,7 +15,7 @@
  */
 
 import { defineNodeSpec, union } from 'prosekit/core'
-import { defineHeading } from 'prosekit/extensions/heading'
+import { defineHardBreak } from 'prosekit/extensions/hard-break'
 import {
   fromProseMirrorNode,
   toProseMirrorNode,
@@ -23,20 +23,14 @@ import {
 
 export function defineHardbreakMarkdown() {
   return union(
-    defineHeading(),
+    defineHardBreak(),
     defineNodeSpec({
-      name: 'hardbreak',
-      inline: true,
-      group: 'inline',
+      name: 'hardBreak',
       unistName: 'break',
       selectable: false,
-      parseDOM: [{ tag: 'br' }],
-      toDOM() {
-        return ['br']
-      },
       // @ts-expect-error TODO: fix hast type
       __toUnist: fromProseMirrorNode('break'),
-      __fromUnist: toProseMirrorNode('hardbreak'),
+      __fromUnist: toProseMirrorNode('hardBreak'),
     }),
   )
 }

@@ -26,7 +26,7 @@ export function defineBlockquoteMarkdown() {
     defineBlockquote(),
     defineNodeSpec({
       name: 'blockquote',
-      // @ts-expect-error TODO: fix types
+      // @ts-expect-error TODO: fix hast type
       __toUnist: fromProseMirrorNode('blockquote'),
       __fromUnist: toProseMirrorNode('blockquote'),
     }),

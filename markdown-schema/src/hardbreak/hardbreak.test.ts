@@ -35,7 +35,7 @@ const extension = getNodesBaseExtensions([defineHardbreakMarkdown()])
 
 const { doc, p, hardbreak } = builders(extension.schema!, {
   p: { nodeType: 'paragraph' },
-  hardbreak: { nodeType: 'hardbreak' },
+  hardbreak: { nodeType: 'hardBreak' },
 })
 
 test('markdown -> prosemirror (html tag)', () => {
