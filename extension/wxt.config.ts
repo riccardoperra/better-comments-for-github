@@ -16,7 +16,7 @@ export default defineConfig({
     ],
   }),
   // only on linux/macOS
-  runner: {
+  webExt: {
     chromiumArgs: ['--user-data-dir=./.wxt/chrome-data'],
     startUrls: ['https://github.com/riccardoperra/better-writer-for-github'],
   },
