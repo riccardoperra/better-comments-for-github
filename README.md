@@ -130,7 +130,7 @@ This project is built with the following technologies:
 
 | Feature                 | Status | Notes |
 |-------------------------|--------|-------|
-| Table                   | ❌️     |       |
+| Table                   | ✅️     |       |
 | Collapsed section       | ❌️     |       |
 | Code blocks             | ✅️     |       |
 | Diagrams                | ❌️     |       |
