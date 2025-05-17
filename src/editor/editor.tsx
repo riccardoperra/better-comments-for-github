@@ -40,13 +40,14 @@ import { ConfigStore } from '../config.store'
 import { defineExtension } from '../core/editor/extension'
 import { ProsekitEditor } from '../core/editor/editor'
 import { remarkGitHubIssueReferenceSupport } from '../core/editor/issue-reference/remarkGitHubIssueReference'
-import { unistNodeFromMarkdown } from './utils/unistNodeFromMarkdown'
-import { DebugNode } from './DebugNode'
-import { forceGithubTextAreaSync } from './utils/forceGithubTextAreaSync'
+import { unknownNodeHandler } from '../core/editor/unknown-node/unknown-node-handler'
 import { setEditorContent } from './utils/setContent'
-import type { Root } from 'mdast'
-import type { GitHubUploaderHandler } from '../core/editor/image/github-file-uploader'
+import { forceGithubTextAreaSync } from './utils/forceGithubTextAreaSync'
+import { DebugNode } from './DebugNode'
+import { unistNodeFromMarkdown } from './utils/unistNodeFromMarkdown'
 import type { SuggestionData } from './utils/loadSuggestionData'
+import type { GitHubUploaderHandler } from '../core/editor/image/github-file-uploader'
+import type { Root } from 'mdast'
 
 export interface EditorProps {
   suggestions: SuggestionData
@@ -72,6 +73,7 @@ export const EditorRootContext = createContext<EditorRootContextProps>()
 function sanitizeMarkdownValue(value: string) {
   return (
     value
+      .replaceAll('\\', '')
       // Handle Alerts:  > [!NOTE]
       .replaceAll('> \\[!', '> [!')
       // Handle github links: https:\//github.com
@@ -110,7 +112,11 @@ export function Editor(props: EditorProps) {
             owner: context.owner,
             repository: context.repository,
           })
-          const pmNode = convertUnistToProsemirror(unistNode, editor.schema)
+          const pmNode = convertUnistToProsemirror(
+            unistNode,
+            editor.schema,
+            unknownNodeHandler(value),
+          )
           editor.setContent(pmNode)
         }
       },
@@ -127,7 +133,11 @@ export function Editor(props: EditorProps) {
           owner: context.owner,
           repository: context.repository,
         })
-        const pmNode = convertUnistToProsemirror(unistNode, editor.schema)
+        const pmNode = convertUnistToProsemirror(
+          unistNode,
+          editor.schema,
+          unknownNodeHandler(value),
+        )
         editor.setContent(pmNode)
       },
       { signal: abortController.signal },

@@ -15,6 +15,7 @@
  */
 
 import { convertUnistToProsemirror } from 'prosemirror-transformer-markdown/prosemirror'
+import { unknownNodeHandler } from '../../core/editor/unknown-node/unknown-node-handler'
 import { unistNodeFromMarkdown } from './unistNodeFromMarkdown'
 import type { EditorView } from 'prosemirror-view'
 
@@ -37,7 +38,11 @@ export function setEditorContent(
   const schema = view.state.schema
 
   const unistNode = unistNodeFromMarkdown(content, { repository, owner })
-  const result = convertUnistToProsemirror(unistNode, schema)
+  const result = convertUnistToProsemirror(
+    unistNode,
+    schema,
+    unknownNodeHandler(content),
+  )
 
   const tr = view.state.tr
 

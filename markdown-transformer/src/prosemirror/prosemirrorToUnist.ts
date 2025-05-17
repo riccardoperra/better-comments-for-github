@@ -4,16 +4,18 @@ import {
   type Schema,
 } from "prosemirror-model";
 import type { UnistNode } from "./types.js";
-import type { Root as MdastRoot } from "mdast";
+import type { Nodes, Root as MdastRoot } from "mdast";
 
 import {
   fromMdastToProseMirror,
+  type ToProseMirrorNodeHandler,
   type ToProseMirrorNodeHandlers,
 } from "@prosemirror-processor/unist/mdast";
 
 export function convertUnistToProsemirror(
   unistNode: UnistNode,
   schema: Schema,
+  unknownHandler: ToProseMirrorNodeHandler<Nodes>,
 ): ProsemirrorNode {
   const defaultHandlers: ToProseMirrorNodeHandlers = {
     root(node, _, context) {
@@ -46,6 +48,7 @@ export function convertUnistToProsemirror(
   return fromMdastToProseMirror(unistNode as MdastRoot, {
     schema,
     nodeHandlers,
+    unknownHandler: (unknownHandler as any) ?? undefined,
   })!;
 }
 

@@ -57,6 +57,7 @@ import { defineGitHubAlert } from './githubAlert/alert'
 import { defineImageExtension } from './image/extension'
 import { defineGitHubIssueReference } from './issue-reference/issue'
 import { UserMentionView } from './user-mention/UserMentionView/UserMentionView'
+import { defineUnknownNodeSpec } from './unknown-node/unknown-node'
 import type { HeadingAttrs } from 'prosekit/extensions/heading'
 
 export function defineMarkdownExtension() {
@@ -91,6 +92,7 @@ export function defineMarkdownExtension() {
     defineVirtualSelection(),
     defineModClickPrevention(),
     defineTableMarkdown(),
+    defineUnknownNodeSpec(),
   )
 }
 
