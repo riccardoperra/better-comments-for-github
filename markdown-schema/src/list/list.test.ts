@@ -19,8 +19,8 @@ import {
   convertPmSchemaToUnist,
   convertUnistToProsemirror,
 } from 'prosemirror-transformer-markdown/prosemirror'
-import { unistNodeFromMarkdown } from 'prosemirror-transformer-markdown/unified'
 import { builders } from 'prosemirror-test-builder'
+import { markdownToUnist } from '@prosemirror-processor/markdown'
 import {
   getEditorInstance,
   getMarksBaseExtensions,
@@ -40,15 +40,10 @@ const { doc, p, list } = builders(extension.schema!, {
 
 test('(markdown -> prosemirror) Bullet list', () => {
   const editor = getEditorInstance(extension)
-  const unist = unistNodeFromMarkdown(
+  const unist = markdownToUnist(
     '- First item\n- Second item\n- Third item\n  - Nested item',
     {
-      transformers: [
-        {
-          type: 'remarkPlugin',
-          handler: remarkFlatList,
-        },
-      ],
+      transformers: [remarkFlatList],
     },
   )
 
@@ -70,15 +65,10 @@ test('(markdown -> prosemirror) Bullet list', () => {
 
 test('(markdown -> prosemirror) Ordered list', () => {
   const editor = getEditorInstance(extension)
-  const unist = unistNodeFromMarkdown(
+  const unist = markdownToUnist(
     '1. First item\n2. Second item\n3. Third item\n   1. Nested item',
     {
-      transformers: [
-        {
-          type: 'remarkPlugin',
-          handler: remarkFlatList,
-        },
-      ],
+      transformers: [remarkFlatList],
     },
   )
 
@@ -100,15 +90,10 @@ test('(markdown -> prosemirror) Ordered list', () => {
 
 test('(markdown -> prosemirror) Task list', () => {
   const editor = getEditorInstance(extension)
-  const unist = unistNodeFromMarkdown(
+  const unist = markdownToUnist(
     '- [ ] First item\n- [x] Second item\n- [ ] Third item\n  - [x] Nested item',
     {
-      transformers: [
-        {
-          type: 'remarkPlugin',
-          handler: remarkFlatList,
-        },
-      ],
+      transformers: [remarkFlatList],
     },
   )
 

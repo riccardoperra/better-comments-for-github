@@ -20,6 +20,9 @@ export * from './code/code.js'
 export * from './italic/italic.js'
 export * from './strikethrough/strikethrough.js'
 export * from './link/link.js'
+export * from './superscript/superscript'
+export * from './subscript/subscript'
+export * from './underline/underline'
 
 // Nodes
 export * from './blockquote/blockquote.js'

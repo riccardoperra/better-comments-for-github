@@ -135,12 +135,17 @@ export function remarkGitHubIssueReferenceSupport() {
           issue: _issue.issue,
           type: _issue.isPullRequest ? 'pull' : 'issue',
           owner: _issue.owner,
-          href: _issue.href,
           repository: _issue.repository,
         }),
       }
       if (typeof index === 'number' && parent) {
         ;(parent as Parent).children[index] = result
+        // If next to the link there is a text node, automatically add a space in order
+        // to avoid the link to be concatenated with the text
+        const nextEl = parent.children.at(index + 1)
+        if (nextEl && nextEl.type === 'text' && nextEl.value[0] !== ' ') {
+          nextEl.value = ' ' + nextEl.value
+        }
       }
     })
   }

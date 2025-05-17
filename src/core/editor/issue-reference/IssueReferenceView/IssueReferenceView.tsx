@@ -91,7 +91,9 @@ export function IssueReferenceView(props: NodeViewContextProps) {
         <Show when={hoverContent.loading}>
           <LucideLoaderCircle size={15} class={styles.loader} />
         </Show>
-        <Show when={issueIcon()}>{(icon) => icon()}</Show>
+        <Show when={issueIcon()}>
+          {(icon) => <span class={styles.iconWrapper}>{icon()}</span>}
+        </Show>
         <Show fallback={label()} when={issueTitle()}>
           {(title) => <span class={styles.title}>{title()}</span>}
         </Show>

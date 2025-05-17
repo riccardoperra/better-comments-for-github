@@ -1,26 +1,16 @@
 import { useEditor } from 'prosekit/solid'
+
+import { For, Show } from 'solid-js'
 import {
   AutocompleteEmpty,
   AutocompleteItem,
   AutocompleteList,
   AutocompletePopover,
-} from 'prosekit/solid/autocomplete'
-
-import LucideHeading1 from 'lucide-solid/icons/heading-1'
-import LucideHeading2 from 'lucide-solid/icons/heading-2'
-import LucideHeading3 from 'lucide-solid/icons/heading-3'
-import LucideHeading4 from 'lucide-solid/icons/heading-4'
-import LucideHeading5 from 'lucide-solid/icons/heading-5'
-import LucideHeading6 from 'lucide-solid/icons/heading-6'
-import LucideList from 'lucide-solid/icons/list'
-import LucideQuote from 'lucide-solid/icons/text-quote'
-import LucideDivider from 'lucide-solid/icons/minus'
-import LucideListOrdered from 'lucide-solid/icons/list-ordered'
-import LucideCodeBlock from 'lucide-solid/icons/code-square'
-import { For, Show } from 'solid-js'
+} from '../../autocomplete/Autocomplete'
 
 import { githubAlertTypeMap } from '../../githubAlert/config'
 import { EditorTextShortcut } from '../../kbd/kbd'
+import { EditorActionIcon } from '../../action-icon/ActionIcon'
 import styles from './slash-menu.module.css'
 import type { JSX } from 'solid-js'
 import type { LucideProps } from 'lucide-solid'
@@ -39,15 +29,6 @@ export interface SlashMenuItem {
   actionId?: string
 }
 
-const icons = [
-  LucideHeading1,
-  LucideHeading2,
-  LucideHeading3,
-  LucideHeading4,
-  LucideHeading5,
-  LucideHeading6,
-]
-
 const SlashMenuItems: Array<SlashMenuItem> = [
   ...[1, 2, 3, 4, 5, 6].map(
     (level) =>
@@ -55,7 +36,6 @@ const SlashMenuItems: Array<SlashMenuItem> = [
         label: `Heading ${level}`,
         canExec: (editor) => editor.commands.toggleHeading.canExec({ level }),
         command: (editor) => editor.commands.setHeading({ level: level }),
-        icon: icons[level - 1],
         actionId: `heading>${level}`,
       }) as SlashMenuItem,
   ),
@@ -64,25 +44,21 @@ const SlashMenuItems: Array<SlashMenuItem> = [
     canExec: (editor) => editor.commands.insertHorizontalRule.canExec(),
     command: (editor) => editor.commands.insertHorizontalRule(),
     actionId: 'horizontalRule',
-    icon: LucideDivider,
   },
   ...[
     {
       label: 'Task',
       actionId: 'taskList',
       kind: 'task',
-      icon: LucideList,
     },
     {
       label: 'Bullet',
       actionId: 'bulletList',
       kind: 'bullet',
-      icon: LucideList,
     },
     {
       label: 'Numbered',
       kind: 'ordered',
-      icon: LucideListOrdered,
     },
     // {
     //   label: 'Toggle',
@@ -96,7 +72,6 @@ const SlashMenuItems: Array<SlashMenuItem> = [
         label: `${listType.label} list`,
         command: (editor) =>
           editor.commands.wrapInList({ kind: listType.kind }),
-        icon: listType.icon,
         actionId: `${listType.kind}List`,
         canExec: (editor) =>
           editor.commands.wrapInList.canExec({ kind: listType.kind }),
@@ -107,14 +82,12 @@ const SlashMenuItems: Array<SlashMenuItem> = [
     label: 'Blockquote',
     command: (editor) => editor.commands.toggleBlockquote(),
     canExec: (editor) => editor.commands.toggleBlockquote.canExec(),
-    icon: LucideQuote,
     actionId: 'blockquote',
   },
   ...Object.values(githubAlertTypeMap).map(
     (alert) =>
       ({
         label: `${alert.label}`,
-        icon: alert.icon,
         actionId: `alert>${alert.type}`,
         command: (editor) => editor.commands.setAlert(alert.type),
         canExec: (editor) => editor.commands.toggleAlert.canExec(alert.type),
@@ -125,7 +98,6 @@ const SlashMenuItems: Array<SlashMenuItem> = [
     label: 'Code block',
     command: (editor) => editor.commands.toggleCodeBlock(),
     canExec: (editor) => editor.commands.toggleCodeBlock.canExec(),
-    icon: LucideCodeBlock,
     actionId: 'codeBlock',
   },
 ]
@@ -181,13 +153,11 @@ export default function SlashMenu() {
   return (
     <AutocompletePopover
       regex={/(?:^|(?<=\s))\/(?!\/)[^/]*$/iu}
-      class={styles.slashMenu}
       fitViewport={false}
+      class={styles.slashMenu}
     >
       <AutocompleteList>
-        <AutocompleteEmpty class={styles.slashMenuItem}>
-          No results
-        </AutocompleteEmpty>
+        <AutocompleteEmpty>No results</AutocompleteEmpty>
 
         <div class={styles.slashMenuSectionGroup}>
           <For each={GroupedMenuItems}>
@@ -203,14 +173,29 @@ export default function SlashMenu() {
                       <AutocompleteItem
                         class={styles.slashMenuItem}
                         value={item.label}
-                        onSelect={() => item.command(editor())}
+                        onSelect={() => {
+                          // hacky workaround to wait for '/ (slash)' to be removed before inserting a new element
+                          queueMicrotask(() => item.command(editor()))
+                        }}
                       >
-                        <Show when={item.icon}>
-                          {(icon) => {
-                            const Icon = icon()
-                            return <Icon size={17} strokeWidth={2} />
-                          }}
+                        <Show
+                          fallback={
+                            <>
+                              <Show when={item.icon}>
+                                {(icon) => {
+                                  const Icon = icon()
+                                  return <Icon size={17} strokeWidth={2} />
+                                }}
+                              </Show>
+                            </>
+                          }
+                          when={item.actionId}
+                        >
+                          {(actionId) => (
+                            <EditorActionIcon actionId={actionId()} size={17} />
+                          )}
                         </Show>
+
                         {item.label}
 
                         <Show when={item.actionId}>

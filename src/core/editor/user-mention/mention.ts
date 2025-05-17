@@ -16,11 +16,10 @@
 
 import { defineNodeSpec, union } from 'prosekit/core'
 import { defineMention } from 'prosekit/extensions/mention'
-import { createProseMirrorNode } from 'prosemirror-transformer-markdown/prosemirror'
 import { defineSolidNodeView } from 'prosekit/solid'
+import { toProseMirrorNode } from '@prosemirror-processor/unist/mdast'
 import { UserMentionView } from './UserMentionView/UserMentionView'
 import type { MentionAttrs } from 'prosekit/extensions/mention'
-import type { Text } from 'mdast'
 import type { GitHubMention } from '../../../editor/utils/remarkGitHubUserReferences'
 
 export function defineMentionMarkdown() {
@@ -46,17 +45,17 @@ export function defineMentionMarkdown() {
           },
         },
       ],
-      toUnist: (node, children): Array<Text> => {
-        return [{ type: 'text', value: node.attrs.value ?? '' }]
+      __toUnist: (node) => {
+        return { type: 'text', value: node.attrs.value ?? '' }
       },
-      unistToNode(node, schema, children, context) {
-        const mention = node as GitHubMention
-        return createProseMirrorNode('mention', schema, [], {
+      // @ts-expect-error TODO: fix types
+      __fromUnist: toProseMirrorNode<GitHubMention>('mention', (mention) => {
+        return {
           kind: 'user',
           id: mention.id,
           value: `@${mention.id}`,
-        } satisfies MentionAttrs)
-      },
+        } satisfies MentionAttrs
+      }),
     }),
     defineSolidNodeView({
       name: 'mention',

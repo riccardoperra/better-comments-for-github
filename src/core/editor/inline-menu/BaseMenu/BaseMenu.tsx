@@ -14,14 +14,10 @@
  * limitations under the License.
  */
 
-import LucideBold from 'lucide-solid/icons/bold'
-import LucideItalic from 'lucide-solid/icons/italic'
-import LucideStrike from 'lucide-solid/icons/strikethrough'
-import LucideCode from 'lucide-solid/icons/code'
 import { Show } from 'solid-js'
-import LucideLink from 'lucide-solid/icons/link'
 import { useEditor } from 'prosekit/solid'
 import { ToolbarAction as Button } from '../../toolbar/toolbar'
+import { EditorActionIcon } from '../../action-icon/ActionIcon'
 import type { EditorExtension } from '../../extension'
 
 export interface BaseMenuProps {
@@ -38,7 +34,7 @@ export const BaseMenu = (props: BaseMenuProps) => {
         onClick={() => editor().commands.toggleBold()}
         label="Bold"
       >
-        <LucideBold size={16} />
+        <EditorActionIcon size={16} actionId={'bold'} />
       </Button>
 
       <Button
@@ -47,7 +43,7 @@ export const BaseMenu = (props: BaseMenuProps) => {
         onClick={() => editor().commands.toggleItalic()}
         label="Italic"
       >
-        <LucideItalic size={16} />
+        <EditorActionIcon size={16} actionId={'italic'} />
       </Button>
 
       <Button
@@ -56,7 +52,7 @@ export const BaseMenu = (props: BaseMenuProps) => {
         onClick={() => editor().commands.toggleStrike()}
         label="Strikethrough"
       >
-        <LucideStrike size={16} />
+        <EditorActionIcon size={16} actionId={'strikethrough'} />
       </Button>
 
       <Button
@@ -65,7 +61,7 @@ export const BaseMenu = (props: BaseMenuProps) => {
         onClick={() => editor().commands.toggleCode()}
         label="Code"
       >
-        <LucideCode size={16} />
+        <EditorActionIcon size={16} actionId={'code'} />
       </Button>
 
       <Show when={editor().commands.addLink.canExec({ href: '' })}>
@@ -78,7 +74,7 @@ export const BaseMenu = (props: BaseMenuProps) => {
           }}
           label="Link"
         >
-          <LucideLink size={16} />
+          <EditorActionIcon size={16} actionId={'link'} />
         </Button>
       </Show>
     </>

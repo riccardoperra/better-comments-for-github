@@ -22,8 +22,10 @@ import {
   createMemo,
   createResource,
   untrack,
+  useContext,
 } from 'solid-js'
 
+import { clsx } from 'clsx'
 import { CacheStore } from '../../../../cache.store'
 import {
   HoverCard,
@@ -32,17 +34,20 @@ import {
   HoverCardTrigger,
 } from '../../hover-card/HoverCard'
 import { getUserHoverCardContent } from '../../../../github/data'
+import { EditorRootContext } from '../../../../editor/editor'
 import styles from './UserMentionView.module.css'
 import type { NodeViewContextProps } from '@prosemirror-adapter/solid'
 import type { MentionAttrs } from 'prosekit/extensions/mention'
 
 export function UserMentionView(props: NodeViewContextProps) {
   const cacheStorage = CacheStore.provide()
+  const editorContext = useContext(EditorRootContext)!
+  console.log(editorContext)
   const context = useNodeViewContext()
   const attrs = () => context().node.attrs as MentionAttrs
   const username = createMemo(() => attrs().id)
 
-  const link = createMemo(() => `https://github.com/users/${username()}`)
+  const link = createMemo(() => `https://github.com/${username()}`)
 
   const [hoverContent] = createResource(username, (username) => {
     const linkValue = untrack(link)
@@ -73,7 +78,11 @@ export function UserMentionView(props: NodeViewContextProps) {
             <HoverCardTrigger
               href={link()}
               target={'_blank'}
-              class={styles.trigger}
+              // Inherit style from user mention
+              class={clsx(styles.trigger, 'user-mention')}
+              data-is-current-user={
+                editorContext.currentUsername() === attrs().id ? '' : null
+              }
             >
               {label()}
             </HoverCardTrigger>

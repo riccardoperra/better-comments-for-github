@@ -20,8 +20,8 @@ import {
   convertPmSchemaToUnist,
   convertUnistToProsemirror,
 } from 'prosemirror-transformer-markdown/prosemirror'
-import { unistNodeFromMarkdown } from 'prosemirror-transformer-markdown/unified'
 import { builders } from 'prosemirror-test-builder'
+import { markdownToUnist } from '@prosemirror-processor/markdown'
 import {
   getEditorInstance,
   getNodesBaseExtensions,
@@ -40,13 +40,10 @@ const { doc, p, image } = builders(extension.schema!, {
 
 test('markdown -> prosemirror', () => {
   const editor = getEditorInstance(extension)
-  const unist = unistNodeFromMarkdown(
+  const unist = markdownToUnist(
     `![Alt text](https://placehold.co/600x400 "Title") with inline text`,
     {
-      transformers: [
-        { type: 'remarkPlugin', handler: remarkInlineImage },
-        { type: 'remarkPlugin', handler: remarkHtmlImage },
-      ],
+      transformers: [remarkInlineImage, remarkHtmlImage],
     },
   )
 
@@ -68,13 +65,10 @@ test('markdown -> prosemirror', () => {
 
 test('markdown (with html) -> prosemirror', () => {
   const editor = getEditorInstance(extension)
-  const unist = unistNodeFromMarkdown(
+  const unist = markdownToUnist(
     `<img src="https://placehold.co/600x400" alt="Alt text" title="My title" width="300" height="400">`,
     {
-      transformers: [
-        { type: 'remarkPlugin', handler: remarkInlineImage },
-        { type: 'remarkPlugin', handler: remarkHtmlImage },
-      ],
+      transformers: [remarkInlineImage, remarkHtmlImage],
     },
   )
 

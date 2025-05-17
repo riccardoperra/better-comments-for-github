@@ -21,8 +21,8 @@ import {
   convertPmSchemaToUnist,
   convertUnistToProsemirror,
 } from 'prosemirror-transformer-markdown/prosemirror'
-import { unistNodeFromMarkdown } from 'prosemirror-transformer-markdown/unified'
 import { builders } from 'prosemirror-test-builder'
+import { markdownToUnist } from '@prosemirror-processor/markdown'
 import { defineDocMarkdown } from '../doc/doc'
 import { defineTextMarkdown } from '../text/text'
 import { defineParagraphMarkdown } from '../paragraph/paragraph'
@@ -43,7 +43,7 @@ const { doc, p, strong } = builders(extension.schema!, {
 
 test('markdown -> prosemirror', () => {
   const editor = getEditorInstance(extension)
-  const unist = unistNodeFromMarkdown(`Just a test content **with bold text**`)
+  const unist = markdownToUnist(`Just a test content **with bold text**`)
 
   const result = convertUnistToProsemirror(unist, editor.schema)
 

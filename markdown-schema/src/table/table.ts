@@ -17,97 +17,68 @@
 import { defineNodeSpec, union } from 'prosekit/core'
 import { defineTable } from 'prosekit/extensions/table'
 import { createProseMirrorNode } from 'prosemirror-transformer-markdown/prosemirror'
-import type {
-  PhrasingContent,
-  RowContent,
-  Table,
-  TableCell,
-  TableContent,
-  TableRow,
-} from 'mdast'
+import {
+  fromProseMirrorNode,
+  toProseMirrorNode,
+} from '@prosemirror-processor/unist/mdast'
+import { pmNode } from '@prosemirror-processor/unist'
+import type { Parent } from 'mdast'
 
 export function defineTableMarkdown() {
   return union(
     defineTable(),
     defineNodeSpec({
       name: 'tableCell',
-      toUnist(node, children): Array<TableCell> {
-        return [
-          {
-            type: 'tableCell',
-            children: children as Array<PhrasingContent>,
-          },
-        ]
-      },
-      unistName: 'tableCell',
-      unistToNode(node, schema, children, context) {
+      __fromUnist: (node, parent, context) => {
+        const isHead =
+          !!parent &&
+          parent.type === 'tableRow' &&
+          // TODO: should access to the parent of table row in my opinion
+          parent.position?.start.line === 1 &&
+          node.position?.start.line === 1
+        const children = context.handleAll(node as Parent)
         const mappedChildren = children.map((child) => {
           if (child.isText) {
-            return createProseMirrorNode('paragraph', schema, [child])[0]
+            return createProseMirrorNode('paragraph', context.schema, [
+              child,
+            ])[0]
           }
           return child
         })
-        return createProseMirrorNode('tableCell', schema, mappedChildren)
+        const nodeType = isHead
+          ? context.schema.nodes.tableHeaderCell
+          : context.schema.nodes.tableCell
+        return pmNode(nodeType, mappedChildren, null)
       },
+      __toUnist: (node, parent, context) => {
+        return fromProseMirrorNode('tableCell')(node, parent, context as any)
+      },
+      unistName: 'tableCell',
     }),
     defineNodeSpec({
       name: 'tableRow',
-      toUnist(node, children): Array<TableRow> {
-        return [
-          {
-            type: 'tableRow',
-            children: children as Array<RowContent>,
-          },
-        ]
-      },
+      __fromUnist: toProseMirrorNode('tableRow'),
+      // @ts-expect-error Fix types
+      __toUnist: fromProseMirrorNode('tableRow'),
       unistName: 'tableRow',
-      unistToNode(node, schema, children, context) {
-        return createProseMirrorNode('tableRow', schema, children)
-      },
     }),
     defineNodeSpec({
       name: 'table',
-      toUnist(node, children): Array<Table> {
-        return [
-          {
-            type: 'table',
-            children: children as Array<TableContent>,
-          },
-        ]
+      __fromUnist: (arg0, arg1, arg2) => {
+        return toProseMirrorNode('table')(arg0, arg1, arg2)
       },
+      // @ts-expect-error Fix types
+      __toUnist: fromProseMirrorNode('table'),
       unistName: 'table',
-      unistToNode(node, schema, children, context) {
-        // Fix heading
-        const firstTableRow = children[0]
-        const headers = [] as Array<any>
-        const firstTableRowChildrenLenght = firstTableRow.childCount
-        // TODO: fragment mapping
-        for (let index = 0; index < firstTableRowChildrenLenght; index++) {
-          const tableCell = firstTableRow.child(index)
-          const tableHeaderCell = schema.nodes.tableHeaderCell.create(
-            {},
-            tableCell.content,
-          )
-          headers.push(tableHeaderCell)
-        }
-        children[0] = schema.nodes.tableRow.create({}, headers)
-        return createProseMirrorNode('table', schema, children)
-      },
     }),
     defineNodeSpec({
       name: 'tableHeaderCell',
-      toUnist(node, children): Array<TableCell> {
-        return [
-          {
-            type: 'tableCell',
-            children: children as Array<PhrasingContent>,
-          },
-        ]
+      __fromUnist: (arg0, arg1, arg2) => {
+        return toProseMirrorNode('tableHeaderCell')(arg0, arg1, arg2)
       },
-      // unistName: "tableCell",
-      unistToNode(node, schema, children, context) {
-        return createProseMirrorNode('tableHeaderCell', schema, children)
-      },
+      // @ts-expect-error Fix types
+      __toUnist: fromProseMirrorNode('tableHeaderCell'),
+      unistName: 'tableHeaderCell',
     }),
   )
 }

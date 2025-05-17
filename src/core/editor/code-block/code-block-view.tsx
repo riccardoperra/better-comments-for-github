@@ -59,7 +59,6 @@ export default function CodeBlockView(props: NodeViewContextProps) {
   }
 
   const setLanguage = (language: string | null) => {
-    console.log(language)
     const attrs: CodeBlockAttrs = { language: language ?? '' }
     props.setAttrs(attrs)
   }

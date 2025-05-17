@@ -43,6 +43,10 @@ declare module 'mdast' {
   interface RootContentMap {
     flatList: FlatList
   }
+
+  interface BlockContentMap {
+    flatList: FlatList
+  }
 }
 
 export const remarkFlatList = () => {

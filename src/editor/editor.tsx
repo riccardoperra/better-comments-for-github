@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import type { Accessor } from 'solid-js'
 import {
   Show,
   createContext,
@@ -28,22 +29,24 @@ import {
   convertPmSchemaToUnist,
   convertUnistToProsemirror,
 } from 'prosemirror-transformer-markdown/prosemirror'
-import { unistMergeAdjacentList } from '@prosedoc/markdown-schema'
-import { ProsekitEditor } from '../core/editor/editor'
-import { defineExtension } from '../core/editor/extension'
 
 import 'prosemirror-example-setup/style/style.css'
-import { ConfigStore } from '../config.store'
-import { setEditorContent } from './utils/setContent'
-import { forceGithubTextAreaSync } from './utils/forceGithubTextAreaSync'
-import type { SuggestionData } from './utils/loadSuggestionData'
 
 import './editor.css'
-import { unistNodeFromMarkdown } from './utils/unistNodeFromMarkdown'
-import type { GitHubUploaderHandler } from '../core/editor/image/github-file-uploader'
-import { DebugNode } from './DebugNode'
-import { remarkGitHubIssueReferenceSupport } from '../core/editor/issue-reference/remarkGitHubIssueReference'
+
+import { unistMergeAdjacentList } from '@prosedoc/markdown-schema'
 import { ExtensionEditorStore } from '../editor.store'
+import { ConfigStore } from '../config.store'
+import { defineExtension } from '../core/editor/extension'
+import { ProsekitEditor } from '../core/editor/editor'
+import { remarkGitHubIssueReferenceSupport } from '../core/editor/issue-reference/remarkGitHubIssueReference'
+import { unknownNodeHandler } from '../core/editor/unknown-node/unknown-node-handler'
+import { setEditorContent } from './utils/setContent'
+import { forceGithubTextAreaSync } from './utils/forceGithubTextAreaSync'
+import { DebugNode } from './DebugNode'
+import { unistNodeFromMarkdown } from './utils/unistNodeFromMarkdown'
+import type { SuggestionData } from './utils/loadSuggestionData'
+import type { GitHubUploaderHandler } from '../core/editor/image/github-file-uploader'
 import type { Root } from 'mdast'
 
 export interface EditorProps {
@@ -54,20 +57,23 @@ export interface EditorProps {
 }
 
 export type EditorType = 'native' | 'react'
-
-export const EditorRootContext = createContext<{
+export type EditorRootContextProps = {
   data: SuggestionData
   textarea: HTMLTextAreaElement
   initialValue: string
   uploadHandler: GitHubUploaderHandler
   type: EditorType
+  currentUsername: Accessor<string>
   repository: string
   owner: string
-}>()
+}
+
+export const EditorRootContext = createContext<EditorRootContextProps>()
 
 function sanitizeMarkdownValue(value: string) {
   return (
     value
+      .replaceAll('\\', '')
       // Handle Alerts:  > [!NOTE]
       .replaceAll('> \\[!', '> [!')
       // Handle github links: https:\//github.com
@@ -106,7 +112,11 @@ export function Editor(props: EditorProps) {
             owner: context.owner,
             repository: context.repository,
           })
-          const pmNode = convertUnistToProsemirror(unistNode, editor.schema)
+          const pmNode = convertUnistToProsemirror(
+            unistNode,
+            editor.schema,
+            unknownNodeHandler(value),
+          )
           editor.setContent(pmNode)
         }
       },
@@ -123,7 +133,11 @@ export function Editor(props: EditorProps) {
           owner: context.owner,
           repository: context.repository,
         })
-        const pmNode = convertUnistToProsemirror(unistNode, editor.schema)
+        const pmNode = convertUnistToProsemirror(
+          unistNode,
+          editor.schema,
+          unknownNodeHandler(value),
+        )
         editor.setContent(pmNode)
       },
       { signal: abortController.signal },

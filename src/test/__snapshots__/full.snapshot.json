@@ -1,0 +1,1377 @@
+{
+  "type": "doc",
+  "content": [
+    {
+      "type": "heading",
+      "attrs": {
+        "level": 1,
+        "textAlign": "left"
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "A first level heading"
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "attrs": {
+        "level": 2,
+        "textAlign": "left"
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "A second level heading"
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "attrs": {
+        "level": 3,
+        "textAlign": "left"
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "A third level heading"
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "attrs": {
+        "level": 4,
+        "textAlign": "left"
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "A fourth level heading"
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "attrs": {
+        "level": 5,
+        "textAlign": "left"
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "A fifth level heading"
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "attrs": {
+        "level": 6,
+        "textAlign": "left"
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "A sixth level heading"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "attrs": {
+        "textAlign": "left"
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "Markdown supports various "
+        },
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "bold"
+            }
+          ],
+          "text": "emphasis"
+        },
+        {
+          "type": "text",
+          "text": " styles to enhance your text formatting."
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "attrs": {
+        "textAlign": "left"
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "You can make text "
+        },
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "bold"
+            }
+          ],
+          "text": "bold"
+        },
+        {
+          "type": "text",
+          "text": " using either "
+        },
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "code"
+            }
+          ],
+          "text": "**double asterisks**"
+        },
+        {
+          "type": "text",
+          "text": " or "
+        },
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "code"
+            }
+          ],
+          "text": "__double underscores__"
+        },
+        {
+          "type": "text",
+          "text": "."
+        },
+        {
+          "type": "hardbreak"
+        },
+        {
+          "type": "text",
+          "text": "For example: "
+        },
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "bold"
+            }
+          ],
+          "text": "This is bold text"
+        },
+        {
+          "type": "text",
+          "text": " and "
+        },
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "bold"
+            }
+          ],
+          "text": "this is also bold"
+        },
+        {
+          "type": "text",
+          "text": "."
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "attrs": {
+        "textAlign": "left"
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "To "
+        },
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "italic"
+            }
+          ],
+          "text": "italicize"
+        },
+        {
+          "type": "text",
+          "text": " text, use "
+        },
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "code"
+            }
+          ],
+          "text": "*asterisks*"
+        },
+        {
+          "type": "text",
+          "text": " or "
+        },
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "code"
+            }
+          ],
+          "text": "_underscores_"
+        },
+        {
+          "type": "text",
+          "text": "."
+        },
+        {
+          "type": "hardbreak"
+        },
+        {
+          "type": "text",
+          "text": "Example: "
+        },
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "italic"
+            }
+          ],
+          "text": "This text is italicized"
+        },
+        {
+          "type": "text",
+          "text": " or "
+        },
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "italic"
+            }
+          ],
+          "text": "this too"
+        },
+        {
+          "type": "text",
+          "text": "."
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "attrs": {
+        "textAlign": "left"
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "Strikethrough is done using "
+        },
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "code"
+            }
+          ],
+          "text": "~~tildes~~"
+        },
+        {
+          "type": "text",
+          "text": ":"
+        },
+        {
+          "type": "hardbreak"
+        },
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "strike"
+            }
+          ],
+          "text": "This was mistaken text"
+        },
+        {
+          "type": "text",
+          "text": " but now corrected."
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "attrs": {
+        "textAlign": "left"
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "You can "
+        },
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "bold"
+            }
+          ],
+          "text": "combine bold and "
+        },
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "bold"
+            },
+            {
+              "type": "italic"
+            }
+          ],
+          "text": "italic"
+        },
+        {
+          "type": "text",
+          "text": " like so:"
+        },
+        {
+          "type": "hardbreak"
+        },
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "bold"
+            }
+          ],
+          "text": "This part is "
+        },
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "bold"
+            },
+            {
+              "type": "italic"
+            }
+          ],
+          "text": "extremely"
+        },
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "bold"
+            }
+          ],
+          "text": " important"
+        },
+        {
+          "type": "text",
+          "text": "."
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "attrs": {
+        "textAlign": "left"
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "Or go even further with "
+        },
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "bold"
+            },
+            {
+              "type": "italic"
+            }
+          ],
+          "text": "bold and italic all at once"
+        },
+        {
+          "type": "text",
+          "text": " using three asterisks:"
+        },
+        {
+          "type": "hardbreak"
+        },
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "bold"
+            },
+            {
+              "type": "italic"
+            }
+          ],
+          "text": "All this text is important"
+        },
+        {
+          "type": "text",
+          "text": "."
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "attrs": {
+        "textAlign": "left"
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "HTML-style tags work for special cases like subscript and superscript:"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "attrs": {
+        "textAlign": "left"
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "This is H"
+        },
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "subscript"
+            }
+          ],
+          "text": "2"
+        },
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "superscript"
+            }
+          ],
+          "text": "2"
+        },
+        {
+          "type": "text",
+          "text": "In formulas like E = mc"
+        },
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "superscript"
+            }
+          ],
+          "text": "2"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "attrs": {
+        "textAlign": "left"
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "Underline isn’t native in Markdown, but you can use HTML tags:"
+        },
+        {
+          "type": "hardbreak"
+        },
+        {
+          "type": "text",
+          "text": "This is an "
+        },
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "underline"
+            }
+          ],
+          "text": "underlined"
+        }
+      ]
+    },
+    {
+      "type": "blockquote",
+      "content": [
+        {
+          "type": "paragraph",
+          "attrs": {
+            "textAlign": "left"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Combine all of them? Sure!"
+            },
+            {
+              "type": "hardbreak"
+            },
+            {
+              "type": "text",
+              "marks": [
+                {
+                  "type": "underline"
+                },
+                {
+                  "type": "bold"
+                },
+                {
+                  "type": "italic"
+                }
+              ],
+              "text": "Even this is "
+            },
+            {
+              "type": "text",
+              "marks": [
+                {
+                  "type": "underline"
+                },
+                {
+                  "type": "subscript"
+                },
+                {
+                  "type": "bold"
+                },
+                {
+                  "type": "italic"
+                }
+              ],
+              "text": "wild"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "attrs": {
+        "textAlign": "left"
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "You can quote text with a >."
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "attrs": {
+        "textAlign": "left"
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "Text that is not a quote"
+        }
+      ]
+    },
+    {
+      "type": "blockquote",
+      "content": [
+        {
+          "type": "paragraph",
+          "attrs": {
+            "textAlign": "left"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Text that is a quote"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "attrs": {
+        "textAlign": "left"
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "To format code or text into its own distinct block, use triple backticks."
+        }
+      ]
+    },
+    {
+      "type": "codeBlock",
+      "attrs": {
+        "language": "typescript"
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "interface MyType {\n    property: string;\n}"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "attrs": {
+        "textAlign": "left"
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "In issues, pull requests, and discussions, you can call out colors within a sentence by using backticks. A supported\ncolor model within backticks will display a visualization of the color."
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "attrs": {
+        "textAlign": "left"
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "The background color is "
+        },
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "code"
+            }
+          ],
+          "text": "#ffffff"
+        },
+        {
+          "type": "text",
+          "text": " for light mode and "
+        },
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "code"
+            }
+          ],
+          "text": "#000000"
+        },
+        {
+          "type": "text",
+          "text": " for dark mode."
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "attrs": {
+        "textAlign": "left"
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "You can create an inline link by wrapping link text in brackets [ ], and then wrapping the URL in parentheses ( ). You\ncan also use the keyboard shortcut Command+K to create a link. When you have text selected, you can paste a URL from\nyour clipboard to automatically create a link from the selection."
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "attrs": {
+        "textAlign": "left"
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "This site was built using "
+        },
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "link",
+              "attrs": {
+                "href": "https://pages.github.com/",
+                "title": null
+              }
+            }
+          ],
+          "text": "GitHub Pages"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "attrs": {
+        "textAlign": "left"
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "A relative link is a link that is relative to the current file. For example, if you have a README file in root of your\nrepository, and you have another file in docs/CONTRIBUTING.md, the relative link to CONTRIBUTING.md in your README might\nlook like this:\n"
+        },
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "link",
+              "attrs": {
+                "href": "docs/CONTRIBUTING.md",
+                "title": null
+              }
+            }
+          ],
+          "text": "Contribution guidelines for this project"
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "attrs": {
+        "level": 1,
+        "textAlign": "left"
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "Section Heading"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "attrs": {
+        "textAlign": "left"
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "Some body text of this section."
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "attrs": {
+        "textAlign": "left"
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "\nSome text I want to provide a direct link to, but which doesn't have its own heading."
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "attrs": {
+        "textAlign": "left"
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "(… more content…)"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "attrs": {
+        "textAlign": "left"
+      },
+      "content": [
+        {
+          "type": "text",
+          "marks": [
+            {
+              "type": "link",
+              "attrs": {
+                "href": "#my-custom-anchor-point",
+                "title": null
+              }
+            }
+          ],
+          "text": "A link to that custom anchor"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "attrs": {
+        "textAlign": "left"
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "This example"
+        },
+        {
+          "type": "hardbreak"
+        },
+        {
+          "type": "text",
+          "text": "Will span two lines"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "attrs": {
+        "textAlign": "left"
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "This example"
+        },
+        {
+          "type": "hardbreak"
+        },
+        {
+          "type": "text",
+          "text": "Will span two lines"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "attrs": {
+        "textAlign": "left"
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "This example\nWill span two lines"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "attrs": {
+        "textAlign": "left"
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "You can display an image by adding ! and wrapping the alt text in [ ]. Alt text is a short text equivalent of the\ninformation in the image. Then, wrap the link for the image in parentheses ()."
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "attrs": {
+        "textAlign": "left"
+      },
+      "content": [
+        {
+          "type": "image",
+          "attrs": {
+            "src": "https://myoctocat.com/assets/images/base-octocat.svg",
+            "width": null,
+            "height": null,
+            "alt": "Screenshot of a comment on a GitHub issue showing an image, added in the Markdown, of an Octocat smiling and raising a tentacle.",
+            "title": null,
+            "referenceId": null
+          }
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "attrs": {
+        "textAlign": "left"
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "You can make an unordered list by preceding one or more lines of text with -, *, or +."
+        }
+      ]
+    },
+    {
+      "type": "list",
+      "attrs": {
+        "kind": "bullet",
+        "order": null,
+        "checked": null,
+        "collapsed": false
+      },
+      "content": [
+        {
+          "type": "paragraph",
+          "attrs": {
+            "textAlign": "left"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "George Washington"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "list",
+      "attrs": {
+        "kind": "bullet",
+        "order": null,
+        "checked": null,
+        "collapsed": false
+      },
+      "content": [
+        {
+          "type": "paragraph",
+          "attrs": {
+            "textAlign": "left"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "John Adams"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "list",
+      "attrs": {
+        "kind": "bullet",
+        "order": null,
+        "checked": null,
+        "collapsed": false
+      },
+      "content": [
+        {
+          "type": "paragraph",
+          "attrs": {
+            "textAlign": "left"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Thomas Jefferson"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "attrs": {
+        "textAlign": "left"
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "Using *"
+        }
+      ]
+    },
+    {
+      "type": "list",
+      "attrs": {
+        "kind": "bullet",
+        "order": null,
+        "checked": null,
+        "collapsed": false
+      },
+      "content": [
+        {
+          "type": "paragraph",
+          "attrs": {
+            "textAlign": "left"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "George Washington"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "list",
+      "attrs": {
+        "kind": "bullet",
+        "order": null,
+        "checked": null,
+        "collapsed": false
+      },
+      "content": [
+        {
+          "type": "paragraph",
+          "attrs": {
+            "textAlign": "left"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "John Adams\n*Thomas Jefferson"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "attrs": {
+        "textAlign": "left"
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "Using +"
+        }
+      ]
+    },
+    {
+      "type": "list",
+      "attrs": {
+        "kind": "bullet",
+        "order": null,
+        "checked": null,
+        "collapsed": false
+      },
+      "content": [
+        {
+          "type": "paragraph",
+          "attrs": {
+            "textAlign": "left"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "George Washington"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "list",
+      "attrs": {
+        "kind": "bullet",
+        "order": null,
+        "checked": null,
+        "collapsed": false
+      },
+      "content": [
+        {
+          "type": "paragraph",
+          "attrs": {
+            "textAlign": "left"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "John Adams"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "list",
+      "attrs": {
+        "kind": "bullet",
+        "order": null,
+        "checked": null,
+        "collapsed": false
+      },
+      "content": [
+        {
+          "type": "paragraph",
+          "attrs": {
+            "textAlign": "left"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Thomas Jefferson"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "attrs": {
+        "textAlign": "left"
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "To order your list, precede each line with a number."
+        }
+      ]
+    },
+    {
+      "type": "list",
+      "attrs": {
+        "kind": "ordered",
+        "order": null,
+        "checked": null,
+        "collapsed": false
+      },
+      "content": [
+        {
+          "type": "paragraph",
+          "attrs": {
+            "textAlign": "left"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "James Madison"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "list",
+      "attrs": {
+        "kind": "ordered",
+        "order": null,
+        "checked": null,
+        "collapsed": false
+      },
+      "content": [
+        {
+          "type": "paragraph",
+          "attrs": {
+            "textAlign": "left"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "James Monroe"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "list",
+      "attrs": {
+        "kind": "ordered",
+        "order": null,
+        "checked": null,
+        "collapsed": false
+      },
+      "content": [
+        {
+          "type": "paragraph",
+          "attrs": {
+            "textAlign": "left"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "John Quincy Adams"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "attrs": {
+        "textAlign": "left"
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "You can create a nested list by indenting one or more list items below another item."
+        }
+      ]
+    },
+    {
+      "type": "list",
+      "attrs": {
+        "kind": "ordered",
+        "order": null,
+        "checked": null,
+        "collapsed": false
+      },
+      "content": [
+        {
+          "type": "paragraph",
+          "attrs": {
+            "textAlign": "left"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "First list item"
+            }
+          ]
+        },
+        {
+          "type": "list",
+          "attrs": {
+            "kind": "bullet",
+            "order": null,
+            "checked": null,
+            "collapsed": false
+          },
+          "content": [
+            {
+              "type": "paragraph",
+              "attrs": {
+                "textAlign": "left"
+              },
+              "content": [
+                {
+                  "type": "text",
+                  "text": "First nested list item"
+                }
+              ]
+            },
+            {
+              "type": "list",
+              "attrs": {
+                "kind": "bullet",
+                "order": null,
+                "checked": null,
+                "collapsed": false
+              },
+              "content": [
+                {
+                  "type": "paragraph",
+                  "attrs": {
+                    "textAlign": "left"
+                  },
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Second nested list item"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "attrs": {
+        "textAlign": "left"
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "To create a task list, preface list items with a hyphen and space followed by [ ]. To mark a task as complete, use [x]."
+        }
+      ]
+    },
+    {
+      "type": "list",
+      "attrs": {
+        "kind": "task",
+        "order": null,
+        "checked": true,
+        "collapsed": false
+      },
+      "content": [
+        {
+          "type": "paragraph",
+          "attrs": {
+            "textAlign": "left"
+          },
+          "content": [
+            {
+              "type": "gh-issue-reference",
+              "attrs": {
+                "issue": 739,
+                "repository": "test-repository",
+                "owner": "riccardoperra",
+                "type": "issue",
+                "href": "https://github.com/riccardoperra/test-repository/issues/739"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "list",
+      "attrs": {
+        "kind": "task",
+        "order": null,
+        "checked": false,
+        "collapsed": false
+      },
+      "content": [
+        {
+          "type": "paragraph",
+          "attrs": {
+            "textAlign": "left"
+          },
+          "content": [
+            {
+              "type": "gh-issue-reference",
+              "attrs": {
+                "issue": 740,
+                "repository": "octo-repo",
+                "owner": "octo-org",
+                "type": "issue",
+                "href": "https://github.com/octo-org/octo-repo/issues/740"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "list",
+      "attrs": {
+        "kind": "task",
+        "order": null,
+        "checked": false,
+        "collapsed": false
+      },
+      "content": [
+        {
+          "type": "paragraph",
+          "attrs": {
+            "textAlign": "left"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Add delight to the experience when all tasks are complete :tada:"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

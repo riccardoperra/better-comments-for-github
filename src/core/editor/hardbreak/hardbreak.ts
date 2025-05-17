@@ -15,38 +15,22 @@
  */
 
 import { defineHardbreakMarkdown } from '@prosedoc/markdown-schema'
-import { defineCommands, defineKeymap, insertNode, union } from 'prosekit/core'
-import { exitCode } from 'prosemirror-commands'
+import { insertNode, union } from 'prosekit/core'
 import type { Command } from 'prosemirror-state'
 
 export function defineHardbreak() {
-  return union(
-    defineHardbreakMarkdown(),
-    defineCommands({
-      setHardbreak: () => {
-        return (state, dispatch, view) => {
-          return setHardbreak(state, dispatch, view)
-        }
-      },
-    }),
-    defineKeymap({
-      'Mod-Enter': setHardbreak,
-      'Shift-Enter': setHardbreak,
-    }),
-  )
+  return union(defineHardbreakMarkdown())
 }
 
 const setHardbreak: Command = (state, dispatch, view) => {
-  const exit = exitCode(state, dispatch, view)
-  if (exit) {
-    return true
-  }
-
-  const { selection } = state
-
-  if (selection.$from.parent.type.spec.isolating) {
-    return false
-  }
-
+  // const exit = exitCode(state, dispatch, view)
+  // if (exit) {
+  //   return true
+  // }
+  //
+  // const { selection } = state
+  //
+  // if (selection.$from.parent.type.spec.isolating) {
+  //   return false
   return insertNode({ type: 'hardbreak' })(state, dispatch, view)
 }

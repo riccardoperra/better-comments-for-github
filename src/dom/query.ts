@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { createRenderEffect, createSignal } from 'solid-js'
+import { createComputed, createSignal } from 'solid-js'
 
 export function query(
   selector: string,
@@ -84,14 +84,17 @@ export function query(
       })
     }
 
-    setElements((els) =>
-      els.filter((el) => !removedEls.includes(el)).concat(addedEls),
-    )
+    setElements((els) => {
+      const newElements = els
+        .filter((el) => !removedEls.includes(el))
+        .concat(addedEls)
+      return [...new Set(newElements)]
+    })
   })
 
   let previousElements: Array<HTMLElement> = []
 
-  createRenderEffect(() => {
+  createComputed(() => {
     const updatedElements = elements()
     const addedEls: Array<HTMLElement> = []
     const removedEls: Array<HTMLElement> = []
