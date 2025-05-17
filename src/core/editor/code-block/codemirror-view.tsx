@@ -43,9 +43,8 @@ import {
 } from '@valtown/codemirror-ts'
 import { autocompletion } from '@codemirror/autocomplete'
 import * as Comlink from 'comlink'
-import type { WorkerShape } from '@valtown/codemirror-ts/worker'
-import { drawSelection, keymap } from '@codemirror/view'
 import type { KeyBinding, ViewUpdate } from '@codemirror/view'
+import { keymap } from '@codemirror/view'
 import type { SolidNodeViewOptions, SolidNodeViewProps } from 'prosekit/solid'
 import type { ProseMirrorNode } from 'prosemirror-transformer-markdown/prosemirror'
 import './codemirror-view.css'
@@ -53,6 +52,14 @@ import { EditorView as CodeMirror, EditorView } from 'codemirror'
 import { Dynamic } from 'solid-js/web'
 import { githubDark } from '@uiw/codemirror-theme-github'
 import { defaultKeymap } from '@codemirror/commands'
+import { unified } from 'unified'
+import remarkParse from 'remark-parse'
+import remarkRehype from 'remark-rehype'
+import rehypeStringify from 'rehype-stringify'
+import remarkGfm from 'remark-gfm'
+import type { TooltipRenderer } from '@valtown/codemirror-ts'
+import type ts from 'typescript'
+import type { HoverInfo, WorkerShape } from '@valtown/codemirror-ts/worker'
 
 export const CodeMirrorContext = createContext<{
   cm: Accessor<CodeMirror | null>
@@ -92,6 +99,7 @@ export function defineCodeBlockCustomView(options: SolidNodeViewOptions) {
     ...userOptions,
     setSelection(anchor, head) {
       const codemirror = cm()
+      console.log('codemirror test', codemirror)
       if (!codemirror) return
       codemirror.focus()
       setUpdating(true)
@@ -108,14 +116,13 @@ export function defineCodeBlockCustomView(options: SolidNodeViewOptions) {
     },
     ignoreMutation: () => true,
     update: (node) => {
-      const codemirror = cm()
-      if (!codemirror) return
-      if (!_node()) setNode(node)
-      if (node.type != _node()?.type) return false
+      const cmView = cm()
+      if (!cmView) return false
+      if (_node() && node.type != _node()!.type) return false
       setNode(node)
       if (updating()) return true
       const newText = node.textContent,
-        curText = codemirror.state.doc.toString()
+        curText = cmView.state.doc.toString()
       if (newText != curText) {
         let start = 0,
           curEnd = curText.length,
@@ -135,7 +142,7 @@ export function defineCodeBlockCustomView(options: SolidNodeViewOptions) {
           newEnd--
         }
         setUpdating(true)
-        codemirror.dispatch({
+        cmView.dispatch({
           changes: {
             from: start,
             to: curEnd,
@@ -213,7 +220,13 @@ export function CodeMirrorView() {
   const codeMirrorKeymap = () => {
     const view = context().view
     return [
-      { key: 'ArrowUp', run: () => maybeEscape('line', -1) },
+      {
+        key: 'ArrowUp',
+        run: () => {
+          console.log('arrow up')
+          maybeEscape('line', -1)
+        },
+      },
       { key: 'ArrowLeft', run: () => maybeEscape('char', -1) },
       { key: 'ArrowDown', run: () => maybeEscape('line', 1) },
       { key: 'ArrowRight', run: () => maybeEscape('char', 1) },
@@ -257,8 +270,8 @@ export function CodeMirrorView() {
         doc: context().node.textContent,
         parent: el,
         extensions: [
-          keymap.of([...codeMirrorKeymap(), ...defaultKeymap]),
-          drawSelection(),
+          keymap.of([...defaultKeymap, ...codeMirrorKeymap()]),
+          // drawSelection(),
           javascript({
             typescript: true,
             jsx: true,
@@ -271,27 +284,91 @@ export function CodeMirrorView() {
             override: [
               tsAutocomplete({
                 renderAutocomplete(raw) {
-                  return () => {
+                  return (com) => {
+                    console.log(raw, com)
                     const div = document.createElement('div')
-                    if (raw.documentation) {
+                    if (raw.displayParts) {
+                      const dp = div.appendChild(document.createElement('div'))
+                      dp.classList.add('cm-autocomplete-display-parts')
+                      dp.appendChild(renderDisplayParts(raw.displayParts))
+                    }
+
+                    if (raw.documentation && raw.documentation.length > 0) {
                       const description = div.appendChild(
                         document.createElement('div'),
                       )
+                      description.classList.add('cm-autocomplete-description')
                       description.appendChild(
                         renderDisplayParts(raw.documentation),
                       )
                     }
-                    if (raw.displayParts) {
-                      const dp = div.appendChild(document.createElement('div'))
-                      dp.appendChild(renderDisplayParts(raw.displayParts))
+
+                    if (raw.tags) {
+                      const tags = document.createElement('div')
+                      div.appendChild(tags)
+                      tags.style =
+                        'display: flex; gap: var(--base-size-8); flex-direction: column;'
+
+                      const tagsToAdd: {
+                        [tag: string]: Array<{ content: string }>
+                      } = {}
+
+                      tags.classList.add('cm-autocomplete-description')
+                      raw.tags.forEach((tag) => {
+                        if (
+                          tag.name === 'link' ||
+                          tag.name === 'description' ||
+                          tag.name === 'since'
+                        ) {
+                          let allText = ''
+                          tag.text?.forEach((t) => {
+                            if (t.text) {
+                              allText += t.text
+                            }
+                          })
+                          const mdText = unified()
+                            .use(remarkParse)
+                            .use(remarkRehype)
+                            .use(rehypeStringify)
+                            .processSync(allText)
+
+                          ;(tagsToAdd[tag.name] ??= []).push({
+                            content: mdText.value as string,
+                          })
+                        }
+                      })
+
+                      Object.entries(tagsToAdd).forEach(([name, values]) => {
+                        const tagEl = document.createElement('div')
+                        tagEl.style = 'display: flex; gap: var(--base-size-8);'
+                        const kind = document.createElement('span')
+                        kind.style = 'color: var(--fgColor-muted)'
+                        kind.innerHTML = name
+
+                        const content = document.createElement('div')
+                        content.style =
+                          'display: flex; flex-direction: column; gap: var(--base-size-4)'
+                        values.forEach((value) => {
+                          const item = document.createElement('div')
+                          item.innerHTML = value.content
+                          content.appendChild(item)
+                        })
+                        content.style.color = 'white'
+                        tagEl.appendChild(kind)
+                        tagEl.appendChild(content)
+                        tags.appendChild(tagEl)
+                      })
                     }
+
                     return { dom: div }
                   }
                 },
               }),
             ],
           }),
-          tsHover(),
+          tsHover({
+            renderTooltip: defaultTooltipRenderer,
+          }),
           tsGoto(),
           tsTwoslash(),
           EditorView.theme({
@@ -306,10 +383,15 @@ export function CodeMirrorView() {
               boxShadow: 'var(--shadow-floating-small)',
               borderRadius: 'var(--borderRadius-medium)',
             },
+            '.cm-tooltip-hover': {
+              padding: 'var(--base-size-16) var(--base-size-12)',
+            },
             '.cm-tooltip .cm-completionInfo': {
-              maxHeight: '300px',
+              maxHeight: '400px',
               overflow: 'auto',
               isolation: 'isolate',
+              padding: 'var(--base-size-16) var(--base-size-12)',
+              maxWidth: '700px',
             },
             '.cm-tooltip-autocomplete': {
               '& > ul > li': {
@@ -343,8 +425,26 @@ function renderDisplayParts(dp: Array<ts.SymbolDisplayPart>) {
   const div = document.createElement('div')
   for (const part of dp) {
     const span = div.appendChild(document.createElement('span'))
+    let text = part.text
+    if (part.kind === 'text' && dp.length === 1) {
+      const mdText = unified()
+        .use(remarkParse)
+        .use(remarkGfm)
+        .use(remarkRehype)
+        .use(rehypeStringify)
+        .processSync(part.text)
+      text = mdText.value as string
+    }
     span.className = `quick-info-${part.kind}`
-    span.innerText = part.text
+    span.innerHTML = text
   }
   return div
+}
+
+export const defaultTooltipRenderer: TooltipRenderer = (info: HoverInfo) => {
+  const div = document.createElement('div')
+  if (info.quickInfo?.displayParts) {
+    div.appendChild(renderDisplayParts(info.quickInfo.displayParts))
+  }
+  return { dom: div }
 }

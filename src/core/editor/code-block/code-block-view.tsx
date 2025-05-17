@@ -127,7 +127,9 @@ export default function CodeBlockView(props: NodeViewContextProps) {
           }
           when={language() === 'typescript'}
         >
-          <CodeMirrorView />
+          <div contentEditable={false}>
+            <CodeMirrorView />
+          </div>
         </Show>
       </div>
     </NodeViewWrapper>

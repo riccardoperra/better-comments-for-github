@@ -10,6 +10,7 @@ export default defineContentScript({
       onMount: (wrapper, iframe) => {
         // Add styles to the iframe like width
         iframe.id = 'codemirror-ata'
+        iframe.style.display = 'none'
         iframe.addEventListener('load', () => {
           if (iframe.contentWindow) {
             iframe.contentWindow.postMessage(

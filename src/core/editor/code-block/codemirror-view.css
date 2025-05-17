@@ -19,15 +19,19 @@
 }
 
 .quick-info-functionName {
-  color: indigo;
+  color: #d2a8ff;
 }
 
 .quick-info-keyword {
-  color: blue;
+  color: #ff7b72;
 }
 
 .quick-info-parameterName {
-  color: green;
+  color: #79c0ff;
+}
+
+.quick-info-aliasName {
+  color: #d2a8ff;
 }
 
 .cm-twoslash {
@@ -37,9 +41,19 @@
 }
 
 .CodeMirror {
-  border: 1px solid #eee;
   height: auto;
 }
 .CodeMirror pre {
   white-space: pre !important;
+}
+
+.cm-autocomplete-description {
+  margin-top: var(--base-size-16);
+  padding-top: var(--base-size-12);
+  border-top: 1px solid var(--borderColor-default);
+  color: var(--fgColor-muted);
+}
+
+.cm-autocomplete-display-parts {
+  white-space: pre;
 }
