@@ -16,25 +16,19 @@
 
 import { defineNodeSpec, union } from 'prosekit/core'
 import { defineBlockquote } from 'prosekit/extensions/blockquote'
-import { createProseMirrorNode } from 'prosemirror-transformer-markdown/prosemirror'
-import type { BlockContent, Blockquote, DefinitionContent } from 'mdast'
+import {
+  fromProseMirrorNode,
+  toProseMirrorNode,
+} from '@prosemirror-processor/unist/mdast'
 
 export function defineBlockquoteMarkdown() {
   return union(
     defineBlockquote(),
     defineNodeSpec({
       name: 'blockquote',
-      toUnist(node, children): Array<Blockquote> {
-        return [
-          {
-            type: 'blockquote',
-            children: children as Array<BlockContent | DefinitionContent>,
-          },
-        ]
-      },
-      unistToNode(node, schema, children, context) {
-        return createProseMirrorNode('blockquote', schema, children)
-      },
+      // @ts-expect-error TODO: fix hast type
+      __toUnist: fromProseMirrorNode('blockquote'),
+      __fromUnist: toProseMirrorNode('blockquote'),
     }),
   )
 }

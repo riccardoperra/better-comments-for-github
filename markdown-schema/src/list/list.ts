@@ -16,7 +16,7 @@
 
 import { defineNodeSpec, union } from 'prosekit/core'
 import { defineList } from 'prosekit/extensions/list'
-import { createProseMirrorNode } from 'prosemirror-transformer-markdown/prosemirror'
+import { toProseMirrorNode } from '@prosemirror-processor/unist/mdast'
 import type { List } from 'mdast'
 import type { FlatList } from './remarkFlatList'
 
@@ -27,30 +27,32 @@ export function defineListMarkdown() {
     defineNodeSpec({
       name: 'list',
       unistName: 'flatList',
-      unistToNode(node, schema, children, context) {
-        const listNode = node as FlatList
-        return createProseMirrorNode('list', schema, children, {
-          kind: listNode.kind,
-          checked: listNode.kind === 'task' ? listNode.checked : null,
-        })
-      },
-      toUnist(node, children): Array<List> {
+
+      __fromUnist: toProseMirrorNode('list', (_node) => {
+        const node = _node as FlatList
+        return {
+          kind: node.kind,
+          checked: node.kind === 'task' ? node.checked : null,
+        }
+      }),
+
+      __toUnist: (node, parent, context) => {
+        const children = context.handleAll(node)
         const checked = node.attrs.kind !== 'task' ? null : node.attrs.checked
-        return [
-          {
-            type: 'list',
-            spread: false,
-            start: null,
-            ordered: node.attrs.kind === 'ordered',
-            children: [
-              {
-                type: 'listItem',
-                checked,
-                children: children as any,
-              },
-            ],
-          },
-        ]
+        return {
+          type: 'list',
+          spread: false,
+          start: null,
+          ordered: node.attrs.kind === 'ordered',
+          children: [
+            {
+              type: 'listItem',
+              checked,
+              // TODO: Fix types
+              children: children,
+            },
+          ],
+        } as List
       },
     }),
   )

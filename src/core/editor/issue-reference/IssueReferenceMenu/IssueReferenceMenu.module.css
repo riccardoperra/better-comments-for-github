@@ -16,8 +16,13 @@
 
 .itemContainer {
   display: flex;
-  align-items: center;
   gap: var(--base-size-8);
+  align-items: center;
+
+  svg {
+    width: var(--autocomplete-menuitem-lh);
+    height: var(--autocomplete-menuitem-lh);
+  }
 }
 
 .referenceId {
@@ -36,4 +41,7 @@
 
 .referenceTitle {
   font-weight: 500;
+  max-width: 330px;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }

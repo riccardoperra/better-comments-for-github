@@ -2,61 +2,51 @@ import type { Root } from "mdast";
 import type { UnistNode } from "./types.js";
 import type { Node as ProseMirrorNode, Schema } from "prosemirror-model";
 
-function convertNode(node: ProseMirrorNode, schema: Schema) {
-  let convertedNodes: UnistNode[] | null = null;
-  let convertedChildren: UnistNode[] = [];
-  for (let i = 0; i < node.childCount; ++i) {
-    const child = node.child(i);
-    convertedChildren = convertedChildren.concat(convertNode(child, schema));
-  }
+import {
+  fromProseMirrorToMdast,
+  type ProseMirrorMarkToMdastHandlers,
+  type ProseMirrorNodeToMdastHandlers,
+} from "@prosemirror-processor/unist/mdast";
 
-  if (node.type.spec.toUnist) {
-    convertedNodes = node.type.spec.toUnist(node, convertedChildren, schema);
-  }
-
-  if (convertedNodes === null) {
-    console.warn(
-      `Couldn't find any way to convert ProseMirror node of type "${node.type.name}" to a unist node.`,
-    );
-    return [];
-  }
-
-  return convertedNodes.map((convertedNode) => {
-    let postProcessedNode = convertedNode;
-    for (const mark of node.marks) {
-      let processed = false;
-      if (mark.type.spec.toUnist) {
-        postProcessedNode = mark.type.spec.toUnist(
-          postProcessedNode,
-          mark,
-          schema,
-        );
-        processed = true;
-      }
-      if (!processed) {
-        console.warn(
-          `Couldn't find any way to convert ProseMirror mark of type "${mark.type.name}" to a unist node.`,
-        );
-      }
-    }
-    return postProcessedNode;
-  });
-}
+import { pmTextHandler } from "@prosemirror-processor/unist";
 
 export function convertPmSchemaToUnist(
   node: ProseMirrorNode,
   schema: Schema,
   options?: Partial<{ postProcess: (node: Root) => void }>,
 ): UnistNode {
-  const rootNode = convertNode(node, schema);
-  if (rootNode.length !== 1) {
-    throw new Error(
-      "Couldn't find any way to convert the root ProseMirror node.",
-    );
-  }
-  const result = rootNode[0];
+  const nodeHandlers: ProseMirrorNodeToMdastHandlers = {};
+  const markHandlers: ProseMirrorMarkToMdastHandlers = {};
+
+  schema.spec.nodes.forEach((k, node) => {
+    if (node.__toUnist) {
+      // @ts-expect-error fix
+      nodeHandlers[k] = node.__toUnist;
+      // @ts-expect-error fix
+      nodeHandlers[node.unistName as any] = node.__toUnist;
+    }
+  });
+
+  schema.spec.marks.forEach((k, mark) => {
+    if (mark.__toUnist) {
+      // @ts-expect-error fix
+      markHandlers[k] = mark.__toUnist;
+      // @ts-expect-error fix
+      markHandlers[mark.unistName as any] = mark.__toUnist;
+    }
+  });
+
+  const result = fromProseMirrorToMdast(node, {
+    nodeName: (node) => node.type.spec.unistName ?? node.type.name,
+    markName: (node) => node.type.spec.unistName ?? node.type.name,
+    nodeHandlers,
+    markHandlers,
+    textHandler: pmTextHandler,
+    schema,
+  });
   if (options?.postProcess) {
     options.postProcess(result as Root);
   }
+  // @ts-expect-error fix type
   return result;
 }

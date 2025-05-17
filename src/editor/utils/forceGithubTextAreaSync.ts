@@ -67,7 +67,7 @@ function forceCallReactFiberOnChange(
 
   const fiberProps = getFiberProps<{
     onChange: (e: Event) => void
-  }>()
+  }>(textarea)
   if (fiberProps && fiberProps.onChange) {
     fiberProps.onChange(event)
   }

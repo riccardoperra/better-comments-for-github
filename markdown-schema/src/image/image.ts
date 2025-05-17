@@ -16,8 +16,8 @@
 
 import { defineNodeSpec, union } from 'prosekit/core'
 import { defineImage } from 'prosekit/extensions/image'
-import { createProseMirrorNode } from 'prosemirror-transformer-markdown/prosemirror'
 import { toHtml } from 'hast-util-to-html'
+import { toProseMirrorNode } from '@prosemirror-processor/unist/mdast'
 import type { ImageAttrs as $ImageAttrs } from 'prosekit/extensions/image'
 import type { Image } from 'mdast'
 
@@ -42,38 +42,36 @@ export function defineImageMarkdown() {
       group: 'inline',
       defining: true,
       draggable: true,
-      toUnist(node, children): Array<any> {
+      __toUnist: (node, parent, context) => {
+        const children = context.handleAll(node)
         const attrs = node.attrs as ImageAttrs
         if (attrs.width && attrs.height) {
-          return [
-            {
-              type: 'html',
-              value: toHtml({
-                type: 'element',
-                tagName: 'img',
-                properties: {
-                  width: Math.round(attrs.width),
-                  height: Math.round(attrs.height),
-                  src: attrs.src,
-                  alt: attrs.alt,
-                },
-                children: children as any,
-              }),
-            },
-          ]
+          return {
+            type: 'html',
+            value: toHtml({
+              type: 'element',
+              tagName: 'img',
+              properties: {
+                width: Math.round(attrs.width),
+                height: Math.round(attrs.height),
+                src: attrs.src,
+                alt: attrs.alt,
+              },
+              // @ts-expect-error TODO: fix hast type
+              children: children,
+            }),
+          }
         }
-        return [
-          {
-            type: 'image',
-            url: attrs.src as string,
-            alt: node.attrs.alt ?? null,
-            title: node.attrs.title ?? null,
-          } satisfies Image,
-        ]
+        return {
+          type: 'image',
+          url: attrs.src as string,
+          alt: node.attrs.alt ?? null,
+          title: node.attrs.title ?? null,
+        } satisfies Image
       },
-      unistToNode(node, schema, children, context) {
+      __fromUnist: toProseMirrorNode('image', (node) => {
         const image = node as Image
-        return createProseMirrorNode('image', schema, children, {
+        return {
           src: image.url,
           alt: image.alt ?? null,
           title: image.title ?? null,
@@ -81,8 +79,8 @@ export function defineImageMarkdown() {
           width: image.data?.hProperties?.width,
           // @ts-expect-error Why not present?
           height: image.data?.hProperties.height,
-        } satisfies ImageAttrs)
-      },
+        } satisfies ImageAttrs
+      }),
     }),
   )
 }

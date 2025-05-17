@@ -16,6 +16,10 @@
 
 import { defineMarkSpec, union } from 'prosekit/core'
 import { defineBold } from 'prosekit/extensions/bold'
+import {
+  fromProseMirrorMark,
+  toProseMirrorMark,
+} from '@prosemirror-processor/unist/mdast'
 import type { PhrasingContent, Strong } from 'mdast'
 
 export function defineBoldMarkdown() {
@@ -24,6 +28,16 @@ export function defineBoldMarkdown() {
     defineMarkSpec({
       name: 'bold',
       unistName: 'strong',
+      __toUnist: (mark, node, children, context) => {
+        return fromProseMirrorMark('strong')(
+          mark,
+          node,
+          children,
+          // @ts-expect-error TDOO: Fix types
+          context,
+        )
+      },
+      __fromUnist: toProseMirrorMark('bold'),
       toUnist(node): Strong {
         return { type: 'strong', children: [node] as Array<PhrasingContent> }
       },

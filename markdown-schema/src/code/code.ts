@@ -16,7 +16,9 @@
 
 import { defineMarkSpec, union } from 'prosekit/core'
 import { defineCode } from 'prosekit/extensions/code'
-import type { InlineCode, Text } from 'mdast'
+import type { ToProseMirrorNodeHandler } from '@prosemirror-processor/unist/mdast'
+import type { InlineCode } from 'mdast'
+import type * as Mdast from 'mdast'
 
 export function defineCodeMarkdown() {
   return union(
@@ -24,16 +26,19 @@ export function defineCodeMarkdown() {
     defineMarkSpec({
       name: 'code',
       unistName: 'inlineCode',
-      toUnist(node, children): InlineCode {
-        return { type: 'inlineCode', value: (node as Text).value }
+      __toUnist: (node, _, children, context) => {
+        const child = children.find((child) => child.type === 'text')
+        return { type: 'inlineCode', value: child?.value ?? '' }
       },
-      unistToNode(node, schema, children, context) {
+      __fromUnist: ((node, _, context) => {
         const code = node as InlineCode
         if (!code.value) {
-          return []
+          return null
         }
-        return [schema.text(code.value).mark([schema.marks.code.create()])]
-      },
+        return context.schema
+          .text(code.value)
+          .mark([context.schema.marks.code.create()])
+      }) satisfies ToProseMirrorNodeHandler<Mdast.Nodes>,
     }),
   )
 }

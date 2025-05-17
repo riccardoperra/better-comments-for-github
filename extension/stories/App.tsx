@@ -4,6 +4,7 @@ import { Editor, EditorRootContext } from '../../src/editor/editor'
 import { MockUploaderNativeHandler } from './mock-uploader'
 
 import type { Ref } from 'solid-js'
+import type { SuggestionData } from '../../src/editor/utils/loadSuggestionData'
 
 export interface AppProps {
   initialValue: string
@@ -25,8 +26,15 @@ export function App(props: AppProps) {
     ],
     savedReplies: [],
     emojis: [],
-    mentions: [],
-  }
+    mentions: [
+      {
+        identifier: 'riccardoperra',
+        participant: true,
+        description: 'Riccardo Perra',
+        avatarUrl: '',
+      },
+    ],
+  } satisfies SuggestionData
 
   return (
     <StateProvider>
@@ -39,6 +47,9 @@ export function App(props: AppProps) {
               <EditorRootContext.Provider
                 value={{
                   data,
+                  currentUsername: () => 'riccardoperra',
+                  owner: 'riccardoperra',
+                  repository: 'test-repository',
                   uploadHandler: mockUploader,
                   get initialValue() {
                     return textareaRef().value

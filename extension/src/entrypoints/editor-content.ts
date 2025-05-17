@@ -42,6 +42,15 @@ export default defineUnlistedScript(() => {
   let id = 0
   createRoot(() => {
     const owner = getOwner()
+    const [currentUsername, setCurrentUsername] = createSignal<string>('')
+
+    const userLogin = (
+      document.head.querySelector<HTMLMetaElement>('meta[name="user-login"]') ??
+      document.head.querySelector<HTMLMetaElement>(
+        'meta[name="octolytics-actor-login"]',
+      )
+    )?.content
+    setCurrentUsername(userLogin ?? '')
 
     queryComment(async (element) => {
       const { repository, repositoryOwner } = parseGitHubUrl(
@@ -396,12 +405,11 @@ export default defineUnlistedScript(() => {
 
           mountElFunction(root)
           mountEditor(root, {
+            currentUsername,
             get open() {
               return showOldEditor()
             },
-            get suggestionData() {
-              return suggestionData()
-            },
+            suggestionData,
             get uploadHandler() {
               return uploadHandler
             },

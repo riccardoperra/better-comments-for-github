@@ -35,11 +35,7 @@ export function EditorTextShortcut(props: EditorTextShortcutProps) {
     const type = props.type
     switch (type) {
       case 'inputRule':
-        const s = shortcuts[1]
-        if (s?.length === 1) {
-          return [s]
-        }
-        return s?.split('-')
+        return shortcuts[1]
       case 'keyboard': {
         const k = shortcuts[0]
         return typeof k === 'string'
@@ -55,31 +51,44 @@ export function EditorTextShortcut(props: EditorTextShortcutProps) {
     <span class={styles.editorTextShortcut}>
       <Show when={label()}>
         {(label) => (
-          <For each={label()}>
-            {(item, index) => (
+          <Show
+            fallback={
               <>
-                <Switch>
-                  <Match when={item === 'Mod' || item === 'mod'}>
-                    <Show fallback={<>Ctrl</>} when={isMac}>
-                      ⌘
-                    </Show>
-                  </Match>
-                  <Match when={true}>
-                    <span
-                      class={clsx({
-                        [styles.char]: item.length === 1,
-                      })}
-                    >
-                      {item}
-                    </span>
-                  </Match>
-                </Switch>
-                <Show when={label().length > 2 && index() < label().length - 1}>
-                  +
-                </Show>
+                <For each={label() as Array<string>}>
+                  {(item, index) => (
+                    <>
+                      <Switch>
+                        <Match when={item === 'Mod' || item === 'mod'}>
+                          <Show fallback={<>Ctrl</>} when={isMac}>
+                            ⌘
+                          </Show>
+                        </Match>
+                        <Match when={true}>
+                          <span
+                            class={clsx({
+                              [styles.char]: item.length === 1,
+                            })}
+                          >
+                            {item}
+                          </span>
+                        </Match>
+                      </Switch>
+                      <Show
+                        when={
+                          label().length > 2 && index() < label().length - 1
+                        }
+                      >
+                        +
+                      </Show>
+                    </>
+                  )}
+                </For>
               </>
-            )}
-          </For>
+            }
+            when={props.type === 'inputRule'}
+          >
+            {label()}
+          </Show>
         )}
       </Show>
     </span>

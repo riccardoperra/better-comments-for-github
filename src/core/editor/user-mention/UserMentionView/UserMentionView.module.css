@@ -15,7 +15,7 @@
  */
 
 .trigger {
-  display: inline-flex;
+  display: inline;
   align-items: center;
   line-height: inherit;
   color: var(--fgColor-default);
@@ -23,4 +23,14 @@
   &[data-invalid] {
     color: var(--fgColor-danger);
   }
+
+  /* Without this it doesn't seem there is already a space after inserting a mention */
+  &:global(.user-mention) {
+    margin-inline: 0;
+  }
+
+  /* .user-mention is enough now */
+  /*&[data-is-current-user] {*/
+  /*  background: var(--bgColor-attention-emphasis);*/
+  /*}*/
 }

@@ -15,15 +15,13 @@
  */
 
 import {
-  Priority,
   defineCommands,
   defineNodeSpec,
   insertNode,
   union,
-  withPriority,
 } from 'prosekit/core'
-import { createProseMirrorNode } from 'prosemirror-transformer-markdown/prosemirror'
 import { defineSolidNodeView } from 'prosekit/solid'
+import { toProseMirrorNode } from '@prosemirror-processor/unist/mdast'
 import {
   githubIssueReferenceType,
   matchGitHubIssueLinkReference,
@@ -63,32 +61,33 @@ export function defineIssueReferenceSpec() {
         node.attrs as GitHubIssueReferenceAttrs,
       )
     },
-    toUnist(node): Array<GitHubIssueReference> {
+    __toUnist: (node) => {
       const attrs = node.attrs as GitHubIssueReferenceAttrs
-      return [
-        {
-          type: githubIssueReferenceType,
-          issue: attrs.issue,
-          owner: attrs.owner,
-          repository: attrs.repository,
-          href: attrs.href,
-          isPullRequest: attrs.type === 'pull',
-        } satisfies GitHubIssueReference,
-      ]
+      return {
+        type: githubIssueReferenceType,
+        issue: attrs.issue,
+        owner: attrs.owner,
+        repository: attrs.repository,
+        href: attrs.href,
+        isPullRequest: attrs.type === 'pull',
+      } as GitHubIssueReference
     },
-    unistToNode(_node, schema, children, context) {
-      const node = _node as GitHubIssueReference
-      return createProseMirrorNode('gh-issue-reference', schema, [], {
-        issue: node.issue,
-        owner: node.owner,
-        repository: node.repository,
-        type: node.isPullRequest ? 'pull' : 'issue',
-        href: node.href,
-      } satisfies GitHubIssueReferenceAttrs)
-    },
+    __fromUnist: toProseMirrorNode<GitHubIssueReference>(
+      'gh-issue-reference',
+      (node) => {
+        return {
+          issue: node.issue,
+          owner: node.owner,
+          repository: node.repository,
+          type: node.isPullRequest ? 'pull' : 'issue',
+          href: node.href,
+        } satisfies GitHubIssueReferenceAttrs
+      },
+    ) as any,
     parseDOM: [
       {
         tag: `a[href]`,
+        priority: 1000,
         getAttrs: (dom: HTMLElement): GitHubIssueReferenceAttrs | false => {
           const href = (dom as HTMLAnchorElement).href
           const match = matchGitHubIssueLinkReference(href)
@@ -147,8 +146,8 @@ export function defineIssueReferenceCommands() {
  */
 export function defineGitHubIssueReference() {
   return union(
-    withPriority(defineIssueReferenceSpec(), Priority.high),
-    withPriority(defineIssueReferencePasteRule(), Priority.high),
+    defineIssueReferenceSpec(),
+    defineIssueReferencePasteRule(),
     defineIssueReferenceCommands(),
     defineSolidNodeView({
       name: 'gh-issue-reference',

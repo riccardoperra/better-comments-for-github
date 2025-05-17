@@ -19,13 +19,15 @@ import { StateProvider } from 'statebuilder'
 import { Show } from 'solid-js'
 import { clsx } from 'clsx'
 import { Editor, EditorRootContext } from './editor/editor'
+import type { Accessor } from 'solid-js'
 import type { EditorType } from './editor/editor'
 import type { GitHubUploaderHandler } from './core/editor/image/github-file-uploader'
 import type { SuggestionData } from './editor/utils/loadSuggestionData'
 
 export interface RenderEditorProps {
   open?: boolean
-  suggestionData: SuggestionData
+  currentUsername: Accessor<string>
+  suggestionData: Accessor<SuggestionData>
   initialValue: string
   uploadHandler: GitHubUploaderHandler
   textarea: () => HTMLTextAreaElement
@@ -78,8 +80,9 @@ export function mountEditor(root: HTMLElement, props: RenderEditorProps) {
           >
             <EditorRootContext.Provider
               value={{
+                currentUsername: props.currentUsername,
                 get data() {
-                  return props.suggestionData
+                  return props.suggestionData()
                 },
                 get uploadHandler() {
                   return props.uploadHandler
@@ -104,7 +107,7 @@ export function mountEditor(root: HTMLElement, props: RenderEditorProps) {
               <Editor
                 type={props.type}
                 textarea={props.textarea()}
-                suggestions={props.suggestionData}
+                suggestions={props.suggestionData()}
                 initialValue={props.textarea().value}
               />
             </EditorRootContext.Provider>

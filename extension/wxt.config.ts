@@ -3,8 +3,9 @@ import { statebuilder } from 'statebuilder/compiler'
 
 // See https://wxt.dev/api/config.html
 export default defineConfig({
-  extensionApi: 'chrome',
-  srcDir: './src',
+  srcDir: 'src',
+  publicDir: 'src/public',
+  modulesDir: 'src/modules',
   outDir: './dist',
   vite: (env) => ({
     plugins: [
@@ -15,7 +16,7 @@ export default defineConfig({
     ],
   }),
   // only on linux/macOS
-  runner: {
+  webExt: {
     chromiumArgs: ['--user-data-dir=./.wxt/chrome-data'],
     startUrls: ['https://github.com/riccardoperra/better-writer-for-github'],
   },

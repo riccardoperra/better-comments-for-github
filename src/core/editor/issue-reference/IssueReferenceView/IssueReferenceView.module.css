@@ -15,19 +15,29 @@
  */
 
 .trigger {
-  display: inline-flex;
+  --svg-size: 0.8em;
+  display: inline;
   align-items: center;
   line-height: inherit;
 
-  > svg {
+  .iconWrapper {
     position: absolute;
-    width: 15px;
-    height: 15px;
+    place-self: flex-start;
+    height: 1lh;
+    line-height: inherit;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  svg {
+    width: var(--svg-size);
+    height: var(--svg-size);
+    vertical-align: middle;
   }
 
   .title {
     /* this is svg size + margin-right. this is needed to vertically align the content in a easier way. I hate fonts. */
-    margin-left: calc(15px + var(--base-size-4));
+    margin-left: calc(var(--svg-size) + var(--base-size-4));
   }
 }
 
