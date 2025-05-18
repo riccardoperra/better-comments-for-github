@@ -19,21 +19,21 @@ import { StateProvider } from 'statebuilder'
 import { Show } from 'solid-js'
 import { clsx } from 'clsx'
 import { Editor, EditorRootContext } from './editor/editor'
-import type { Accessor } from 'solid-js'
 import type { EditorType } from './editor/editor'
+import type { Accessor } from 'solid-js'
 import type { GitHubUploaderHandler } from './core/editor/image/github-file-uploader'
 import type { SuggestionData } from './editor/utils/loadSuggestionData'
 
 export interface RenderEditorProps {
-  open?: boolean
-  currentUsername: Accessor<string>
+  open: Accessor<boolean>
+  currentUsername: Accessor<string | null>
   suggestionData: Accessor<SuggestionData>
   initialValue: string
   uploadHandler: GitHubUploaderHandler
-  textarea: () => HTMLTextAreaElement
+  textarea: () => HTMLTextAreaElement | null
   type: EditorType
-  owner: string
-  repository: string
+  owner: Accessor<string | null>
+  repository: Accessor<string | null>
 }
 
 export function SwitchButton(props: {
@@ -71,7 +71,7 @@ export function mountEditor(root: HTMLElement, props: RenderEditorProps) {
   return render(() => {
     return (
       <StateProvider>
-        <Show when={props.open !== false}>
+        <Show when={props.open()}>
           <div
             data-github-better-comment-wrapper=""
             on:keydown={(event) => {
@@ -81,14 +81,10 @@ export function mountEditor(root: HTMLElement, props: RenderEditorProps) {
             <EditorRootContext.Provider
               value={{
                 currentUsername: props.currentUsername,
-                get data() {
-                  return props.suggestionData()
-                },
-                get uploadHandler() {
-                  return props.uploadHandler
-                },
+                data: props.suggestionData,
+                uploadHandler: props.uploadHandler,
                 get initialValue() {
-                  return props.textarea().value
+                  return props.initialValue
                 },
                 get textarea() {
                   return props.textarea()
@@ -104,12 +100,7 @@ export function mountEditor(root: HTMLElement, props: RenderEditorProps) {
                 },
               }}
             >
-              <Editor
-                type={props.type}
-                textarea={props.textarea()}
-                suggestions={props.suggestionData()}
-                initialValue={props.textarea().value}
-              />
+              <Editor type={props.type} suggestions={props.suggestionData()} />
             </EditorRootContext.Provider>
           </div>
         </Show>

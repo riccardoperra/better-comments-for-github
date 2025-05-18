@@ -51,21 +51,19 @@ import type { Root } from 'mdast'
 
 export interface EditorProps {
   suggestions: SuggestionData
-  textarea: HTMLTextAreaElement
-  initialValue: string
   type: EditorType
 }
 
 export type EditorType = 'native' | 'react'
 export type EditorRootContextProps = {
-  data: SuggestionData
+  data: Accessor<SuggestionData>
   textarea: HTMLTextAreaElement
   initialValue: string
   uploadHandler: GitHubUploaderHandler
   type: EditorType
-  currentUsername: Accessor<string>
-  repository: string
-  owner: string
+  currentUsername: Accessor<string | null>
+  repository: Accessor<string | null>
+  owner: Accessor<string | null>
 }
 
 export const EditorRootContext = createContext<EditorRootContextProps>()
@@ -93,7 +91,6 @@ export function Editor(props: EditorProps) {
 
   createEffect(() => {
     const abortController = new AbortController()
-    onCleanup(() => abortController.abort('I hope a new reference of textarea'))
 
     const observer = new ResizeObserver(([{ target }], observer) => {
       if (!target.isConnected) {
@@ -101,16 +98,21 @@ export function Editor(props: EditorProps) {
         console.log('test')
       }
     })
-    observer.observe(props.textarea)
+    observer.observe(context.textarea)
 
-    props.textarea.addEventListener(
+    onCleanup(() => {
+      abortController.abort('I hope a new reference of textarea')
+      observer.disconnect()
+    })
+
+    context.textarea.addEventListener(
       'input',
       (event) => {
         if (!(event as { fromEditor?: boolean }).fromEditor) {
-          const value = props.textarea.value
+          const value = context.textarea.value
           const unistNode = unistNodeFromMarkdown(value, {
-            owner: context.owner,
-            repository: context.repository,
+            owner: context.owner() ?? '',
+            repository: context.repository() ?? '',
           })
           const pmNode = convertUnistToProsemirror(
             unistNode,
@@ -123,15 +125,15 @@ export function Editor(props: EditorProps) {
       { signal: abortController.signal },
     )
 
-    props.textarea.addEventListener(
+    context.textarea.addEventListener(
       'change',
       (event) => {
         if ((event as any)['fromEditor']) return
         if (event.isTrusted) return false
-        const value = props.textarea.value
+        const value = context.textarea.value
         const unistNode = unistNodeFromMarkdown(value, {
-          owner: context.owner,
-          repository: context.repository,
+          owner: context.owner() ?? '',
+          repository: context.repository() ?? '',
         })
         const pmNode = convertUnistToProsemirror(
           unistNode,
@@ -145,11 +147,11 @@ export function Editor(props: EditorProps) {
   })
 
   createEffect(() => {
-    setEditorContent(props.initialValue, editor.view, {
+    setEditorContent(context.initialValue, editor.view, {
       isFromTextarea: true,
       isInitialValue: true,
-      owner: context.owner,
-      repository: context.repository,
+      owner: context.owner() ?? '',
+      repository: context.repository() ?? '',
     })
     const markdown = toMarkdown()
     editorStore.set('markdown', markdown)
@@ -170,7 +172,7 @@ export function Editor(props: EditorProps) {
       setTimeout(() => {
         const markdown = toMarkdown()
         editorStore.set('markdown', markdown)
-        forceGithubTextAreaSync(props.textarea, markdown, {
+        forceGithubTextAreaSync(context.textarea, markdown, {
           behavior: props.type,
         })
       }, 150)
