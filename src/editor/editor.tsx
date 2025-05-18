@@ -63,9 +63,9 @@ export type EditorRootContextProps = {
   initialValue: string
   uploadHandler: GitHubUploaderHandler
   type: EditorType
-  currentUsername: Accessor<string>
-  repository: string
-  owner: string
+  currentUsername: Accessor<string | null>
+  repository: Accessor<string | null>
+  owner: Accessor<string | null>
 }
 
 export const EditorRootContext = createContext<EditorRootContextProps>()

@@ -26,14 +26,14 @@ import type { SuggestionData } from './editor/utils/loadSuggestionData'
 
 export interface RenderEditorProps {
   open?: boolean
-  currentUsername: Accessor<string>
+  currentUsername: Accessor<string | null>
   suggestionData: Accessor<SuggestionData>
   initialValue: string
   uploadHandler: GitHubUploaderHandler
   textarea: () => HTMLTextAreaElement
   type: EditorType
-  owner: string
-  repository: string
+  owner: Accessor<string | null>
+  repository: Accessor<string | null>
 }
 
 export function SwitchButton(props: {

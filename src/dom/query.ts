@@ -21,6 +21,7 @@ export function query(
   parentNode: HTMLElement | null = null,
   options?: {
     onAdded?: (el: HTMLElement) => void
+    onRemoved?: (el: HTMLElement) => void
   },
 ) {
   const [elements, setElements] = createSignal<Array<HTMLElement>>([], {
@@ -114,6 +115,7 @@ export function query(
       onAddedListeners.forEach((fn) => fn(addedEl))
     }
     for (const removedEl of removedEls) {
+      options?.onRemoved?.(removedEl)
       onAddedListeners.forEach((fn) => fn(removedEl))
     }
 
@@ -125,5 +127,10 @@ export function query(
     subtree: true,
   })
 
-  return [elements, onAdded, onRemoved]
+  const dispose = () => {
+    observer.disconnect()
+    // setElements([])
+  }
+
+  return [elements, onAdded, onRemoved, dispose] as const
 }
