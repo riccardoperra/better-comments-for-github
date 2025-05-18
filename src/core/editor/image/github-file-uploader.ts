@@ -71,7 +71,6 @@ export class GitHubUploaderNativeHandler implements GitHubUploaderHandler {
 
   init(originalFile: File): GitHubFile {
     const objectURL = URL.createObjectURL(originalFile)
-    console.log('init', originalFile)
 
     const file: GitHubFile = {
       id: crypto.randomUUID(),

@@ -19,7 +19,6 @@ import { SwitchButton } from '../../../src/render'
 import type { Accessor, ComponentProps, Setter } from 'solid-js'
 import type { GitHubUrlParsedResult } from './githubUrlParser'
 import type { SuggestionData } from '../../../src/editor/utils/loadSuggestionData'
-import type { SetStoreFunction } from 'solid-js/store'
 
 export interface GithubPageInstanceResult {
   readonly currentUsername: Accessor<string | null>
@@ -37,9 +36,9 @@ export interface GitHubPageInstanceOptions {
 
 export interface GitHubEditorInstance {
   rootElement: HTMLElement
-  suggestionData: SuggestionData
+  suggestionData: Accessor<SuggestionData>
   setInjector: (injector: GitHubEditorInjector) => void
-  setSuggestionData: SetStoreFunction<SuggestionData>
+  setSuggestionData: Setter<SuggestionData>
   showOldEditor: Accessor<boolean>
   setShowOldEditor: Setter<boolean>
   textareaRef: Accessor<HTMLTextAreaElement | null>
@@ -95,7 +94,7 @@ export function createGitHubEditorInstance(
   const [textareaRef, setTextareaRef] =
     createSignal<HTMLTextAreaElement | null>(null)
   const [showOldEditor, setShowOldEditor] = createSignal<boolean>(true)
-  const [suggestionData, setSuggestionData] = createStore<SuggestionData>({
+  const [suggestionData, setSuggestionData] = createSignal<SuggestionData>({
     mentions: [],
     emojis: [],
     references: [],

@@ -36,5 +36,6 @@ export class GitHubEditorInjector {
     this.mountFooterFn = null
     this.mountEditorFn = null
     this.findTextarea = null
+    this.uploadHandler = null
   }
 }

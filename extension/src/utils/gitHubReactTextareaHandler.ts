@@ -24,8 +24,6 @@ export class GitHubReactTextareaHandler {
   readonly root: HTMLElement
   readonly instance: GitHubEditorInstance
 
-  tabContainer: HTMLElement | null = null
-
   constructor(root: HTMLElement, editorInstance: GitHubEditorInstance) {
     this.root = root
     this.instance = editorInstance
@@ -41,30 +39,6 @@ export class GitHubReactTextareaHandler {
     return this.root.querySelector(
       '[class*="MarkdownEditor-module__container"]',
     )
-  }
-
-  // New comment at the bottom of the page
-  findNewCommentForm(textarea: HTMLTextAreaElement) {
-    return textarea.closest<HTMLFormElement>('#new_comment_form')
-  }
-
-  // Inline comment for thread reply
-  findInlineCommentForm(textarea: HTMLTextAreaElement) {
-    return textarea.closest('.js-inline-comment-form')
-  }
-
-  findTabContainer(textarea: HTMLTextAreaElement) {
-    this.classes['tab-container'] = []
-    // Search for closest tab-container of the textarea.
-    // This element is the wrapper of the entire comment box.
-    let tabContainer = textarea.closest<HTMLElement>('tab-container')
-    if (!tabContainer) {
-      // When the tab container is not present, the user is probably trying to edit an existing pull request comment
-      tabContainer = textarea.closest<HTMLElement>('.CommentBox')
-      this.classes['tab-container'].push('m-2')
-    }
-    this.tabContainer = tabContainer
-    return tabContainer
   }
 
   getUploadHandler() {

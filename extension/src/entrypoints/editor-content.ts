@@ -123,10 +123,16 @@ export default defineUnlistedScript(() => {
                     nativeTextareaHandler.loadSuggestionDataAsync(
                       textExpander,
                       {
-                        onReferenceSuggestionChange: (data) =>
-                          setSuggestionData('references', data),
-                        onMentionsChange: (data) =>
-                          setSuggestionData('mentions', data),
+                        onReferenceSuggestionChange: (references) =>
+                          setSuggestionData((data) => ({
+                            ...data,
+                            references,
+                          })),
+                        onMentionsChange: (mentions) =>
+                          setSuggestionData((data) => ({
+                            ...data,
+                            mentions,
+                          })),
                       },
                     )
                   editorInjector.uploadHandler =
@@ -179,10 +185,10 @@ export default defineUnlistedScript(() => {
                 //   console.log('cleanup')
                 // })
 
-                editorInjector.mountFooterFn?.(root)
-                editorInjector.mountEditorFn?.(root)
+                editorInjector.mountFooterFn(root)
+                editorInjector.mountEditorFn(root)
 
-                const currentTextarea = editorInjector.findTextarea?.()
+                const currentTextarea = editorInjector.findTextarea()
                 if (!currentTextarea) {
                   return
                 }
@@ -190,17 +196,11 @@ export default defineUnlistedScript(() => {
                 editorElement.setDisposer(
                   mountEditor(root, {
                     currentUsername,
-                    suggestionData: () => suggestionData,
-                    get open() {
-                      return showOldEditor()
-                    },
-                    get uploadHandler() {
-                      return editorInjector.uploadHandler!
-                    },
-                    textarea: () => textareaRef()!,
-                    get initialValue() {
-                      return textareaRef()?.value ?? ''
-                    },
+                    suggestionData,
+                    open: showOldEditor,
+                    uploadHandler: editorInjector.uploadHandler!,
+                    textarea: textareaRef,
+                    initialValue: textareaRef()?.value ?? '',
                     type,
                     repository,
                     owner: repositoryOwner,
