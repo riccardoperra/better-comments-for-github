@@ -14,14 +14,18 @@
  * limitations under the License.
  */
 
+import { createComponent } from 'solid-js'
+import { SwitchButton } from '../../../src/render'
+import type { Accessor, ComponentProps, Setter } from 'solid-js'
 import type { GitHubUrlParsedResult } from './githubUrlParser'
-import type { Accessor } from 'solid-js'
+import type { SuggestionData } from '../../../src/editor/utils/loadSuggestionData'
+import type { SetStoreFunction } from 'solid-js/store'
 
 export interface GithubPageInstanceResult {
   readonly currentUsername: Accessor<string | null>
   readonly parsedUrl: Accessor<GitHubUrlParsedResult | null>
-  readonly addInstance?: (instance: GitHubEditorInstance) => void
-  readonly removeInstance?: (instance: GitHubEditorInstance) => void
+  readonly addInstance: (instance: GitHubEditorInstance) => void
+  readonly removeInstance: (instance: GitHubEditorInstance) => void
 }
 
 export interface GitHubPageInstanceOptions {
@@ -30,7 +34,111 @@ export interface GitHubPageInstanceOptions {
 }
 
 export interface GitHubEditorInstance {
-  el: HTMLElement
+  rootElement: HTMLElement
+  suggestionData: SuggestionData
+  setSuggestionData: SetStoreFunction<SuggestionData>
+  showOldEditor: Accessor<boolean>
+  setShowOldEditor: Setter<boolean>
+  switchButton: {
+    render: (
+      root: HTMLElement,
+      props?: Partial<ComponentProps<typeof SwitchButton>>,
+    ) => () => void
+    dispose: null | (() => void)
+  }
+  editorElement: {
+    setDisposer: (dispose: () => void) => void
+    dispose: null | (() => void)
+  }
+}
+
+export const $GITHUB_EDITOR_INSTANCE = Symbol('GITHUB_EDITOR_INSTANCE')
+
+export function registerGitHubEditorInstance(
+  page: GithubPageInstanceResult,
+  instance: GitHubEditorInstance,
+) {
+  Reflect.set(instance.rootElement, $GITHUB_EDITOR_INSTANCE, instance)
+  page.addInstance(instance)
+}
+
+export function removeGitHubEditorInstance(
+  page: GithubPageInstanceResult,
+  instance: GitHubEditorInstance,
+) {
+  Reflect.deleteProperty(instance.rootElement, $GITHUB_EDITOR_INSTANCE)
+
+  instance.switchButton.dispose?.()
+  instance.editorElement.dispose?.()
+
+  page.removeInstance(instance)
+}
+
+export function getGitHubEditorInstanceFromElement(el: Element) {
+  const instance = Reflect.get(el, $GITHUB_EDITOR_INSTANCE)
+  if (!instance) {
+    return null
+  }
+  return instance as GitHubEditorInstance
+}
+
+export function createGitHubEditorInstance(
+  el: HTMLElement,
+): GitHubEditorInstance {
+  const [showOldEditor, setShowOldEditor] = createSignal<boolean>(true)
+  const [suggestionData, setSuggestionData] = createStore<SuggestionData>({
+    mentions: [],
+    emojis: [],
+    references: [],
+    savedReplies: [],
+  })
+
+  let disposeSwitch: (() => void) | null = null
+  let disposeEditorInstance: (() => void) | null = null
+
+  function renderSwitch(
+    root: HTMLElement,
+    props?: Partial<ComponentProps<typeof SwitchButton>>,
+  ) {
+    const dispose = render(
+      () =>
+        createComponent(SwitchButton, {
+          get open() {
+            return showOldEditor()
+          },
+          onOpenChange: (open) => {
+            setShowOldEditor(open)
+          },
+          size: props?.size ?? 'small',
+          variant: props?.variant ?? 'invisible',
+        }),
+      root,
+    )
+    disposeSwitch = dispose
+    return dispose
+  }
+
+  return {
+    rootElement: el,
+    showOldEditor,
+    setShowOldEditor,
+    suggestionData,
+    setSuggestionData,
+    switchButton: {
+      render: renderSwitch,
+      get dispose() {
+        return disposeSwitch
+      },
+    },
+    editorElement: {
+      setDisposer: (dispose) => {
+        disposeEditorInstance = dispose
+      },
+      get dispose() {
+        return disposeEditorInstance
+      },
+    },
+  }
 }
 
 export function createGitHubPageInstance(
@@ -77,10 +185,7 @@ export function createGitHubPageInstance(
 
   document.addEventListener('turbo:render', (event) => {})
 
-  return {
-    currentUsername,
-    parsedUrl,
-  }
+  return result
 }
 
 function retrieveCurrentUsername() {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { createComponent, getOwner, runWithOwner } from 'solid-js'
+import { getOwner, runWithOwner } from 'solid-js'
 import { effect } from 'solid-js/web'
 import { queryComment } from '../../../src/dom/queryComment'
 import { createSuggestionData } from '../../../src/editor/utils/loadSuggestionData'
@@ -25,15 +25,19 @@ import {
   tryGetReferences,
 } from '../../../src/github/data'
 import { createGitHubUploaderReactHandler } from '../../../src/editor/utils/reactFileUploader'
-import { SwitchButton, mountEditor } from '../../../src/render'
-import { createGitHubPageInstance } from '../utils/githubPageDetector'
+import { mountEditor } from '../../../src/render'
+import {
+  createGitHubEditorInstance,
+  createGitHubPageInstance,
+  getGitHubEditorInstanceFromElement,
+  registerGitHubEditorInstance,
+  removeGitHubEditorInstance,
+} from '../utils/githubPageDetector'
 import styles from './main.module.css'
 import type {
   AttachmentHandlerElement,
   GitHubUploaderHandler,
 } from '../../../src/core/editor/image/github-file-uploader'
-import type { SuggestionData } from '../../../src/editor/utils/loadSuggestionData'
-import type { Accessor, ComponentProps } from 'solid-js'
 import type { EditorType } from '../../../src/editor/editor'
 
 import './styles.css'
@@ -47,7 +51,6 @@ export default defineUnlistedScript(() => {
       onClickLink: () => {
         if (observerDisposer) {
           observerDisposer()
-          console.log('disposer from on click')
           observerDisposer = undefined
         }
       },
@@ -58,280 +61,281 @@ export default defineUnlistedScript(() => {
         const repositoryOwner = () => parsedUrl()?.repositoryOwner ?? null
         if (observerDisposer) {
           observerDisposer()
-          console.log('disposer from on ready')
           observerDisposer = undefined
         }
 
-        ;[, , , observerDisposer] = queryComment({
-          onNodeRemoved: (element) => {
-            console.log(Reflect.get(element, '______githubBetterComment'))
-          },
-          onNodeAdded: (element) => {
-            runWithOwner(owner, async () => {
-              const [showOldEditor, setShowOldEditor] = createSignal(true)
-
-              function renderSwitch(
-                root: HTMLElement,
-                props?: Partial<ComponentProps<typeof SwitchButton>>,
-              ) {
-                render(
-                  () =>
-                    createComponent(SwitchButton, {
-                      get open() {
-                        return showOldEditor()
-                      },
-                      onOpenChange: (open) => {
-                        setShowOldEditor(open)
-                      },
-                      size: props?.size ?? 'small',
-                      variant: props?.variant ?? 'invisible',
-                    }),
-                  root,
-                )
+        runWithOwner(owner, () => {
+          ;[, , , observerDisposer] = queryComment({
+            onNodeRemoved: (element) => {
+              const instance = getGitHubEditorInstanceFromElement(element)
+              if (instance) {
+                removeGitHubEditorInstance(this, instance)
               }
+            },
+            onNodeAdded: (element) => {
+              const editorInstance = createGitHubEditorInstance(element)
+              const {
+                showOldEditor,
+                switchButton,
+                editorElement,
+                suggestionData,
+                setSuggestionData,
+              } = editorInstance
+              registerGitHubEditorInstance(this, editorInstance)
 
-              let textarea: HTMLTextAreaElement | null = null
-              let findTextarea: () => HTMLTextAreaElement
-              let mountElFunction: (node: HTMLElement) => void
-              let suggestionData: Accessor<SuggestionData>
-              let type: EditorType
-              let uploadHandler: GitHubUploaderHandler
+              runWithOwner(owner, () => {
+                let textarea: HTMLTextAreaElement | null = null
+                let findTextarea: () => HTMLTextAreaElement
+                let mountElFunction: (node: HTMLElement) => void
+                let type: EditorType
+                let uploadHandler: GitHubUploaderHandler
 
-              const jsCommentField = element.querySelector<HTMLTextAreaElement>(
-                'textarea.js-comment-field',
-              )
-
-              // Old comment component of GitHub, This is still present in pull requests
-              if (jsCommentField) {
-                type = 'native'
-                textarea = jsCommentField
-                findTextarea = () =>
+                const jsCommentField =
                   element.querySelector<HTMLTextAreaElement>(
                     'textarea.js-comment-field',
-                  )!
-
-                const textExpander =
-                  jsCommentField.closest<HTMLElement>('text-expander')
-                if (textExpander) {
-                  const { emojiUrl, issueUrl, mentionUrl } =
-                    textExpander.dataset
-
-                  const [issues, mentionableUsers] = await Promise.all([
-                    await tryGetReferences(issueUrl),
-                    await fetchMentionableUsers(mentionUrl),
-                  ])
-
-                  suggestionData = () => ({
-                    mentions: mentionableUsers.map((data) => ({
-                      avatarUrl: getUserAvatarId(data.id),
-                      identifier: data.login,
-                      description: data.name,
-                      participant: data.participant,
-                    })),
-                    emojis: [],
-                    references: issues,
-                    savedReplies: [],
-                  })
-                }
-
-                const fileAttachmentTransfer =
-                  jsCommentField.closest<AttachmentHandlerElement>(
-                    'file-attachment',
                   )
-                if (fileAttachmentTransfer) {
-                  uploadHandler = new GitHubUploaderNativeHandler(
-                    fileAttachmentTransfer,
-                  )
-                }
 
-                const classes = [] as Array<string>
-                // Search for closest tab-container of the textarea.
-                // This element is the wrapper of the entire comment box.
-                let tabContainer =
-                  jsCommentField.closest<HTMLElement>('tab-container')
-                if (!tabContainer) {
-                  // When tab container is not present, user is trying to edit an existing pull request comment
-                  tabContainer =
-                    jsCommentField.closest<HTMLElement>('.CommentBox')
-                  classes.push('m-2')
-                }
+                // Old comment component of GitHub, This is still present in pull requests
+                if (jsCommentField) {
+                  type = 'native'
+                  textarea = jsCommentField
+                  findTextarea = () =>
+                    element.querySelector<HTMLTextAreaElement>(
+                      'textarea.js-comment-field',
+                    )!
 
-                if (!tabContainer) {
-                  // TODO: add log
-                  return
-                }
-
-                const slashCommandSurface = tabContainer.closest(
-                  '.js-slash-command-surface',
-                )
-
-                const newCommentForm =
-                  jsCommentField.closest<HTMLFormElement>('#new_comment_form')
-
-                let mountFooter: undefined | (() => void)
-
-                // new comment at the bottom of the page
-                if (newCommentForm) {
-                  mountFooter = () => {
-                    const commentFooter = newCommentForm.querySelector(
-                      '#partial-new-comment-form-actions',
-                    )
-                    if (commentFooter) {
-                      const actionsWrapper = commentFooter.firstElementChild
-                      if (actionsWrapper) {
-                        const switchRoot = document.createElement('div')
-                        actionsWrapper.prepend(switchRoot)
-                        renderSwitch(switchRoot)
-                      }
+                  const textExpander =
+                    jsCommentField.closest<HTMLElement>('text-expander')
+                  if (textExpander) {
+                    const { emojiUrl, issueUrl, mentionUrl } =
+                      textExpander.dataset
+                    if (issueUrl) {
+                      tryGetReferences(issueUrl).then((data) => {
+                        setSuggestionData('references', data)
+                      })
+                    }
+                    if (mentionUrl) {
+                      fetchMentionableUsers(mentionUrl).then(
+                        (mentionableUsers) => {
+                          setSuggestionData(
+                            'mentions',
+                            mentionableUsers.map((data) => ({
+                              avatarUrl: getUserAvatarId(data.id),
+                              identifier: data.login,
+                              description: data.name,
+                              participant: data.participant,
+                            })),
+                          )
+                        },
+                      )
                     }
                   }
-                } else {
-                  // inline comment form is for thread reply
-                  const inlineCommentForm = jsCommentField.closest(
-                    '.js-inline-comment-form',
+
+                  const fileAttachmentTransfer =
+                    jsCommentField.closest<AttachmentHandlerElement>(
+                      'file-attachment',
+                    )
+                  if (fileAttachmentTransfer) {
+                    uploadHandler = new GitHubUploaderNativeHandler(
+                      fileAttachmentTransfer,
+                    )
+                  }
+
+                  const classes = [] as Array<string>
+                  // Search for closest tab-container of the textarea.
+                  // This element is the wrapper of the entire comment box.
+                  let tabContainer =
+                    jsCommentField.closest<HTMLElement>('tab-container')
+                  if (!tabContainer) {
+                    // When tab container is not present, user is trying to edit an existing pull request comment
+                    tabContainer =
+                      jsCommentField.closest<HTMLElement>('.CommentBox')
+                    classes.push('m-2')
+                  }
+
+                  if (!tabContainer) {
+                    // TODO: add log
+                    return
+                  }
+
+                  const slashCommandSurface = tabContainer.closest(
+                    '.js-slash-command-surface',
                   )
-                  if (inlineCommentForm) {
+
+                  const newCommentForm =
+                    jsCommentField.closest<HTMLFormElement>('#new_comment_form')
+
+                  let mountFooter: undefined | (() => void)
+
+                  // new comment at the bottom of the page
+                  if (newCommentForm) {
                     mountFooter = () => {
-                      const formActions =
-                        inlineCommentForm.querySelector<HTMLElement>(
-                          '.form-actions',
-                        )
-                      if (formActions) {
-                        const switchRoot = document.createElement('div')
-                        switchRoot.style.display = 'inline'
-                        formActions.prepend(switchRoot)
-                        renderSwitch(switchRoot, {
-                          size: 'medium',
-                          variant: 'secondary',
-                        })
+                      const commentFooter = newCommentForm.querySelector(
+                        '#partial-new-comment-form-actions',
+                      )
+                      if (commentFooter) {
+                        const actionsWrapper = commentFooter.firstElementChild
+                        if (actionsWrapper) {
+                          const switchRoot = document.createElement('div')
+                          actionsWrapper.prepend(switchRoot)
+                          switchButton.render(switchRoot)
+                        }
                       }
                     }
                   } else {
-                    if (slashCommandSurface) {
-                      const el = slashCommandSurface.lastElementChild
+                    // inline comment form is for thread reply
+                    const inlineCommentForm = jsCommentField.closest(
+                      '.js-inline-comment-form',
+                    )
+                    if (inlineCommentForm) {
                       mountFooter = () => {
-                        if (el) {
+                        const formActions =
+                          inlineCommentForm.querySelector<HTMLElement>(
+                            '.form-actions',
+                          )
+                        if (formActions) {
                           const switchRoot = document.createElement('div')
                           switchRoot.style.display = 'inline'
-                          el.prepend(switchRoot)
-                          renderSwitch(switchRoot, {
+                          formActions.prepend(switchRoot)
+                          switchButton.render(switchRoot, {
                             size: 'medium',
                             variant: 'secondary',
                           })
                         }
                       }
+                    } else {
+                      if (slashCommandSurface) {
+                        const el = slashCommandSurface.lastElementChild
+                        mountFooter = () => {
+                          if (el) {
+                            const switchRoot = document.createElement('div')
+                            switchRoot.style.display = 'inline'
+                            el.prepend(switchRoot)
+                            switchButton.render(switchRoot, {
+                              size: 'medium',
+                              variant: 'secondary',
+                            })
+                          }
+                        }
+                      }
                     }
                   }
-                }
 
-                // We should create our element before the tab container
-                mountElFunction = (node) => {
-                  mountFooter?.()
+                  // We should create our element before the tab container
+                  mountElFunction = (node) => {
+                    mountFooter?.()
 
-                  effect(() => {
-                    const show = showOldEditor()
-                    show
-                      ? tabContainer.style.setProperty('display', 'none')
-                      : tabContainer.style.removeProperty('display')
+                    effect(() => {
+                      const show = showOldEditor()
+                      show
+                        ? tabContainer.style.setProperty('display', 'none')
+                        : tabContainer.style.removeProperty('display')
+                    })
+
+                    node.classList.add(...classes)
+                    node.style.width = 'auto'
+                    tabContainer.insertAdjacentElement('beforebegin', node)
+                  }
+                } else {
+                  type = 'react'
+                  // TODO: improve signal implementation
+                  const suggestionDataResult = createSuggestionData(element)
+                  uploadHandler = createGitHubUploaderReactHandler(element)
+                  createEffect(() => {
+                    setSuggestionData(suggestionDataResult.suggestionData())
                   })
 
-                  node.classList.add(...classes)
-                  node.style.width = 'auto'
-                  tabContainer.insertAdjacentElement('beforebegin', node)
-                }
-              } else {
-                type = 'react'
-                const suggestionDataResult = createSuggestionData(element)
-                uploadHandler = createGitHubUploaderReactHandler(element)
-                suggestionData = suggestionDataResult.suggestionData
-                const moduleContainer = element.querySelector(
-                  '[class*="MarkdownEditor-module__container"]',
-                )!
-                textarea =
-                  moduleContainer.querySelector<HTMLTextAreaElement>(
-                    'textarea',
+                  const moduleContainer = element.querySelector(
+                    '[class*="MarkdownEditor-module__container"]',
                   )!
-                findTextarea = () =>
-                  moduleContainer.querySelector<HTMLTextAreaElement>(
-                    'textarea',
-                  )!
+                  textarea =
+                    moduleContainer.querySelector<HTMLTextAreaElement>(
+                      'textarea',
+                    )!
+                  findTextarea = () =>
+                    moduleContainer.querySelector<HTMLTextAreaElement>(
+                      'textarea',
+                    )!
 
-                const footerModule = element.querySelector(
-                  'footer[class*="Footer-module"]',
-                )
+                  const footerModule = element.querySelector(
+                    'footer[class*="Footer-module"]',
+                  )
 
-                mountElFunction = (node) => {
-                  if (footerModule) {
-                    const actionsWrapper = footerModule.firstElementChild
-                    if (actionsWrapper) {
-                      const switchRoot = document.createElement('div')
-                      actionsWrapper.prepend(switchRoot)
-                      renderSwitch(switchRoot)
+                  mountElFunction = (node) => {
+                    if (footerModule) {
+                      const actionsWrapper = footerModule.firstElementChild
+                      if (actionsWrapper) {
+                        const switchRoot = document.createElement('div')
+                        actionsWrapper.prepend(switchRoot)
+                        switchButton.render(switchRoot)
 
-                      effect(() => {
-                        const show = showOldEditor()
-                        const wrapper = element.querySelector<HTMLElement>(
-                          '[class*="MarkdownEditor-module__inputWrapper"]',
-                        )
-                        if (wrapper) {
-                          show
-                            ? wrapper.style.setProperty('display', 'none')
-                            : wrapper.style.removeProperty('display')
-                        }
-                      })
+                        effect(() => {
+                          const show = showOldEditor()
+                          const wrapper = element.querySelector<HTMLElement>(
+                            '[class*="MarkdownEditor-module__inputWrapper"]',
+                          )
+                          if (wrapper) {
+                            show
+                              ? wrapper.style.setProperty('display', 'none')
+                              : wrapper.style.removeProperty('display')
+                          }
+                        })
+                      }
                     }
+
+                    moduleContainer.prepend(node)
                   }
-
-                  moduleContainer.prepend(node)
                 }
-              }
 
-              if (!textarea) {
-                // add log
-                return
-              }
+                if (!textarea) {
+                  // add log
+                  return
+                }
 
-              const root = document.createElement('div')
-              root.id = 'github-better-comment'
-              root.className = styles.injectedEditorContent
+                const root = document.createElement('div')
+                root.id = 'github-better-comment'
+                root.className = styles.injectedEditorContent
 
-              runWithOwner(owner, () => {
-                const [textareaRef, setTextareaRef] = createSignal(textarea)
-                // Since I didn't really find a good way to detect if the current textarea
-                // has been disconnected. I'll now check via mutation observer.
-                // TODO: potential perforamnce issue
-                const observer = new MutationObserver((mutation) => {
-                  const ref = textareaRef()
-                  if (!ref.isConnected) setTextareaRef(findTextarea())
-                })
-                observer.observe(element, {
-                  childList: true,
-                  subtree: true,
-                  characterData: true,
-                })
-                onCleanup(() => observer.disconnect())
+                runWithOwner(owner, () => {
+                  const [textareaRef, setTextareaRef] = createSignal(textarea)
+                  // Since I didn't really find a good way to detect if the current textarea
+                  // has been disconnected. I'll now check via mutation observer.
+                  // TODO: potential perforamnce issue
+                  const observer = new MutationObserver((mutation) => {
+                    const ref = textareaRef()
+                    if (!ref.isConnected) setTextareaRef(findTextarea())
+                  })
+                  observer.observe(element, {
+                    childList: true,
+                    subtree: true,
+                    characterData: true,
+                  })
+                  onCleanup(() => observer.disconnect())
 
-                mountElFunction(root)
-                mountEditor(root, {
-                  currentUsername,
-                  get open() {
-                    return showOldEditor()
-                  },
-                  suggestionData,
-                  get uploadHandler() {
-                    return uploadHandler
-                  },
-                  textarea: textareaRef,
-                  get initialValue() {
-                    return textarea.value
-                  },
-                  type,
-                  repository,
-                  owner: repositoryOwner,
+                  mountElFunction(root)
+                  editorElement.setDisposer(
+                    mountEditor(root, {
+                      currentUsername,
+                      suggestionData: () => suggestionData,
+                      get open() {
+                        return showOldEditor()
+                      },
+                      get uploadHandler() {
+                        return uploadHandler
+                      },
+                      textarea: textareaRef,
+                      get initialValue() {
+                        return textarea.value
+                      },
+                      type,
+                      repository,
+                      owner: repositoryOwner,
+                    }),
+                  )
                 })
               })
-            })
-          },
+            },
+          })
         })
       },
     })
