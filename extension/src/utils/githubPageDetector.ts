@@ -26,6 +26,8 @@ export interface GithubPageInstanceResult {
   readonly parsedUrl: Accessor<GitHubUrlParsedResult | null>
   readonly addInstance: (instance: GitHubEditorInstance) => void
   readonly removeInstance: (instance: GitHubEditorInstance) => void
+  readonly instances: Array<GitHubEditorInstance>
+  readonly removeAllInstances: () => void
 }
 
 export interface GitHubPageInstanceOptions {
@@ -36,9 +38,13 @@ export interface GitHubPageInstanceOptions {
 export interface GitHubEditorInstance {
   rootElement: HTMLElement
   suggestionData: SuggestionData
+  setInjector: (injector: GitHubEditorInjector) => void
   setSuggestionData: SetStoreFunction<SuggestionData>
   showOldEditor: Accessor<boolean>
   setShowOldEditor: Setter<boolean>
+  textareaRef: Accessor<HTMLTextAreaElement | null>
+  setTextareaRef: Setter<HTMLTextAreaElement | null>
+  unmount: () => void
   switchButton: {
     render: (
       root: HTMLElement,
@@ -66,11 +72,11 @@ export function removeGitHubEditorInstance(
   page: GithubPageInstanceResult,
   instance: GitHubEditorInstance,
 ) {
-  Reflect.deleteProperty(instance.rootElement, $GITHUB_EDITOR_INSTANCE)
+  Reflect.set(instance.rootElement, $GITHUB_EDITOR_INSTANCE, null)
 
   instance.switchButton.dispose?.()
   instance.editorElement.dispose?.()
-
+  instance.unmount()
   page.removeInstance(instance)
 }
 
@@ -84,7 +90,10 @@ export function getGitHubEditorInstanceFromElement(el: Element) {
 
 export function createGitHubEditorInstance(
   el: HTMLElement,
+  ownerDisposer: () => void,
 ): GitHubEditorInstance {
+  const [textareaRef, setTextareaRef] =
+    createSignal<HTMLTextAreaElement | null>(null)
   const [showOldEditor, setShowOldEditor] = createSignal<boolean>(true)
   const [suggestionData, setSuggestionData] = createStore<SuggestionData>({
     mentions: [],
@@ -93,6 +102,7 @@ export function createGitHubEditorInstance(
     savedReplies: [],
   })
 
+  let injector: GitHubEditorInjector | null = null
   let disposeSwitch: (() => void) | null = null
   let disposeEditorInstance: (() => void) | null = null
 
@@ -114,16 +124,40 @@ export function createGitHubEditorInstance(
         }),
       root,
     )
-    disposeSwitch = dispose
-    return dispose
+    disposeSwitch = () => {
+      dispose()
+      disposeSwitch = null
+      root.remove()
+    }
+    return disposeSwitch
+  }
+
+  const unmount = () => {
+    disposeSwitch?.()
+    disposeSwitch = null
+
+    disposeEditorInstance?.()
+    disposeEditorInstance = null
+
+    setTextareaRef(null)
+    ownerDisposer()
+
+    injector?.destroy()
+    injector = null
   }
 
   return {
+    unmount,
     rootElement: el,
     showOldEditor,
     setShowOldEditor,
     suggestionData,
     setSuggestionData,
+    textareaRef,
+    setTextareaRef,
+    setInjector: (_injector) => {
+      injector = _injector
+    },
     switchButton: {
       render: renderSwitch,
       get dispose() {
@@ -132,7 +166,10 @@ export function createGitHubEditorInstance(
     },
     editorElement: {
       setDisposer: (dispose) => {
-        disposeEditorInstance = dispose
+        disposeEditorInstance = () => {
+          dispose()
+          disposeEditorInstance = null
+        }
       },
       get dispose() {
         return disposeEditorInstance
@@ -157,6 +194,15 @@ export function createGitHubPageInstance(
     parsedUrl,
     addInstance: (item) => instances.push(item),
     removeInstance: (item) => (instances = instances.filter((i) => i !== item)),
+    removeAllInstances() {
+      for (const instance of instances) {
+        instance.unmount()
+      }
+      instances = []
+    },
+    get instances() {
+      return instances
+    },
   }
 
   function loadUsername() {

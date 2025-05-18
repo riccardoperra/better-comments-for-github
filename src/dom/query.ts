@@ -129,6 +129,13 @@ export function query(
 
   const dispose = () => {
     observer.disconnect()
+    if (options?.onAdded) {
+      options.onAdded = undefined
+    }
+    if (options?.onRemoved) {
+      options.onRemoved = undefined
+    }
+
     // setElements([])
   }
 
