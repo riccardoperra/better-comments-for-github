@@ -82,6 +82,8 @@ export class GitHubUploaderReactHandler implements GitHubUploaderHandler {
         }))
       })
   }
+
+  destroy() {}
 }
 
 export function createGitHubUploaderReactHandler(element: HTMLElement) {
