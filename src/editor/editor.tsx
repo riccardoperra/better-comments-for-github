@@ -15,11 +15,20 @@
  */
 
 import type { Accessor } from 'solid-js'
-import { createContext, createEffect, onCleanup, Show, useContext } from 'solid-js'
+import {
+  Show,
+  createContext,
+  createEffect,
+  onCleanup,
+  useContext,
+} from 'solid-js'
 import { createEditor } from 'prosekit/core'
 import { useDocChange } from 'prosekit/solid'
 import { markdownFromUnistNode } from 'prosemirror-transformer-markdown/unified'
-import { convertPmSchemaToUnist, convertUnistToProsemirror } from 'prosemirror-transformer-markdown/prosemirror'
+import {
+  convertPmSchemaToUnist,
+  convertUnistToProsemirror,
+} from 'prosemirror-transformer-markdown/prosemirror'
 
 import 'prosemirror-example-setup/style/style.css'
 
@@ -86,7 +95,6 @@ export function Editor(props: EditorProps) {
     const observer = new ResizeObserver(([{ target }], observer) => {
       if (!target.isConnected) {
         observer.disconnect()
-        console.log('test')
       }
     })
     observer.observe(context.textarea)

@@ -32,7 +32,6 @@ export function defineMentionMarkdown() {
           tag: 'a.user-mention',
           priority: 1_000,
           getAttrs: (node) => {
-            console.log(node)
             const href = (node as HTMLLinkElement).href
             const parts = href.split('https://github.com/')
             const id = parts.at(-1)

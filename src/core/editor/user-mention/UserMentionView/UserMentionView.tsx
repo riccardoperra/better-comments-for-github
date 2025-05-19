@@ -42,7 +42,6 @@ import type { MentionAttrs } from 'prosekit/extensions/mention'
 export function UserMentionView(props: NodeViewContextProps) {
   const cacheStorage = CacheStore.provide()
   const editorContext = useContext(EditorRootContext)!
-  console.log(editorContext)
   const context = useNodeViewContext()
   const attrs = () => context().node.attrs as MentionAttrs
   const username = createMemo(() => attrs().id)

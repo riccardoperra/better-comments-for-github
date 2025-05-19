@@ -42,7 +42,6 @@ export function wrapMixedHtmlContent(
   }
 
   if (endNode && nodeIndex !== undefined) {
-    console.log('my index', index, nodeIndex, nodeChildren)
     parent.children.splice(index, nodeIndex + 1, {
       type: options.type,
       children: nodeChildren,
