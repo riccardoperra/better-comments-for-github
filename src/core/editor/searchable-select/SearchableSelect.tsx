@@ -62,15 +62,7 @@ const SearchControl = <T, U extends ValidComponent = 'div'>(
   props: PolymorphicProps<U, SearchControlProps<T>>,
 ) => {
   const [local, others] = splitProps(props as SearchControlProps<T>, ['class'])
-  return (
-    <SearchPrimitive.Control
-      class={clsx(local.class)}
-      {...others}
-      onKeyDown={(x) => {
-        console.log(x)
-      }}
-    />
-  )
+  return <SearchPrimitive.Control class={clsx(local.class)} {...others} />
 }
 
 export function SearchableSelectProvider(
@@ -132,6 +124,7 @@ export function SearchableSelectPopover<T extends ValidComponent = 'div'>(
       anchorRef={context.anchorRef}
       open={context.popoverOpen()}
       onOpenChange={context.setPopoverOpen}
+      hideWhenDetached={true}
       {...props}
     />
   )
@@ -151,6 +144,7 @@ export function SearchableSelectRoot<
   T extends ValidComponent = 'div',
 >(props: PolymorphicProps<T, SearchRootProps<Option, OptGroup, T>>) {
   const context = useContext(SearchableSelectContext)
+  let ref: HTMLElement
 
   onCleanup(() => {
     props.onInputChange?.('')
@@ -160,6 +154,8 @@ export function SearchableSelectRoot<
     <SearchPrimitive.Search
       {...props}
       open
+      value={null}
+      ref={ref}
       onInputChange={(value) => {
         if (context?.initialPopoverRender()) {
           return

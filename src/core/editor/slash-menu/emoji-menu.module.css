@@ -15,6 +15,7 @@
  */
 
 .emojiListbox {
+  max-height: 200px;
   /*display: grid;*/
   /*grid-template-columns: repeat(8, 1fr);*/
 }

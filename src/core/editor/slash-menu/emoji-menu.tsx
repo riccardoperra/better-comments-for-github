@@ -5,6 +5,7 @@ import {
   AutocompleteRule,
   defineAutocomplete,
 } from 'prosekit/extensions/autocomplete'
+import { Fragment, Slice } from 'prosemirror-model'
 import {
   SearchControl,
   SearchableSelectContent,
@@ -24,20 +25,16 @@ import type { SuggestionData } from '../../../editor/utils/loadSuggestionData'
 
 export default function EmojiMenu(props: { emojis: SuggestionData['emojis'] }) {
   const editor = useEditor<EditorExtension>()
-
-  createEffect(() => {
-    console.log(props.emojis)
-  })
-
   const [open, setOpen] = createSignal(false)
 
-  const [reference, setReference] = createSignal<Element | null>(null)
-  const [_query, _setQuery] = createSignal<string | null>(null)
-  const [query, setQuery] = createSignal<string>(':')
-  const [onDismiss, setDismiss] = createSignal<VoidFunction | null>(null)
-  const [onSubmit, setSubmit] = createSignal<VoidFunction | null>(null)
+  const [reference, setReference] = createSignal<HTMLElement | null>(null)
+  const [query, setQuery] = createSignal<string>('')
+  const [onDismiss, setDismiss] = createSignal<(() => VoidFunction) | null>(
+    null,
+  )
+  const [onSubmit, setSubmit] = createSignal<(() => VoidFunction) | null>(null)
 
-  const regex = () => /(?:^|(?<=\s)):(?!:)[^:]*$/iu
+  const regex = () => /:(|\S.*)$/iu
 
   useAutocompleteExtension(
     editor,
@@ -56,11 +53,15 @@ export default function EmojiMenu(props: { emojis: SuggestionData['emojis'] }) {
     }
   })
 
-  const anchorRef = createMemo(() => reference())
+  const anchorRef = createMemo(() => reference() || undefined)
 
   const emojis = createMemo(() => {
-    const _ = _query() ?? ''
-    return props.emojis.slice(0, 200).filter((emoji) => {
+    const _ = query()
+    let emojis = props.emojis
+    if (_.length < 2) {
+      emojis = emojis.slice(0, 50)
+    }
+    return emojis.filter((emoji) => {
       return emoji.name.toLowerCase().includes(_)
     })
   })
@@ -71,22 +72,31 @@ export default function EmojiMenu(props: { emojis: SuggestionData['emojis'] }) {
       onPopoverOpen={(open) => {
         setOpen(open)
         if (!open) {
-          editor().focus()
+          setTimeout(() => {
+            onDismiss()?.()
+            editor().view.focus()
+          })
         }
       }}
     >
       <SearchableSelectPopover
-        placement={'bottom-end'}
+        placement={'right-start'}
         fitViewport={false}
         anchorRef={anchorRef}
+        onKeyDown={(event) => {
+          if (event.key === 'Escape') {
+            setTimeout(() => onDismiss()?.())
+          }
+        }}
       >
         <SearchableSelectPopoverContent>
           <SearchableSelectRoot
             open
             multiple={false}
+            optionLabel={'name'}
             optionValue={'name'}
             options={emojis()}
-            onInputChange={_setQuery}
+            onInputChange={setQuery}
             itemComponent={(props) => (
               <SearchableSelectItem item={props.item}>
                 <SearchableSelectItemLabel>
@@ -95,8 +105,37 @@ export default function EmojiMenu(props: { emojis: SuggestionData['emojis'] }) {
                 </SearchableSelectItemLabel>
               </SearchableSelectItem>
             )}
+            onChange={(value) => {
+              if (value) {
+                const span = editor().view.dom.querySelector(
+                  '.prosemirror-prediction-match',
+                )
+                if (span) {
+                  const pos = editor().view.posAtDOM(span, 0)
+                  const tr = editor().state.tr
+                  tr.replace(
+                    pos,
+                    pos + 1,
+                    new Slice(
+                      Fragment.from(editor().schema.text(value.character)),
+                      0,
+                      0,
+                    ),
+                  )
+
+                  editor().view.dispatch(tr)
+                  setTimeout(() => editor().view.focus())
+                }
+              }
+            }}
           >
-            <SearchControl>
+            <SearchControl
+              onKeyDown={(event) => {
+                if (event.key === 'Escape') {
+                  onDismiss()
+                }
+              }}
+            >
               <SearchableSelectInput placeholder={'Search'} />
             </SearchControl>
             <SearchableSelectContent listboxClass={styles.emojiListbox} />
@@ -110,7 +149,7 @@ export default function EmojiMenu(props: { emojis: SuggestionData['emojis'] }) {
 function useAutocompleteExtension(
   editor: Accessor<Editor | null>,
   regex: Accessor<RegExp | null>,
-  setReference: Setter<Element | null>,
+  setReference: Setter<HTMLElement | null>,
   setQuery: Setter<string>,
   setDismiss: Setter<VoidFunction | null>,
   setSubmit: Setter<VoidFunction | null>,
@@ -130,7 +169,6 @@ function useAutocompleteExtension(
       setDismiss,
       setSubmit,
     )
-    console.log(rule)
     const extension = defineAutocomplete(rule)
     return editorValue.use(extension)
   })
@@ -147,27 +185,25 @@ export function defaultQueryBuilder(match: RegExpExecArray) {
 function createAutocompleteRule(
   editor: Editor,
   regex: RegExp,
-  setReference: Setter<Element | null>,
+  setReference: Setter<HTMLElement | null>,
   setQuery: Setter<string>,
-  setDismiss: Setter<VoidFunction | null>,
-  setSubmit: Setter<VoidFunction | null>,
+  setDismiss: Setter<(() => VoidFunction) | null>,
+  setSubmit: Setter<(() => VoidFunction) | null>,
 ) {
   const handleEnter: MatchHandler = (options) => {
-    const span = editor.view.dom.querySelector('.prosemirror-prediction-match')
-    console.log('set enter', options, span)
-
+    const span = editor.view.dom.querySelector<HTMLElement>(
+      '.prosemirror-prediction-match',
+    )
     if (span) {
       setReference(span)
     }
-
     setQuery(defaultQueryBuilder(options.match))
-    // setDismiss(options.ignoreMatch)
-    // setSubmit(options.deleteMatch)
+    setDismiss(() => options.ignoreMatch)
+    setSubmit(() => options.deleteMatch)
   }
 
   const handleLeave = () => {
-    console.log('leave')
-    // setReference(null)
+    setReference(null)
     setQuery('')
   }
 
