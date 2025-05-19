@@ -19,10 +19,18 @@ import LucideTrash from 'lucide-solid/icons/trash'
 import LucidePersonStanding from 'lucide-solid/icons/person-standing'
 import LucideUndo2 from 'lucide-solid/icons/undo-2'
 import { useNodeViewContext } from '@prosemirror-adapter/solid'
-import { Tooltip, TooltipContent, TooltipTrigger } from '../tooltip/tooltip'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '../../editor/tooltip/tooltip'
 import { deleteRange } from '../../../editor/utils/deleteRange'
-import { Popover, PopoverContent, PopoverTrigger } from '../popover/popover'
-import { TextField } from '../text-field/text-field'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '../../editor/popover/popover'
+import { TextField } from '../../editor/text-field/text-field'
 import styles from './image-view.module.css'
 
 export interface ImageViewActionsProps {

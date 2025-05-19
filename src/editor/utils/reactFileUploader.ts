@@ -26,7 +26,7 @@ import type { Fiber } from '../../core/react-hacks/fiber'
 import type {
   GitHubFile,
   GitHubUploaderHandler,
-} from '../../core/editor/image/github-file-uploader'
+} from '../../core/custom/image/github-file-uploader'
 
 export class GitHubUploaderReactHandler implements GitHubUploaderHandler {
   #store = createStore<Array<GitHubFile>>([])

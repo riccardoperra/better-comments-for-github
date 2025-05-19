@@ -59,6 +59,7 @@ export const AutocompleteItem: ParentComponent<
   Partial<AutocompleteItemProps & { class?: string }>
 > = (props) => {
   return (
+    // @ts-expect-error Fix types
     <CoreAutocompleteItem
       {...props}
       class={clsx(props.class, styles.autocompleteMenuItem)}

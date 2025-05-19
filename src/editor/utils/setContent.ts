@@ -15,7 +15,7 @@
  */
 
 import { convertUnistToProsemirror } from 'prosemirror-transformer-markdown/prosemirror'
-import { unknownNodeHandler } from '../../core/editor/unknown-node/unknown-node-handler'
+import { unknownNodeHandler } from '../../core/custom/unknown-node/unknown-node-handler'
 import { unistNodeFromMarkdown } from './unistNodeFromMarkdown'
 import type { EditorView } from 'prosemirror-view'
 

@@ -21,7 +21,7 @@ import { clsx } from 'clsx'
 import { Editor, EditorRootContext } from './editor/editor'
 import type { EditorType } from './editor/editor'
 import type { Accessor } from 'solid-js'
-import type { GitHubUploaderHandler } from './core/editor/image/github-file-uploader'
+import type { GitHubUploaderHandler } from './core/custom/image/github-file-uploader'
 import type { SuggestionData } from './editor/utils/loadSuggestionData'
 
 export interface RenderEditorProps {

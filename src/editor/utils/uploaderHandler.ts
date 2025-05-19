@@ -1,5 +1,5 @@
 import { getImagePreviewUrl } from '../../github/data'
-import type { GitHubFile } from '../../core/editor/image/github-file-uploader'
+import type { GitHubFile } from '../../core/custom/image/github-file-uploader'
 
 export interface GitHubUploaderHandler {
   init: (originalFile: File) => GitHubFile

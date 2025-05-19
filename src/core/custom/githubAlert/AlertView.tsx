@@ -19,7 +19,7 @@ import { Dynamic } from 'solid-js/web'
 import { For, Show, createMemo } from 'solid-js'
 import { clsx } from 'clsx'
 import LucideChevronDown from 'lucide-solid/icons/chevron-down'
-import { NodeViewWrapper } from '../nodeviews/node-view'
+import { NodeViewWrapper } from '../../editor/nodeviews/node-view'
 
 import {
   DropdownMenu,
@@ -27,7 +27,7 @@ import {
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
-} from '../dropdown-menu/dropdown-menu'
+} from '../../editor/dropdown-menu/dropdown-menu'
 import { githubAlertTypeKeys, githubAlertTypeMap } from './config'
 import styles from './AlertView.module.css'
 import type { GithubAlertType } from './config'

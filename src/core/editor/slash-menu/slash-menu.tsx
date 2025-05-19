@@ -24,7 +24,7 @@ import {
   AutocompletePopover,
 } from '../autocomplete/Autocomplete'
 
-import { githubAlertTypeMap } from '../githubAlert/config'
+import { githubAlertTypeMap } from '../../custom/githubAlert/config'
 import { EditorTextShortcut } from '../kbd/kbd'
 import { EditorActionIcon } from '../action-icon/ActionIcon'
 import styles from './slash-menu.module.css'

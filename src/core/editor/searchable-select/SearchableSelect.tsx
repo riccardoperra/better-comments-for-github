@@ -135,6 +135,7 @@ export function SearchableSelectPopoverContent<
 >(props: PolymorphicProps<T, PopoverContentProps<T>>) {
   const context = useContext(SearchableSelectContext)!
 
+  // @ts-expect-error Fix types
   return <PopoverContent {...props} onKeyDown={context.onPopoverKeyDown} />
 }
 
@@ -144,7 +145,6 @@ export function SearchableSelectRoot<
   T extends ValidComponent = 'div',
 >(props: PolymorphicProps<T, SearchRootProps<Option, OptGroup, T>>) {
   const context = useContext(SearchableSelectContext)
-  let ref: HTMLElement
 
   onCleanup(() => {
     props.onInputChange?.('')
@@ -155,7 +155,6 @@ export function SearchableSelectRoot<
       {...props}
       open
       value={null}
-      ref={ref}
       onInputChange={(value) => {
         if (context?.initialPopoverRender()) {
           return

@@ -22,8 +22,8 @@ import {
   getUserAvatarId,
   tryGetReferences,
 } from '../../../src/github/data'
-import { GitHubUploaderNativeHandler } from '../../../src/core/editor/image/github-file-uploader'
-import type { AttachmentHandlerElement } from '../../../src/core/editor/image/github-file-uploader'
+import { GitHubUploaderNativeHandler } from '../../../src/core/custom/image/github-file-uploader'
+import type { AttachmentHandlerElement } from '../../../src/core/custom/image/github-file-uploader'
 import type { SuggestionData } from '../../../src/editor/utils/loadSuggestionData'
 
 export class GitHubNativeTextareaHandler {
