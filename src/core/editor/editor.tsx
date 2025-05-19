@@ -20,13 +20,15 @@ import styles from './editor.module.css'
 import { UserMentionMenu } from './user-mention/UserMentionMenu'
 import { IssueReferenceMenu } from './issue-reference/IssueReferenceMenu/IssueReferenceMenu'
 import { EditorBlockHandler } from './block-handle/block-handle'
-import SlashMenu from './slash-menu/slash-menu/slash-menu'
 import InlineMenu from './inline-menu/InlineMenu'
+import EmojiMenu from './emoji-menu/emoji-menu'
+import SlashMenu from './slash-menu/slash-menu'
 import type { Editor } from 'prosekit/core'
 import type { SuggestionData } from '../../editor/utils/loadSuggestionData'
 
 export interface ProsekitEditor {
   editor: Editor
+  emojis: SuggestionData['emojis']
   mentions: SuggestionData['mentions']
   issues: SuggestionData['references']
 }
@@ -44,6 +46,8 @@ export function ProsekitEditor(props: ProsekitEditor) {
           />
 
           <SlashMenu />
+          <EmojiMenu emojis={props.emojis} />
+
           <UserMentionMenu users={props.mentions} />
           <IssueReferenceMenu issues={props.issues} />
           <InlineMenu />

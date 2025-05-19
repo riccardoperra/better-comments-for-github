@@ -24,6 +24,7 @@ import type { ValidComponent } from 'solid-js'
 
 type SearchContentProps<T extends ValidComponent = 'div'> = {
   class?: string | undefined
+  listboxClass?: string | undefined
   noResultContent?: JSX.Element
 }
 
@@ -32,6 +33,7 @@ export const SearchableSelectContent = <T extends ValidComponent = 'div'>(
 ) => {
   const [local, others] = splitProps(props as SearchContentProps, [
     'class',
+    'listboxClass',
     'noResultContent',
   ])
   let listboxScrollContainer!: HTMLDivElement
@@ -42,7 +44,7 @@ export const SearchableSelectContent = <T extends ValidComponent = 'div'>(
       class={clsx(local.class, styles.searchableSelectListboxContainer)}
     >
       <SearchPrimitive.Listbox
-        class={styles.searchableSelectListbox}
+        class={clsx(local.listboxClass, styles.searchableSelectListbox)}
         scrollRef={() => listboxScrollContainer}
       />
       <Show when={props.noResultContent}>

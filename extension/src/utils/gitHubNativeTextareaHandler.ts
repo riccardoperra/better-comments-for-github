@@ -145,6 +145,22 @@ export class GitHubNativeTextareaHandler {
       }
     }
 
+    // This case will match in the PR comment edit
+    const tabContainer = this.findTabContainer(textarea)
+    if (tabContainer && tabContainer.classList.contains('CommentBox')) {
+      const nextSibling = tabContainer.nextElementSibling
+      // Hope will match
+      if (nextSibling && nextSibling.tagName === 'DIV') {
+        const switchRoot = document.createElement('div')
+        switchRoot.style.display = 'inline'
+        nextSibling.prepend(switchRoot)
+        this.instance.switchButton.render(switchRoot, {
+          size: 'medium',
+          variant: 'secondary',
+        })
+      }
+    }
+
     return () => {
       // Just a noop
       console.warn(

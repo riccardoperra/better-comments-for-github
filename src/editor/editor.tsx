@@ -15,20 +15,11 @@
  */
 
 import type { Accessor } from 'solid-js'
-import {
-  Show,
-  createContext,
-  createEffect,
-  onCleanup,
-  useContext,
-} from 'solid-js'
+import { createContext, createEffect, onCleanup, Show, useContext } from 'solid-js'
 import { createEditor } from 'prosekit/core'
 import { useDocChange } from 'prosekit/solid'
 import { markdownFromUnistNode } from 'prosemirror-transformer-markdown/unified'
-import {
-  convertPmSchemaToUnist,
-  convertUnistToProsemirror,
-} from 'prosemirror-transformer-markdown/prosemirror'
+import { convertPmSchemaToUnist, convertUnistToProsemirror } from 'prosemirror-transformer-markdown/prosemirror'
 
 import 'prosemirror-example-setup/style/style.css'
 
@@ -184,6 +175,7 @@ export function Editor(props: EditorProps) {
     <div data-editor-wrapper={''}>
       <ProsekitEditor
         editor={editor}
+        emojis={props.suggestions.emojis}
         mentions={props.suggestions.mentions ?? []}
         issues={props.suggestions.references ?? []}
       />
