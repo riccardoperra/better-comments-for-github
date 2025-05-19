@@ -68,7 +68,6 @@ export default defineUnlistedScript(() => {
             onNodeRemoved: (element) => {
               const instance = getGitHubEditorInstanceFromElement(element)
               if (instance) {
-                console.log('should remove', instance)
                 removeGitHubEditorInstance(this, instance)
               }
             },
@@ -123,6 +122,11 @@ export default defineUnlistedScript(() => {
                     nativeTextareaHandler.loadSuggestionDataAsync(
                       textExpander,
                       {
+                        onEmojiChange: (emojis) =>
+                          setSuggestionData((data) => ({
+                            ...data,
+                            emojis,
+                          })),
                         onReferenceSuggestionChange: (references) =>
                           setSuggestionData((data) => ({
                             ...data,
@@ -169,21 +173,20 @@ export default defineUnlistedScript(() => {
                 // Since I didn't really find a good way to detect if the current textarea
                 // has been disconnected. I'll now check via mutation observer.
                 // TODO: potential perforamnce issue
-                // const observer = new MutationObserver(() => {
-                //   const ref = textareaRef()
-                //   if (!ref || !ref.isConnected) {
-                //     setTextareaRef(editorInjector.findTextarea?.() ?? null)
-                //   }
-                // })
-                // observer.observe(element, {
-                //   childList: true,
-                //   subtree: true,
-                //   characterData: true,
-                // })
-                // onCleanup(() => {
-                //   observer.disconnect()
-                //   console.log('cleanup')
-                // })
+                const observer = new MutationObserver(() => {
+                  const ref = textareaRef()
+                  if (!ref || !ref.isConnected) {
+                    setTextareaRef(editorInjector.findTextarea?.() ?? null)
+                  }
+                })
+                observer.observe(element, {
+                  childList: true,
+                  subtree: true,
+                  characterData: true,
+                })
+                onCleanup(() => {
+                  observer.disconnect()
+                })
 
                 editorInjector.mountFooterFn(root)
                 editorInjector.mountEditorFn(root)

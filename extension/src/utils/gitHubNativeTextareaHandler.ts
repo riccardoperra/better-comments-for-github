@@ -15,7 +15,9 @@
  */
 
 import { effect } from 'solid-js/web'
+import { createComponent } from 'solid-js'
 import {
+  fetchEmojisImages,
   fetchMentionableUsers,
   getUserAvatarId,
   tryGetReferences,
@@ -172,11 +174,35 @@ export class GitHubNativeTextareaHandler {
   loadSuggestionDataAsync(
     textExpander: HTMLElement,
     callbacks: {
+      onEmojiChange: (data: SuggestionData['emojis']) => void
       onReferenceSuggestionChange: (data: SuggestionData['references']) => void
       onMentionsChange: (data: SuggestionData['mentions']) => void
     },
   ) {
     const { emojiUrl, issueUrl, mentionUrl } = textExpander.dataset
+    // Skipping emojiUrl since the response is a html to be parsed 🤮
+    fetchEmojisImages().then((data) => {
+      const suggestions: SuggestionData['emojis'] = []
+      for (const key in data) {
+        suggestions.push({
+          name: key,
+          character: ':' + key + ':',
+          fallback: () =>
+            // So legacy 😅
+            createComponent(Dynamic, {
+              component: 'img',
+              width: 18,
+              height: 18,
+              style: { 'vertical-align': 'middle', 'margin-left': '2px' },
+              class: 'image-result',
+              alt: key,
+              src: data[key],
+            }),
+        })
+      }
+      callbacks.onEmojiChange(suggestions)
+    })
+
     if (issueUrl) {
       tryGetReferences(issueUrl).then((data) => {
         callbacks.onReferenceSuggestionChange(data)

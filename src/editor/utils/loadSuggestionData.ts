@@ -26,8 +26,8 @@ import {
   traverseFiber,
   waitForReactFiber,
 } from '../../core/react-hacks/fiber'
+import type { Accessor, JSXElement } from 'solid-js'
 import type { Fiber } from '../../core/react-hacks/fiber'
-import type { Accessor } from 'solid-js'
 
 export interface MentionSuggestion {
   avatarUrl: string
@@ -51,6 +51,7 @@ export interface SavedReplySuggestion {
 export interface EmojiSuggestion {
   name: string
   character: string
+  fallback?: () => JSXElement
 }
 
 export interface SuggestionData {

@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-import { createEffect, createMemo, createSignal } from 'solid-js'
+import { Show, createEffect, createMemo, createSignal } from 'solid-js'
 import { useEditor } from 'prosekit/solid'
 import { Fragment, Slice } from 'prosemirror-model'
+import { Dynamic } from 'solid-js/web'
 import {
   SearchControl,
   SearchableSelectContent,
@@ -130,7 +131,12 @@ export default function EmojiMenu(props: { emojis: SuggestionData['emojis'] }) {
             itemComponent={(props) => (
               <SearchableSelectItem item={props.item}>
                 <SearchableSelectItemLabel>
-                  {props.item.rawValue.character}
+                  <Show
+                    fallback={props.item.rawValue.character}
+                    when={props.item.rawValue.fallback}
+                  >
+                    {(fallback) => <Dynamic component={fallback()} />}
+                  </Show>
                   <span>{'   '}</span>
                   {props.item.rawValue.name}
                 </SearchableSelectItemLabel>
