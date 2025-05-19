@@ -54,6 +54,17 @@ export function fetchIssues(url: string): Promise<{
   }).then((result) => result.json())
 }
 
+export function fetchEmojisImages(
+  url: string,
+): Promise<Record<string, string>> {
+  return fetch('https://api.github.com/emojis', {
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+      Accept: 'application/json',
+    },
+  }).then((result) => result.json())
+}
+
 export async function tryGetReferences(
   url: string,
 ): Promise<SuggestionData['references']> {
