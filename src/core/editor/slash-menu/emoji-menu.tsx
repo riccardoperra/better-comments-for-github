@@ -101,7 +101,8 @@ export default function EmojiMenu(props: { emojis: SuggestionData['emojis'] }) {
               <SearchableSelectItem item={props.item}>
                 <SearchableSelectItemLabel>
                   {props.item.rawValue.character}
-                  <span>{'   '}</span>:{props.item.rawValue.name}:
+                  <span>{'   '}</span>
+                  {props.item.rawValue.name}
                 </SearchableSelectItemLabel>
               </SearchableSelectItem>
             )}
