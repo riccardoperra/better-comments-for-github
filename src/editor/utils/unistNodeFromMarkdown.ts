@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { unistNodeFromMarkdown as coreUnistNodeFromMarkdown } from 'prosemirror-transformer-markdown/unified'
 import {
   remarkFlatList,
   remarkHtmlHardbreak,
@@ -24,6 +23,7 @@ import {
   remarkSuperscript,
   remarkUnderline,
 } from '@prosedoc/markdown-schema'
+import { markdownToUnist } from '@prosemirror-processor/markdown'
 import { remarkGitHubAlert } from '../../core/editor/githubAlert/remarkGitHubAlert'
 import { remarkParseLinkToGitHubIssueReference } from '../../core/editor/issue-reference/remarkGitHubIssueReference'
 import { remarkGitHubUserReferences } from './remarkGitHubUserReferences'
@@ -36,22 +36,18 @@ export function unistNodeFromMarkdown(
   },
 ) {
   const { repository, owner } = options
-  return coreUnistNodeFromMarkdown(content, {
+  return markdownToUnist(content, {
     transformers: [
-      { type: 'remarkPlugin', handler: remarkGitHubUserReferences },
-      {
-        type: 'remarkPlugin',
-        handler: () =>
-          remarkParseLinkToGitHubIssueReference({ repository, owner }),
-      },
-      { type: 'remarkPlugin', handler: remarkSubscript },
-      { type: 'remarkPlugin', handler: remarkSuperscript },
-      { type: 'remarkPlugin', handler: remarkUnderline },
-      { type: 'remarkPlugin', handler: remarkGitHubAlert },
-      { type: 'remarkPlugin', handler: remarkFlatList },
-      { type: 'remarkPlugin', handler: remarkHtmlImage },
-      { type: 'remarkPlugin', handler: remarkInlineImage },
-      { type: 'remarkPlugin', handler: remarkHtmlHardbreak },
+      remarkGitHubUserReferences,
+      () => remarkParseLinkToGitHubIssueReference({ repository, owner }),
+      remarkSubscript,
+      remarkSuperscript,
+      remarkUnderline,
+      remarkGitHubAlert,
+      remarkFlatList,
+      remarkHtmlImage,
+      remarkInlineImage,
+      remarkHtmlHardbreak,
     ],
   })
 }

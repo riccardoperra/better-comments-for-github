@@ -16,7 +16,10 @@
 
 import { defineMarkSpec, union } from 'prosekit/core'
 import { defineItalic } from 'prosekit/extensions/italic'
-import type { Emphasis, Strong, Text } from 'mdast'
+import {
+  fromProseMirrorMark,
+  toProseMirrorMark,
+} from '@prosemirror-processor/unist/mdast'
 
 export function defineItalicMarkdown() {
   return union(
@@ -24,14 +27,9 @@ export function defineItalicMarkdown() {
     defineMarkSpec({
       name: 'italic',
       unistName: 'emphasis',
-      toUnist(node): Emphasis {
-        return { type: 'emphasis', children: [node] as Array<Strong | Text> }
-      },
-      unistToNode(node, schema, children, context) {
-        return children.map((child) =>
-          child.mark(child.marks.concat(schema.marks.italic.create())),
-        )
-      },
+      // @ts-expect-error fix types
+      __toUnist: fromProseMirrorMark('emphasis'),
+      __fromUnist: toProseMirrorMark('italic'),
     }),
   )
 }

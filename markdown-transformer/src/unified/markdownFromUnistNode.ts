@@ -1,14 +1,9 @@
-import rehypeParse from "rehype-parse";
-import remarkGfm from "remark-gfm";
-import remarkStringify from "remark-stringify";
-import { unified } from "unified";
 import type { Root } from "mdast";
+import { unistToMarkdown } from "@prosemirror-processor/markdown";
 
 export function markdownFromUnistNode(rootNode: Root): string {
-  const processor = unified()
-    .use(rehypeParse)
-    .use(remarkGfm)
-    .use(remarkStringify, {
+  return unistToMarkdown(rootNode, {
+    stringifyOptions: {
       fences: true,
       listItemIndent: "one",
       resourceLink: true,
@@ -19,7 +14,6 @@ export function markdownFromUnistNode(rootNode: Root): string {
       rule: "-",
       // ruleSpaces: true,
       strong: "*",
-    });
-
-  return processor.stringify(rootNode);
+    },
+  });
 }

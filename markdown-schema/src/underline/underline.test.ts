@@ -19,8 +19,8 @@ import {
   convertPmSchemaToUnist,
   convertUnistToProsemirror,
 } from 'prosemirror-transformer-markdown/prosemirror'
-import { unistNodeFromMarkdown } from 'prosemirror-transformer-markdown/unified'
 import { builders } from 'prosemirror-test-builder'
+import { markdownToUnist } from '@prosemirror-processor/markdown'
 import {
   getEditorInstance,
   getMarksBaseExtensions,
@@ -39,10 +39,10 @@ const { doc, p, underline } = builders(extension.schema!, {
 
 test('markdown -> prosemirror', () => {
   const editor = getEditorInstance(extension)
-  const unist = unistNodeFromMarkdown(
+  const unist = markdownToUnist(
     `Just a test content with <ins>underlined text</ins>`,
     {
-      transformers: [{ type: 'remarkPlugin', handler: remarkUnderline }],
+      transformers: [remarkUnderline],
     },
   )
 

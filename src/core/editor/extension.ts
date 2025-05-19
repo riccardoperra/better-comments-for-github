@@ -34,6 +34,7 @@ import {
   defineBoldMarkdown,
   defineCodeMarkdown,
   defineDocMarkdown,
+  defineHardbreakMarkdown,
   defineHeadingMarkdown,
   defineHorizontalRuleMarkdown,
   defineImageMarkdown,
@@ -51,12 +52,12 @@ import {
 import { defineTextAlign } from 'prosekit/extensions/text-align'
 import { defineSolidNodeView } from 'prosekit/solid'
 import { defineCodeBlock } from './code-block/code-block'
-import { defineHardbreak } from './hardbreak/hardbreak'
 import { defineMentionMarkdown } from './user-mention/mention'
 import { defineGitHubAlert } from './githubAlert/alert'
 import { defineImageExtension } from './image/extension'
 import { defineGitHubIssueReference } from './issue-reference/issue'
 import { UserMentionView } from './user-mention/UserMentionView/UserMentionView'
+import { defineUnknownNodeSpec } from './unknown-node/unknown-node'
 import type { HeadingAttrs } from 'prosekit/extensions/heading'
 
 export function defineMarkdownExtension() {
@@ -83,7 +84,7 @@ export function defineMarkdownExtension() {
     defineImageMarkdown(),
     defineParagraphMarkdown(),
 
-    defineHardbreak(),
+    defineHardbreakMarkdown(),
 
     defineDropCursor(),
     defineGapCursor(),
@@ -91,6 +92,7 @@ export function defineMarkdownExtension() {
     defineVirtualSelection(),
     defineModClickPrevention(),
     defineTableMarkdown(),
+    defineUnknownNodeSpec(),
   )
 }
 

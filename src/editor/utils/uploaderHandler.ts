@@ -7,6 +7,8 @@ export interface GitHubUploaderHandler {
   upload: (file: GitHubFile, dataTransfer: DataTransfer | null) => void
 
   get: ReadonlyArray<GitHubFile>
+
+  destroy: () => void
 }
 
 const getUrlFromHtml = (html: string) => {

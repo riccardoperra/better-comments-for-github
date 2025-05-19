@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-import { createRenderEffect, createSignal } from 'solid-js'
+import { createComputed, createSignal } from 'solid-js'
 
 export function query(
   selector: string,
   parentNode: HTMLElement | null = null,
   options?: {
     onAdded?: (el: HTMLElement) => void
+    onRemoved?: (el: HTMLElement) => void
   },
 ) {
   const [elements, setElements] = createSignal<Array<HTMLElement>>([], {
@@ -84,14 +85,17 @@ export function query(
       })
     }
 
-    setElements((els) =>
-      els.filter((el) => !removedEls.includes(el)).concat(addedEls),
-    )
+    setElements((els) => {
+      const newElements = els
+        .filter((el) => !removedEls.includes(el))
+        .concat(addedEls)
+      return [...new Set(newElements)]
+    })
   })
 
   let previousElements: Array<HTMLElement> = []
 
-  createRenderEffect(() => {
+  createComputed(() => {
     const updatedElements = elements()
     const addedEls: Array<HTMLElement> = []
     const removedEls: Array<HTMLElement> = []
@@ -111,6 +115,7 @@ export function query(
       onAddedListeners.forEach((fn) => fn(addedEl))
     }
     for (const removedEl of removedEls) {
+      options?.onRemoved?.(removedEl)
       onAddedListeners.forEach((fn) => fn(removedEl))
     }
 
@@ -122,5 +127,17 @@ export function query(
     subtree: true,
   })
 
-  return [elements, onAdded, onRemoved]
+  const dispose = () => {
+    observer.disconnect()
+    if (options?.onAdded) {
+      options.onAdded = undefined
+    }
+    if (options?.onRemoved) {
+      options.onRemoved = undefined
+    }
+
+    // setElements([])
+  }
+
+  return [elements, onAdded, onRemoved, dispose] as const
 }

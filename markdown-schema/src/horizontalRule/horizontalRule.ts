@@ -16,8 +16,10 @@
 
 import { defineNodeSpec, union } from 'prosekit/core'
 import { defineHorizontalRule } from 'prosekit/extensions/horizontal-rule'
-import { createProseMirrorNode } from 'prosemirror-transformer-markdown/prosemirror'
-import type { ThematicBreak } from 'mdast'
+import {
+  fromProseMirrorNode,
+  toProseMirrorNode,
+} from '@prosemirror-processor/unist/mdast'
 
 export function defineHorizontalRuleMarkdown() {
   return union(
@@ -25,16 +27,9 @@ export function defineHorizontalRuleMarkdown() {
     defineNodeSpec({
       name: 'horizontalRule',
       unistName: 'thematicBreak',
-      toUnist(node, children): Array<ThematicBreak> {
-        return [
-          {
-            type: 'thematicBreak',
-          },
-        ]
-      },
-      unistToNode(node, schema, children, context) {
-        return createProseMirrorNode('horizontalRule', schema, children)
-      },
+      // @ts-expect-error TODO: fix types
+      __toUnist: fromProseMirrorNode('thematicBreak'),
+      __fromUnist: toProseMirrorNode('horizontalRule'),
     }),
   )
 }

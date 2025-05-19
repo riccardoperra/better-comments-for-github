@@ -28,7 +28,13 @@ export const PULL_REQUEST_FILES_PAGE = 1 << 3
 export const DISCUSSION_PAGE = 1 << 4
 export const NEW_DISCUSSION_PAGE = 1 << 5
 
-export function parseGitHubUrl(pathName: string) {
+export interface GitHubUrlParsedResult {
+  repositoryOwner: string
+  repository: string
+  flags: number
+}
+
+export function parseGitHubUrl(pathName: string): GitHubUrlParsedResult {
   const [, repositoryOwner, repository] = pathName.split('/')
 
   let flags = 0

@@ -19,8 +19,8 @@ import {
   convertPmSchemaToUnist,
   convertUnistToProsemirror,
 } from 'prosemirror-transformer-markdown/prosemirror'
-import { unistNodeFromMarkdown } from 'prosemirror-transformer-markdown/unified'
 import { builders } from 'prosemirror-test-builder'
+import { markdownToUnist } from '@prosemirror-processor/markdown'
 import {
   getEditorInstance,
   getMarksBaseExtensions,
@@ -38,7 +38,7 @@ const { doc, p, link } = builders(extension.schema!, {
 
 test('(markdown -> prosemirror) Link with url', () => {
   const editor = getEditorInstance(extension)
-  const unist = unistNodeFromMarkdown(
+  const unist = markdownToUnist(
     `Just a [link](https://example.com) into content`,
   )
 
@@ -58,7 +58,7 @@ test('(markdown -> prosemirror) Link with url', () => {
 
 test('(markdown -> prosemirror) Link with title', () => {
   const editor = getEditorInstance(extension)
-  const unist = unistNodeFromMarkdown(
+  const unist = markdownToUnist(
     `Just a [link](https://example.com "This is a title") into content`,
   )
 
@@ -78,7 +78,7 @@ test('(markdown -> prosemirror) Link with title', () => {
 
 test('(markdown -> prosemirror) Link with defined content', () => {
   const editor = getEditorInstance(extension)
-  const unist = unistNodeFromMarkdown(
+  const unist = markdownToUnist(
     `This is an example link: [https://example.com]`,
   )
 

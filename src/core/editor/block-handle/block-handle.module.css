@@ -14,4 +14,21 @@
  * limitations under the License.
  */
 
-import 'bippy'
+.blockHandle {
+  display: flex;
+}
+
+.draggable {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  cursor: grab;
+  width: 20px;
+  height: 20px;
+  transition: background 150ms ease;
+
+  &:hover {
+    background: var(--control-bgColor-hover);
+  }
+}

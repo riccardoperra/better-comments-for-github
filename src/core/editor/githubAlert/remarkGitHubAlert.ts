@@ -55,10 +55,21 @@ export function remarkGitHubAlert() {
       }
       if (found) {
         // Removing first entry in order to remove the first blank paragraph, which was the alert type
-        blockquote.children = blockquote.children.slice(
-          1,
-          blockquote.children.length,
-        )
+        const firstChildren = blockquote.children.at(0)
+        if (
+          firstChildren &&
+          'children' in firstChildren &&
+          // If an empty paragraph is inserted, we have a text node with an empty string
+          (firstChildren.children.length === 0 ||
+            (firstChildren.children.length === 1 &&
+              firstChildren.children[0].type === 'text' &&
+              firstChildren.children[0].value === ''))
+        ) {
+          blockquote.children = blockquote.children.slice(
+            1,
+            blockquote.children.length,
+          )
+        }
       }
     })
   }

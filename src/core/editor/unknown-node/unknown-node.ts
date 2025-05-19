@@ -14,8 +14,23 @@
  * limitations under the License.
  */
 
-import { queryComment } from '../../dom/queryComment'
+import { defineNodeSpec } from 'prosekit/core'
+import type { Text } from 'mdast'
 
-export function handleEditorInstances() {
-  const [, onAdded] = queryComment()
+export function defineUnknownNodeSpec() {
+  return defineNodeSpec({
+    name: 'unknownBlock',
+    group: 'inline',
+    inline: true,
+    content: '(text|hardBreak)+',
+    __toUnist: (node, parent, context) => {
+      return {
+        type: 'text',
+        value: node.textContent,
+      } as Text
+    },
+    toDOM() {
+      return ['span', { style: 'display: contents', class: 'unknown-block' }, 0]
+    },
+  })
 }
