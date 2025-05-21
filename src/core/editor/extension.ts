@@ -58,6 +58,7 @@ import { UserMentionView } from '../custom/user-mention/UserMentionView/UserMent
 import { defineUnknownNodeSpec } from '../custom/unknown-node/unknown-node'
 import { defineGitHubIssueReference } from '../custom/issue-reference/issue'
 import { defineImageExtension } from '../custom/image/extension'
+import { defineComment } from '../custom/comment/comment'
 import type { HeadingAttrs } from 'prosekit/extensions/heading'
 
 export function defineMarkdownExtension() {
@@ -85,6 +86,7 @@ export function defineMarkdownExtension() {
     defineParagraphMarkdown(),
 
     defineHardbreakMarkdown(),
+    defineComment(),
 
     defineDropCursor(),
     defineGapCursor(),

@@ -19,13 +19,15 @@ import { pmNode } from '@prosemirror-processor/unist'
 import type { CommentNode } from './remarkComment'
 import type { Break, Html, Text } from 'mdast'
 
+export { remarkComment } from './remarkComment'
+
 export function defineCommentMarkdown() {
   return union(
     defineNodeSpec({
       inline: true,
       content: '(text|hardBreak)+',
       group: 'inline',
-      code: true,
+      code: false,
       name: 'comment',
       unistName: 'comment',
       __toUnist: (pmNode, parent, context) => {
@@ -43,18 +45,31 @@ export function defineCommentMarkdown() {
       __fromUnist: (_node, parent, context) => {
         const node = _node as unknown as CommentNode
         const rows = node.raw.split('\n')
-        console.log(rows)
-        const content = rows.flatMap((row, index, array) =>
-          row === ''
-            ? []
-            : index === array.length - 1
-              ? [context.schema.text(row)]
-              : [
-                  context.schema.text(row),
-                  context.schema.nodes.hardBreak.create(),
-                ],
-        )
+        const content = rows.flatMap((row, index, array) => {
+          if (row === '') {
+            if (index === 0 && array.length > 0) {
+              // This is to preserve the break for the opening tag of the comment
+              return [context.schema.nodes.hardBreak.create()]
+            }
+            return []
+          }
+          if (index === array.length - 1) {
+            return [context.schema.text(row)]
+          }
+          return [
+            context.schema.text(row),
+            context.schema.nodes.hardBreak.create(),
+          ]
+        })
         return pmNode(context.schema.nodes.comment, content, {})
+      },
+      parseDOM: [
+        {
+          tag: 'comment',
+        },
+      ],
+      toDOM() {
+        return ['comment', { class: 'comment-node' }, 0]
       },
     }),
   )

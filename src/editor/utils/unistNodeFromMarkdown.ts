@@ -15,6 +15,7 @@
  */
 
 import {
+  remarkComment,
   remarkFlatList,
   remarkHtmlHardbreak,
   remarkHtmlImage,
@@ -48,6 +49,7 @@ export function unistNodeFromMarkdown(
       remarkHtmlImage,
       remarkInlineImage,
       remarkHtmlHardbreak,
+      remarkComment,
     ],
   })
 }
