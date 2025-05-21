@@ -30,12 +30,12 @@
     "vite": "^6.3.5",
     "vite-plugin-solid": "^2.11.1",
     "vite-plugin-web-extension": "^4.4.3",
-    "vitest": "^3.1.3"
+    "vitest": "^3.1.4"
   },
   "dependencies": {
     "@floating-ui/dom": "^1.7.0",
     "@kobalte/core": "^0.13.9",
-    "@primer/primitives": "^10.6.0",
+    "@primer/primitives": "^10.7.0",
     "@primer/view-components": "^0.43.1",
     "@prosedoc/markdown-schema": "workspace:*",
     "@prosemirror-adapter/solid": "^0.4.1",
