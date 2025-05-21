@@ -23,11 +23,12 @@ import { defineDocMarkdown } from './doc/doc'
 import { defineTextMarkdown } from './text/text'
 import { defineParagraphMarkdown } from './paragraph/paragraph'
 import type { Extension } from 'prosekit/core'
-import type { Root } from 'mdast'
+import type { Nodes, Root } from 'mdast'
 import type {
   ProseMirrorNode,
   UnistNode,
 } from 'prosemirror-transformer-markdown/prosemirror'
+import type { ToProseMirrorNodeHandler } from '@prosemirror-processor/unist/mdast'
 
 export function sameNode(node: ProseMirrorNode, expected: ProseMirrorNode) {
   assert.deepEqual(node.toJSON(), expected.toJSON())
@@ -72,4 +73,12 @@ export function getEditorInstance<TExtension extends Extension>(
     editor.set(doc)
   }
   return editor
+}
+
+export const testUnknownHandler: ToProseMirrorNodeHandler<Nodes> = (
+  node,
+  parent,
+  context,
+) => {
+  throw new Error('Unknown node')
 }
