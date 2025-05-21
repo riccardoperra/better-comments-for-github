@@ -46,7 +46,7 @@ export default function EmojiMenu(props: { emojis: SuggestionData['emojis'] }) {
 
   let onDismiss: VoidFunction = () => void 0
 
-  const regex = () => /:(|\S.*)$/iu
+  const regex = () => /(?:^|(?<=\s)):(?!:)[^:]*$/iu
 
   useSearchableSelectAutocompleteExtension(
     editor,
@@ -103,10 +103,7 @@ export default function EmojiMenu(props: { emojis: SuggestionData['emojis'] }) {
       onPopoverOpen={(open) => {
         setOpen(open)
         if (!open) {
-          setTimeout(() => {
-            onDismiss()
-            editor().view.focus()
-          })
+          setTimeout(() => onDismiss())
         }
       }}
     >
@@ -114,11 +111,6 @@ export default function EmojiMenu(props: { emojis: SuggestionData['emojis'] }) {
         placement={'right-start'}
         fitViewport={false}
         anchorRef={anchorRef}
-        onKeyDown={(event) => {
-          if (event.key === 'Escape') {
-            setTimeout(() => onDismiss())
-          }
-        }}
       >
         <SearchableSelectPopoverContent>
           <SearchableSelectRoot
@@ -148,6 +140,7 @@ export default function EmojiMenu(props: { emojis: SuggestionData['emojis'] }) {
               onKeyDown={(event) => {
                 if (event.key === 'Escape') {
                   onDismiss()
+                  editor().view.focus()
                 }
               }}
             >
