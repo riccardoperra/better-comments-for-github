@@ -124,7 +124,7 @@ This project is built with the following technologies:
 | Paragraphs                          | ✅️     |                                      |
 | Footnotes                           | ❌️     |                                      |
 | Alerts                              | ✅️     |                                      |
-| Hiding content with comments        | ❌️     |                                      |
+| Hiding content with comments        | ✅️     |                                      |
 
 ### Advanced formatting
 
