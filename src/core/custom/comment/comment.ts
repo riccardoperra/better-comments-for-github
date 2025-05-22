@@ -15,10 +15,16 @@
  */
 
 import { defineCommentMarkdown } from '@prosedoc/markdown-schema'
-import { union } from 'prosekit/core'
+import { defineNodeSpec, union } from 'prosekit/core'
 
 import './comment.css'
 
 export function defineComment() {
-  return union(defineCommentMarkdown())
+  return union(
+    defineCommentMarkdown(),
+    defineNodeSpec({
+      name: 'comment',
+      exitable: true,
+    }),
+  )
 }

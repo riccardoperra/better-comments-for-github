@@ -16,6 +16,9 @@
 
 import { defineNodeSpec, union } from 'prosekit/core'
 import { pmNode } from '@prosemirror-processor/unist'
+import { defineInputRule } from 'prosekit/extensions/input-rule'
+import { InputRule } from 'prosemirror-inputrules'
+import { Fragment } from 'prosekit/pm/model'
 import type { CommentNode } from './remarkComment'
 import type { Break, Html, Text } from 'mdast'
 
@@ -27,7 +30,7 @@ export function defineCommentMarkdown() {
       inline: true,
       content: '(text|hardBreak)+',
       group: 'inline',
-      code: false,
+      code: true,
       name: 'comment',
       unistName: 'comment',
       __toUnist: (pmNode, parent, context) => {
@@ -72,5 +75,15 @@ export function defineCommentMarkdown() {
         return ['comment', { class: 'comment-node' }, 0]
       },
     }),
+    defineInputRule(
+      new InputRule(/<!--\s$/, (state, match, start, end) => {
+        const { tr } = state
+        const node = state.schema.nodes['comment'].createAndFill(null, [
+          state.schema.text(' '),
+        ])
+        if (!node) return null
+        return tr.replaceWith(start, end, Fragment.fromArray([node]))
+      }),
+    ),
   )
 }
