@@ -39,6 +39,7 @@
     "micromark-util-types": "^2.0.2",
     "prosekit": "^0.13.2",
     "prosemirror-transformer-markdown": "workspace:*",
+    "remark-comment-config": "^8.0.0",
     "remark-gfm": "^4.0.1"
   }
 }

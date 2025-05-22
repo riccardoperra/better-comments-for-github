@@ -19,6 +19,7 @@ import {
   defineBaseCommands,
   defineBaseKeymap,
   defineHistory,
+  defineMarkSpec,
   defineNodeSpec,
   union,
   withPriority,
@@ -58,7 +59,16 @@ import { UserMentionView } from '../custom/user-mention/UserMentionView/UserMent
 import { defineUnknownNodeSpec } from '../custom/unknown-node/unknown-node'
 import { defineGitHubIssueReference } from '../custom/issue-reference/issue'
 import { defineImageExtension } from '../custom/image/extension'
+import { defineComment } from '../custom/comment/comment'
+import { defineExitable } from './exitable/exitable'
 import type { HeadingAttrs } from 'prosekit/extensions/heading'
+
+function defineCode() {
+  return union(
+    defineCodeMarkdown(),
+    defineMarkSpec({ name: 'code', exitable: true }),
+  )
+}
 
 export function defineMarkdownExtension() {
   return union(
@@ -75,7 +85,8 @@ export function defineMarkdownExtension() {
     defineItalicMarkdown(),
     defineBoldMarkdown(),
     defineStrikethroughMarkdown(),
-    defineCodeMarkdown(),
+    defineCode(),
+
     defineSuperscriptMarkdown(),
     defineSubscriptMarkdown(),
     defineUnderlineMarkdown(),
@@ -85,6 +96,7 @@ export function defineMarkdownExtension() {
     defineParagraphMarkdown(),
 
     defineHardbreakMarkdown(),
+    defineComment(),
 
     defineDropCursor(),
     defineGapCursor(),
@@ -107,6 +119,7 @@ export function defineExtension() {
     // Mention should be defined before link in order to support pasting content
     withPriority(defineMentionMarkdown(), Priority.high),
     defineTextAlign({ types: ['paragraph', 'heading'] }),
+    defineExitable(),
     definePlaceholder({
       placeholder: (state) => {
         const node = state.selection.$from.node()
