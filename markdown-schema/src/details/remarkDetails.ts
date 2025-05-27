@@ -16,12 +16,59 @@
 
 import { visit } from 'unist-util-visit'
 import type { Processor } from 'unified'
-import type { Root } from 'mdast'
+import type { Parent, Root } from 'mdast'
 
 const detailsEnter = '<details',
   detailsExit = '</details>',
   summaryEnter = '<summary',
   summaryExit = '</summary>'
+
+export const detailsNodeType = 'details'
+export const detailsSummary = 'detailsSummary'
+export const detailsContent = 'detailsContent'
+
+export interface DetailsNode extends Parent {
+  /**
+   * Node type of mdast details.
+   */
+  type: typeof detailsNodeType
+
+  children: [DetailsSummary, ...Array<DetailsContent>]
+}
+
+export interface DetailsSummary {
+  /**
+   * Node type of mdast details.
+   */
+  type: typeof detailsSummary
+
+  value: string
+}
+
+export interface DetailsContent {
+  /**
+   * Node type of mdast details.
+   */
+  type: typeof detailsContent
+
+  value: string
+}
+
+declare module 'mdast' {
+  interface RootContentMap {
+    details: DetailsNode
+    detailsSummary: DetailsSummary
+    detailsContent: DetailsContent
+  }
+}
+
+declare module 'unist' {
+  interface RootContentMap {
+    details: typeof detailsNodeType
+    detailsSummary: typeof detailsSummary
+    detailsContent: typeof detailsContent
+  }
+}
 
 export function remarkDetails(this: Processor) {
   return (root: Root) => {
@@ -44,7 +91,7 @@ export function remarkDetails(this: Processor) {
       )
       const summaryContent = summaryMatch ? summaryMatch[1].trim() : null
 
-      const newChildren = []
+      const newChildren = [] as unknown as DetailsNode['children']
 
       const restContent = summaryMatch
         ? insideDetails.replace(summaryMatch[0], '').trim()
@@ -54,12 +101,12 @@ export function remarkDetails(this: Processor) {
         newChildren.push({
           type: 'detailsSummary',
           value: summaryContent,
-        })
+        } as DetailsSummary)
       } else {
         newChildren.push({
           type: 'detailsSummary',
           value: 'Details',
-        })
+        } as DetailsSummary)
       }
 
       if (restContent) {
@@ -67,11 +114,11 @@ export function remarkDetails(this: Processor) {
         newChildren.push({
           type: 'detailsContent',
           value: restContent,
-        })
+        } as DetailsContent)
       }
 
       // Wrap in a details node
-      const detailsNode = {
+      const detailsNode: DetailsNode = {
         type: 'details',
         children: newChildren,
       }

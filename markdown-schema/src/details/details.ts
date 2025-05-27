@@ -22,7 +22,8 @@ import {
 } from 'prosekit/core'
 import { DOMParser, DOMSerializer } from 'prosemirror-model'
 import { pmNode } from '@prosemirror-processor/unist'
-import type { Parent } from 'mdast'
+import type { Html, Parent } from 'mdast'
+import type { DetailsNode } from './remarkDetails'
 
 export { remarkDetails } from './remarkDetails'
 
@@ -68,7 +69,7 @@ export function defineDetailsMarkdown() {
       code: true,
       defining: true,
       __fromUnist: (node, parent, context) => {
-        const [summary, content] = node.children
+        const [summary, content] = (node as DetailsNode).children
 
         const contentNode = new window.DOMParser().parseFromString(
           content.value,
@@ -89,9 +90,12 @@ export function defineDetailsMarkdown() {
         )
       },
       __toUnist: (node, parent, context) => {
+        const htmlNode = DOMSerializer.fromSchema(context.schema).serializeNode(
+          node,
+        ) as HTMLElement
         return {
           type: 'html',
-          value: `<details>${DOMSerializer.fromSchema(context.schema).serializeNode(node).innerHTML}</details>`,
+          value: `<details>${htmlNode.innerHTML}</details>`,
         }
       },
       attrs: {
@@ -131,10 +135,11 @@ export function defineDetailsMarkdown() {
         ).serializeNode(pmNode)
         return {
           type: 'html',
-          value: serializedNode.innerHTML,
+          value: (serializedNode as HTMLElement).innerHTML,
         }
       },
-      __fromUnist: (node, parent, context) => {
+      __fromUnist: (_node, parent, context) => {
+        const node = _node as Html
         const domNode = new window.DOMParser().parseFromString(
           node.value,
           'text/html',
