@@ -23,7 +23,12 @@ export default defineConfig({
 
   modules: ['@wxt-dev/module-solid'],
   manifest: {
-    name: 'Better write for GitHub',
+    name: 'Better comments for GitHub',
+    description:
+      'A GitHub extension that replaces the native comment editor with a more powerful one',
+    author: {
+      email: 'riccardo.perra@icloud.com',
+    },
     permissions: ['storage'],
     web_accessible_resources: [
       {
