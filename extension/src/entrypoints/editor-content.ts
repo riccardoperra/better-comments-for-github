@@ -183,6 +183,7 @@ export default defineUnlistedScript(() => {
                   childList: true,
                   subtree: true,
                   characterData: true,
+                  attributes: true,
                 })
                 onCleanup(() => {
                   observer.disconnect()

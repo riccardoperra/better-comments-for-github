@@ -22,20 +22,7 @@
     <title>MDN Example - Embedded worker</title>
 </head>
 <body>
-<script>
-    import * as Comlink from 'comlink';
-    addEventListener('message', message => {
-        const url = message.data;
-        const worker = new Worker(url);
-        console.warn("Registering worker", worker);
-
-        const wrappedWorker = Comlink.wrap(worker);
-
-        Comlink.expose(
-            wrappedWorker,
-            Comlink.windowEndpoint(self.parent)
-        )
-    }, {once: true});
+<script src="/iframe-worker-connector.js">
 </script>
 </body>
 </html>

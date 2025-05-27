@@ -1,6 +1,6 @@
 export default defineContentScript({
   matches: ['*://github.com/*'],
-  runAt: 'document_start',
+  runAt: 'document_idle',
   async main(ctx) {
     // Define the UI
     const ui = createIframeUi(ctx, {
