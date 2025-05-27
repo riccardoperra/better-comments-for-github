@@ -94,7 +94,6 @@ export function Editor(props: EditorProps) {
 
     const observer = new ResizeObserver(([{ target }], observer) => {
       if (!target.isConnected) {
-        console.log('is not connected anymore')
         observer.disconnect()
       }
     })
