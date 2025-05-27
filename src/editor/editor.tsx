@@ -101,6 +101,7 @@ export function Editor(props: EditorProps) {
 
     onCleanup(() => {
       abortController.abort('I hope a new reference of textarea')
+      editor.setContent('')
       observer.disconnect()
     })
 
@@ -124,6 +125,12 @@ export function Editor(props: EditorProps) {
       { signal: abortController.signal },
     )
 
+    // When textarea is not connected anymore, we
+    context.textarea.addEventListener('manual-reset', () => {
+      editor.setContent('')
+    })
+
+    // Old text area change event (e.g. PR)
     context.textarea.addEventListener(
       'change',
       (event) => {

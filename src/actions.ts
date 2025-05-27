@@ -36,7 +36,8 @@ import LucideListCheck from 'lucide-solid/icons/list-check'
 import LucideDivider from 'lucide-solid/icons/minus'
 import LucideList from 'lucide-solid/icons/list'
 import LucideListOrdered from 'lucide-solid/icons/list-ordered'
-import { LucideAlertOctagon } from 'lucide-solid'
+import LucidePanelBottom from 'lucide-solid/icons/panel-bottom'
+import LucideAlertOctagon from 'lucide-solid/icons/alert-octagon'
 import LucideLink from 'lucide-solid/icons/link'
 import { githubAlertTypeMap } from './core/custom/githubAlert/config'
 import type { LucideProps } from 'lucide-solid'
@@ -125,6 +126,10 @@ export const EditorActionConfig: EditorActionConfigData = {
   },
   alert: {
     icon: LucideAlertOctagon,
+    shortcuts: [],
+  },
+  details: {
+    icon: LucidePanelBottom,
     shortcuts: [],
   },
   ...Object.values(githubAlertTypeMap).reduce(

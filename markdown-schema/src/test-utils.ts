@@ -80,5 +80,5 @@ export const testUnknownHandler: ToProseMirrorNodeHandler<Nodes> = (
   parent,
   context,
 ) => {
-  throw new Error('Unknown node')
+  throw new Error(`Unknown node ${node.type}`)
 }
