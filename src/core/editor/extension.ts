@@ -60,6 +60,7 @@ import { defineUnknownNodeSpec } from '../custom/unknown-node/unknown-node'
 import { defineGitHubIssueReference } from '../custom/issue-reference/issue'
 import { defineImageExtension } from '../custom/image/extension'
 import { defineComment } from '../custom/comment/comment'
+import { defineDetails } from '../custom/details/details'
 import { defineExitable } from './exitable/exitable'
 import type { HeadingAttrs } from 'prosekit/extensions/heading'
 
@@ -94,9 +95,9 @@ export function defineMarkdownExtension() {
     defineLinkMarkdown(),
     defineImageMarkdown(),
     defineParagraphMarkdown(),
-
     defineHardbreakMarkdown(),
     defineComment(),
+    defineDetails(),
 
     defineDropCursor(),
     defineGapCursor(),

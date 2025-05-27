@@ -46,7 +46,7 @@
     "@prosedoc/markdown-schema": "workspace:*",
     "@prosemirror-adapter/solid": "^0.4.1",
     "@prosemirror-processor/markdown": "^0.0.1-alpha.3",
-    "@prosemirror-processor/unist": "^0.0.1-alpha.4",
+    "@prosemirror-processor/unist": "^0.0.1-alpha.6",
     "@solid-primitives/memo": "^1.4.2",
     "@types/chrome": "^0.0.323",
     "@types/mdast": "^4.0.4",

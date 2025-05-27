@@ -169,13 +169,15 @@ export default defineUnlistedScript(() => {
                 }
 
                 const root = editorInjector.createRootContainer()
-
                 // Since I didn't really find a good way to detect if the current textarea
                 // has been disconnected. I'll now check via mutation observer.
                 // TODO: potential perforamnce issue
-                const observer = new MutationObserver(() => {
+                const observer = new MutationObserver((entry) => {
                   const ref = textareaRef()
                   if (!ref || !ref.isConnected) {
+                    // This is needed to trigger a re-execution of the
+                    // effect that will check if the textarea is still connected
+                    // so we are able to reset the content
                     setTextareaRef(editorInjector.findTextarea?.() ?? null)
                   }
                 })

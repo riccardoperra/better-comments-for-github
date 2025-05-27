@@ -7,4 +7,5 @@ export default defineConfig({
   format: 'esm',
   platform: 'neutral',
   dts: true,
+  external: [/prosemirror/],
 })
