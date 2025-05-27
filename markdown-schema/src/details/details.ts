@@ -14,34 +14,59 @@
  * limitations under the License.
  */
 
-import { defineNodeSpec, definePlugin, union } from 'prosekit/core'
+import {
+  defineCommands,
+  defineNodeSpec,
+  insertNode,
+  union,
+} from 'prosekit/core'
 import { DOMParser, DOMSerializer } from 'prosemirror-model'
 import { pmNode } from '@prosemirror-processor/unist'
-import { Plugin } from 'prosemirror-state'
-import type { Schema } from 'prosemirror-model'
 import type { Parent } from 'mdast'
 
+export { remarkDetails } from './remarkDetails'
+
 export function defineDetailsMarkdown() {
-  let schema: Schema
   return union(
-    definePlugin(
-      new Plugin({
-        state: {
-          init: (config, state) => {
-            schema = state.schema
-          },
-        },
-      }),
-    ),
+    defineCommands({
+      insertDetails: () => {
+        return (state, dispatch, view) => {
+          const summary = pmNode(
+            state.schema.nodes.detailsSummary,
+            [state.schema.text('Summary')],
+            null,
+          )!
+
+          const node = pmNode(
+            state.schema.nodes.details,
+            [summary, state.schema.nodes.paragraph.createAndFill(null)!],
+            { open: true },
+            {
+              mode: 'fill',
+            },
+          )
+
+          if (!node) {
+            return false
+          }
+
+          const command = insertNode({
+            node,
+          })(state, dispatch, view)
+
+          return command
+        }
+      },
+    }),
     defineNodeSpec({
       name: 'details',
-      content: 'block+',
+      content: 'detailsSummary block+',
       marks: '',
       group: 'block',
       isolating: true,
-      code: false,
-      defining: true,
       unistName: 'details',
+      code: true,
+      defining: true,
       __fromUnist: (node, parent, context) => {
         const [summary, content] = node.children
 
@@ -66,22 +91,32 @@ export function defineDetailsMarkdown() {
       __toUnist: (node, parent, context) => {
         return {
           type: 'html',
-          value: `<details>${DOMSerializer.fromSchema(schema).serializeNode(node).innerHTML}</details>`,
+          value: `<details>${DOMSerializer.fromSchema(context.schema).serializeNode(node).innerHTML}</details>`,
         }
+      },
+      attrs: {
+        open: {
+          default: true,
+        },
       },
       parseDOM: [
         {
           tag: 'details',
           getAttrs(dom) {
             return {
-              open: (dom as HTMLDetailsElement).open,
+              open: (dom as HTMLDetailsElement).getAttribute('open'),
             }
           },
         },
       ],
       toDOM(node) {
         const { open } = node.attrs
-        return ['details', { open }, 0]
+        const attrs = {} as Record<string, any>
+        if (open) {
+          attrs.open = true
+        }
+
+        return ['details', attrs, 0]
       },
     }),
     defineNodeSpec({
@@ -91,8 +126,9 @@ export function defineDetailsMarkdown() {
       parseDOM: [{ tag: 'summary' }],
       unistName: 'detailsSummary',
       __toUnist: (pmNode, parent, context) => {
-        const serializedNode =
-          DOMSerializer.fromSchema(schema).serializeNode(pmNode)
+        const serializedNode = DOMSerializer.fromSchema(
+          context.schema,
+        ).serializeNode(pmNode)
         return {
           type: 'html',
           value: serializedNode.innerHTML,

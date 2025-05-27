@@ -116,6 +116,12 @@ const SlashMenuItems: Array<SlashMenuItem> = [
     canExec: (editor) => editor.commands.toggleCodeBlock.canExec(),
     actionId: 'codeBlock',
   },
+  {
+    label: 'Details',
+    command: (editor) => editor.commands.insertDetails(),
+    canExec: (editor) => editor.commands.insertDetails.canExec(),
+    actionId: 'details',
+  },
 ]
 
 type SlashMenuSection = {
@@ -190,8 +196,7 @@ export default function SlashMenu() {
                         class={styles.slashMenuItem}
                         value={item.label}
                         onSelect={() => {
-                          // hacky workaround to wait for '/ (slash)' to be removed before inserting a new element
-                          queueMicrotask(() => item.command(editor()))
+                          item.command(editor())
                         }}
                       >
                         <Show
