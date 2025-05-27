@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-import { query } from './query'
+import { defineCommentMarkdown } from '@prosedoc/markdown-schema'
+import { defineNodeSpec, union } from 'prosekit/core'
 
-export function queryComment(options: {
-  onNodeAdded: (element: HTMLElement) => void
-  onNodeRemoved: (element: HTMLElement) => void
-}) {
-  return query('slash-command-expander', null, {
-    onAdded: options.onNodeAdded,
-    onRemoved: options.onNodeRemoved,
-  })
+import './comment.css'
+
+export function defineComment() {
+  return union(
+    defineCommentMarkdown(),
+    defineNodeSpec({
+      name: 'comment',
+      exitable: true,
+    }),
+  )
 }

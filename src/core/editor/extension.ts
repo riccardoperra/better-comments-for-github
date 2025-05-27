@@ -19,6 +19,7 @@ import {
   defineBaseCommands,
   defineBaseKeymap,
   defineHistory,
+  defineMarkSpec,
   defineNodeSpec,
   union,
   withPriority,
@@ -51,14 +52,23 @@ import {
 } from '@prosedoc/markdown-schema'
 import { defineTextAlign } from 'prosekit/extensions/text-align'
 import { defineSolidNodeView } from 'prosekit/solid'
-import { defineCodeBlock } from './code-block/code-block'
-import { defineMentionMarkdown } from './user-mention/mention'
-import { defineGitHubAlert } from './githubAlert/alert'
-import { defineImageExtension } from './image/extension'
-import { defineGitHubIssueReference } from './issue-reference/issue'
-import { UserMentionView } from './user-mention/UserMentionView/UserMentionView'
-import { defineUnknownNodeSpec } from './unknown-node/unknown-node'
+import { defineCodeBlock } from '../custom/code-block/code-block'
+import { defineGitHubAlert } from '../custom/githubAlert/alert'
+import { defineMentionMarkdown } from '../custom/user-mention/mention'
+import { UserMentionView } from '../custom/user-mention/UserMentionView/UserMentionView'
+import { defineUnknownNodeSpec } from '../custom/unknown-node/unknown-node'
+import { defineGitHubIssueReference } from '../custom/issue-reference/issue'
+import { defineImageExtension } from '../custom/image/extension'
+import { defineComment } from '../custom/comment/comment'
+import { defineExitable } from './exitable/exitable'
 import type { HeadingAttrs } from 'prosekit/extensions/heading'
+
+function defineCode() {
+  return union(
+    defineCodeMarkdown(),
+    defineMarkSpec({ name: 'code', exitable: true }),
+  )
+}
 
 export function defineMarkdownExtension() {
   return union(
@@ -75,7 +85,8 @@ export function defineMarkdownExtension() {
     defineItalicMarkdown(),
     defineBoldMarkdown(),
     defineStrikethroughMarkdown(),
-    defineCodeMarkdown(),
+    defineCode(),
+
     defineSuperscriptMarkdown(),
     defineSubscriptMarkdown(),
     defineUnderlineMarkdown(),
@@ -85,6 +96,7 @@ export function defineMarkdownExtension() {
     defineParagraphMarkdown(),
 
     defineHardbreakMarkdown(),
+    defineComment(),
 
     defineDropCursor(),
     defineGapCursor(),
@@ -107,6 +119,7 @@ export function defineExtension() {
     // Mention should be defined before link in order to support pasting content
     withPriority(defineMentionMarkdown(), Priority.high),
     defineTextAlign({ types: ['paragraph', 'heading'] }),
+    defineExitable(),
     definePlaceholder({
       placeholder: (state) => {
         const node = state.selection.$from.node()

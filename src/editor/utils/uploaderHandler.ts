@@ -1,5 +1,5 @@
 import { getImagePreviewUrl } from '../../github/data'
-import type { GitHubFile } from '../../core/editor/image/github-file-uploader'
+import type { GitHubFile } from '../../core/custom/image/github-file-uploader'
 
 export interface GitHubUploaderHandler {
   init: (originalFile: File) => GitHubFile
@@ -7,6 +7,8 @@ export interface GitHubUploaderHandler {
   upload: (file: GitHubFile, dataTransfer: DataTransfer | null) => void
 
   get: ReadonlyArray<GitHubFile>
+
+  destroy: () => void
 }
 
 const getUrlFromHtml = (html: string) => {

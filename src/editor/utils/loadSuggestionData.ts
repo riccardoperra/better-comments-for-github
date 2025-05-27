@@ -14,14 +14,20 @@
  * limitations under the License.
  */
 
-import { batch, createMemo, createSignal } from 'solid-js'
+import {
+  createEffect,
+  createMemo,
+  createSignal,
+  getOwner,
+  runWithOwner,
+} from 'solid-js'
 import {
   getFiber,
   traverseFiber,
   waitForReactFiber,
 } from '../../core/react-hacks/fiber'
+import type { Accessor, JSXElement } from 'solid-js'
 import type { Fiber } from '../../core/react-hacks/fiber'
-import type { Accessor } from 'solid-js'
 
 export interface MentionSuggestion {
   avatarUrl: string
@@ -45,6 +51,7 @@ export interface SavedReplySuggestion {
 export interface EmojiSuggestion {
   name: string
   character: string
+  fallback?: () => JSXElement
 }
 
 export interface SuggestionData {
@@ -61,15 +68,14 @@ export function createSuggestionData(element: HTMLElement) {
     savedReplies: [],
     emojis: [],
   })
-
+  const owner = getOwner()
   const fiber = getFiber(element)
 
-  const reactiveData = makeSuggestionData(fiber)
-
-  function updateData(fiber: Fiber) {
-    const suggestionData = reactiveData()
-    if (suggestionData) {
-      batch(() => {
+  function register(fiber: Fiber) {
+    const _suggestionData = makeSuggestionData(fiber)
+    runWithOwner(owner, () => {
+      createEffect(() => {
+        const suggestionData = _suggestionData()
         setData(() => ({
           emojis: suggestionData.emojis,
           mentions: suggestionData.mentions,
@@ -77,15 +83,14 @@ export function createSuggestionData(element: HTMLElement) {
           savedReplies: suggestionData.savedReplies,
         }))
       })
-    }
+    })
   }
-
   if (!fiber) {
     waitForReactFiber(element).then((fiber) => {
-      updateData(fiber)
+      register(fiber)
     })
   } else {
-    updateData(fiber)
+    register(fiber)
   }
 
   return {

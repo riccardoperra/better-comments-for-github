@@ -93,7 +93,7 @@ export function DebugNode(props: DebugNodeProps) {
           <pre innerHTML={editorStore.get.nodeString} />
         </Match>
         <Match when={mode() === 'md'}>
-          <pre innerHTML={editorStore.get.markdown} />
+          <pre innerText={editorStore.get.markdown} />
         </Match>
       </Switch>
     </div>

@@ -14,14 +14,18 @@
  * limitations under the License.
  */
 
-import { query } from './query'
+.ProseMirror .comment-node {
+  color: var(--fgColor-muted);
 
-export function queryComment(options: {
-  onNodeAdded: (element: HTMLElement) => void
-  onNodeRemoved: (element: HTMLElement) => void
-}) {
-  return query('slash-command-expander', null, {
-    onAdded: options.onNodeAdded,
-    onRemoved: options.onNodeRemoved,
-  })
+  &::before {
+    content: '<!-- ';
+    font-weight: bold;
+    color: var(--fgColor-attention);
+  }
+
+  &::after {
+    content: ' -->';
+    font-weight: bold;
+    color: var(--fgColor-attention);
+  }
 }

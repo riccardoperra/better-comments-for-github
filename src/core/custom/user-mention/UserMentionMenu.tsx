@@ -21,9 +21,9 @@ import {
   AutocompleteItem,
   AutocompleteList,
   AutocompletePopover,
-} from '../autocomplete/Autocomplete'
+} from '../../editor/autocomplete/Autocomplete'
 import styles from './UserMentionMenu.module.css'
-import type { EditorExtension } from '../extension'
+import type { EditorExtension } from '../../editor/extension'
 import type { SuggestionData } from '../../../editor/utils/loadSuggestionData'
 
 export interface UserMentionMenuProps {

@@ -14,14 +14,6 @@
  * limitations under the License.
  */
 
-import { query } from './query'
-
-export function queryComment(options: {
-  onNodeAdded: (element: HTMLElement) => void
-  onNodeRemoved: (element: HTMLElement) => void
-}) {
-  return query('slash-command-expander', null, {
-    onAdded: options.onNodeAdded,
-    onRemoved: options.onNodeRemoved,
-  })
+.emojiListbox {
+  max-height: 200px;
 }

@@ -119,9 +119,17 @@ export function ImageView() {
       context().node.attrs.width !== naturalWidth &&
       context().node.attrs.height !== naturalHeight
     ) {
-      context().setAttrs({ width: undefined, height: undefined })
+      context().setAttrs({
+        ...context().node.attrs,
+        width: undefined,
+        height: undefined,
+      })
     } else if (naturalWidth !== size.width || naturalHeight !== size.height) {
-      context().setAttrs({ width: size.width, height: size.height })
+      context().setAttrs({
+        ...context().node.attrs,
+        width: size.width,
+        height: size.height,
+      })
     }
   })
 

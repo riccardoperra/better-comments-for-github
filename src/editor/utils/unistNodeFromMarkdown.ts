@@ -15,6 +15,7 @@
  */
 
 import {
+  remarkComment,
   remarkFlatList,
   remarkHtmlHardbreak,
   remarkHtmlImage,
@@ -24,8 +25,8 @@ import {
   remarkUnderline,
 } from '@prosedoc/markdown-schema'
 import { markdownToUnist } from '@prosemirror-processor/markdown'
-import { remarkGitHubAlert } from '../../core/editor/githubAlert/remarkGitHubAlert'
-import { remarkParseLinkToGitHubIssueReference } from '../../core/editor/issue-reference/remarkGitHubIssueReference'
+import { remarkGitHubAlert } from '../../core/custom/githubAlert/remarkGitHubAlert'
+import { remarkParseLinkToGitHubIssueReference } from '../../core/custom/issue-reference/remarkGitHubIssueReference'
 import { remarkGitHubUserReferences } from './remarkGitHubUserReferences'
 
 export function unistNodeFromMarkdown(
@@ -48,6 +49,7 @@ export function unistNodeFromMarkdown(
       remarkHtmlImage,
       remarkInlineImage,
       remarkHtmlHardbreak,
+      remarkComment,
     ],
   })
 }

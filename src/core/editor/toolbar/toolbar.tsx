@@ -27,12 +27,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '../dropdown-menu/dropdown-menu'
-import { githubAlertTypeMap } from '../githubAlert/config'
+import { githubAlertTypeMap } from '../../custom/githubAlert/config'
 import { Settings } from '../settings/settings'
 import { EditorTextShortcut } from '../kbd/kbd'
 import { EditorActionIcon } from '../action-icon/ActionIcon'
 import styles from './toolbar.module.css'
-import type { GithubAlertType } from '../githubAlert/config'
+import type { GithubAlertType } from '../../custom/githubAlert/config'
 import type { FlowProps, JSX } from 'solid-js'
 import type { NodeAction } from 'prosekit/core'
 import type { EditorExtension } from '../extension'

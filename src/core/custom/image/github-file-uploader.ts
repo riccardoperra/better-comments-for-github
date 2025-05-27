@@ -27,10 +27,6 @@ export type GitHubFile = {
   errorMessage?: string
 }
 
-export interface GitHubUploaderStoreOptions {
-  behavior: 'native' | 'react'
-}
-
 export type AttachmentHandlerElement = HTMLElement & {
   attach: (dataTransfer: DataTransfer | null) => void
 }
@@ -41,6 +37,8 @@ export interface GitHubUploaderHandler {
   upload: (file: GitHubFile, dataTransfer: DataTransfer | null) => void
 
   get: ReadonlyArray<GitHubFile>
+
+  destroy: () => void
 }
 
 const possibleErrorStates = [
@@ -64,14 +62,18 @@ export class GitHubUploaderNativeHandler implements GitHubUploaderHandler {
   #attachmentHandler: AttachmentHandlerElement
   readonly get = this.#store[0]
   readonly set = this.#store[1]
+  readonly abortController = new AbortController()
 
   constructor(attachmentHandler: AttachmentHandlerElement) {
     this.#attachmentHandler = attachmentHandler
   }
 
+  destroy() {
+    this.abortController.abort()
+  }
+
   init(originalFile: File): GitHubFile {
     const objectURL = URL.createObjectURL(originalFile)
-    console.log('init', originalFile)
 
     const file: GitHubFile = {
       id: crypto.randomUUID(),
@@ -134,6 +136,7 @@ export class GitHubUploaderNativeHandler implements GitHubUploaderHandler {
           })
         })
       },
+      { signal: this.abortController.signal, once: true },
     )
 
     this.#attachmentHandler.addEventListener(
@@ -156,6 +159,7 @@ export class GitHubUploaderNativeHandler implements GitHubUploaderHandler {
           }))
         })
       },
+      { signal: this.abortController.signal, once: true },
     )
 
     this.set(getIndex(), (file) => ({
