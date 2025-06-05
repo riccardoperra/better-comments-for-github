@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import type { Accessor } from 'solid-js'
 import {
   Show,
   createContext,
@@ -22,8 +21,9 @@ import {
   onCleanup,
   useContext,
 } from 'solid-js'
+import type { Accessor } from 'solid-js'
 import { createEditor } from 'prosekit/core'
-import { useDocChange } from 'prosekit/solid'
+import { useDocChange, useStateUpdate } from 'prosekit/solid'
 import { markdownFromUnistNode } from 'prosemirror-transformer-markdown/unified'
 import {
   convertPmSchemaToUnist,
@@ -172,6 +172,15 @@ export function Editor(props: EditorProps) {
     })
     return sanitizeMarkdownValue(markdownFromUnistNode(unistNode as Root))
   }
+
+  useStateUpdate(
+    (state) => {
+      queueMicrotask(() => {
+        editorStore.emitter.emit('editor::state-update', state)
+      })
+    },
+    { editor },
+  )
 
   useDocChange(
     (node) => {

@@ -161,7 +161,7 @@ export default defineUnlistedScript(() => {
                   const textarea = reactTextareaHandler.findTextarea()
                   setTextareaRef(textarea)
 
-                  editorInjector.mountFooterFn = () =>
+                  editorInjector.mountFooterFn =
                     reactTextareaHandler.getMountFooterFn()
 
                   editorInjector.mountEditorFn =

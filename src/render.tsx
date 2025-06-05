@@ -16,8 +16,9 @@
 
 import { mergeProps, render } from 'solid-js/web'
 import { StateProvider } from 'statebuilder'
-import { Show } from 'solid-js'
+import { Show, createSignal } from 'solid-js'
 import { clsx } from 'clsx'
+import { ConfettiExplosion } from 'solid-confetti-explosion'
 import { Editor, EditorRootContext } from './editor/editor'
 import type { EditorType } from './editor/editor'
 import type { Accessor } from 'solid-js'
@@ -45,25 +46,47 @@ export function SwitchButton(props: {
   const mergedProps = mergeProps({ size: 'small', variant: 'invisible' }, props)
 
   const label = () =>
-    props.open ? 'Back to default editor' : 'Switch to a better editor'
+    props.open ? 'Back to default editor' : 'Improve Editor 🤯'
+
+  const [confetti, setConfetti] = createSignal(false)
 
   return (
-    <button
-      type={'button'}
-      class={clsx('Button mr-2', {
-        'Button--small': mergedProps.size === 'small',
-        'Button--medium': mergedProps.size === 'medium',
-        'Button--secondary': mergedProps.variant === 'secondary',
-        'Button--invisible': mergedProps.variant === 'invisible',
-      })}
-      onClick={() => mergedProps.onOpenChange(!mergedProps.open)}
-    >
-      <span
-        class={clsx({ 'fgColor-muted': mergedProps.variant === 'invisible' })}
+    <div style={{ position: 'relative' }}>
+      <Show when={confetti()}>
+        <div
+          style={{
+            position: 'absolute',
+            left: '50%',
+            transform: 'translateX(-50%)',
+          }}
+        >
+          <ConfettiExplosion particlesShape={'mix'} count={2} />
+        </div>
+      </Show>
+      <button
+        type={'button'}
+        class={clsx('Button mr-2', {
+          'Button--small': mergedProps.size === 'small',
+          'Button--medium': mergedProps.size === 'medium',
+          'Button--secondary': mergedProps.variant === 'secondary',
+          'Button--invisible': mergedProps.variant === 'invisible',
+        })}
+        onClick={() => {
+          mergedProps.onOpenChange(!mergedProps.open)
+          if (mergedProps.open) {
+            setConfetti(true)
+          } else {
+            setConfetti(false)
+          }
+        }}
       >
-        {label()}
-      </span>
-    </button>
+        <span
+          class={clsx({ 'fgColor-muted': mergedProps.variant === 'invisible' })}
+        >
+          {label()}
+        </span>
+      </button>
+    </div>
   )
 }
 

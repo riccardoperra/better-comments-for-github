@@ -15,13 +15,34 @@
  */
 
 import { defineStore } from 'statebuilder'
+import { emitter } from './editor/utils/emitter'
+import type { Editor } from 'prosekit/core'
+import type { EditorExtension } from './core/editor/extension'
+import type { EditorState } from 'prosekit/pm/state'
 
 export interface ExtensionEditorState {
   markdown: string
   nodeString: string
 }
 
+export interface EditorEvents {
+  'editor::state-update': (editor: EditorState) => void
+}
+
 export const ExtensionEditorStore = defineStore<ExtensionEditorState>(() => ({
   markdown: '',
   nodeString: '',
-}))
+})).extend((_) => {
+  let instance: Editor<EditorExtension>
+  const eventEmitter = emitter<EditorEvents>()
+
+  return {
+    emitter: eventEmitter,
+    get instance() {
+      return instance
+    },
+    setInstance(_: Editor<EditorExtension>) {
+      instance = _
+    },
+  }
+})

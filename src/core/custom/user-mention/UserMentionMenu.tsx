@@ -53,7 +53,8 @@ export function UserMentionMenu(props: UserMentionMenuProps) {
     return props.users
       .filter((user) => {
         return (
-          user.description.includes(filter) || user.identifier.includes(filter)
+          user.description.toLowerCase().includes(filter) ||
+          user.identifier.toLowerCase().includes(filter)
         )
       })
       .slice(0, 100)
@@ -78,7 +79,9 @@ export function UserMentionMenu(props: UserMentionMenuProps) {
                 alt={''}
               />
 
-              {user.description}
+              <span class={styles.identifier}>{user.identifier}</span>
+
+              <small class={styles.description}>{user.description}</small>
             </AutocompleteItem>
           )}
         </For>

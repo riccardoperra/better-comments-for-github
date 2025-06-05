@@ -14,20 +14,23 @@
  * limitations under the License.
  */
 
+.codeBlockActions {
+  display: flex;
+  gap: var(--base-size-8);
+  justify-content: space-between;
+  align-items: center;
+  padding-inline: 0 var(--base-size-4);
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
 .CodeBlock {
   color: var(--fgColor-default, var(--color-fg-default));
   background-color: var(--bgColor-muted, var(--color-canvas-subtle));
   border-radius: 6px;
   min-height: 100px;
-
-  .actions {
-    display: flex;
-    width: 100%;
-    gap: var(--base-size-8);
-    justify-content: space-between;
-    align-items: center;
-    padding-inline: 0 var(--base-size-4);
-  }
+  position: relative;
 
   .LanguageSelector {
     position: relative;

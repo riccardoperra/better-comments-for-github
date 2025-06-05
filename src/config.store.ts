@@ -22,8 +22,10 @@ export interface ConfigState {
   useCodeMirrorForTypescriptCode: boolean
 }
 
+const defaultDebugMode: ConfigState['showDebug'] = false
+
 export const ConfigStore = defineStore<ConfigState>(() => ({
-  showDebug: import.meta.env.MODE === 'development' ? 'md' : false,
+  showDebug: import.meta.env.MODE === 'development' ? defaultDebugMode : false,
   nativeSelectForLanguageSelector: false,
   useCodeMirrorForTypescriptCode: true,
 }))

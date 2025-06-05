@@ -20,5 +20,8 @@
   /*height: 100%;*/
   /*left: 0;*/
   /*top: 0;*/
-  margin-bottom: var(--base-size-12);
+
+  /*&:not(:empty) {*/
+  /*  margin-bottom: var(--base-size-12);*/
+  /*}*/
 }

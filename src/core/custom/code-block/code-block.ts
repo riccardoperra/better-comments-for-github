@@ -15,7 +15,6 @@
  */
 
 import { defineKeymap, defineNodeSpec, union } from 'prosekit/core'
-import { defineCodeBlockKeymap } from 'prosekit/extensions/code-block'
 import { defineCodeBlockMarkdown } from '@prosedoc/markdown-schema'
 import { Selection, TextSelection } from 'prosemirror-state'
 import CodeBlockView from './code-block-view'
@@ -55,15 +54,13 @@ export function defineCodeBlock() {
       contentAs: 'div',
       component: CodeBlockView,
     }),
-
     defineKeymap({
       ArrowLeft: arrowHandler('left'),
       ArrowRight: arrowHandler('right'),
       ArrowUp: arrowHandler('up'),
       ArrowDown: arrowHandler('down'),
     }),
-
-    defineCodeBlockKeymap(),
+    // defineCodeBlockKeymap(),
     defineKeymap({
       'Mod-a': (state, dispatch) => {
         const { $head, from, to } = state.selection

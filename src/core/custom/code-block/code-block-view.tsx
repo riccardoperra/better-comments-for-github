@@ -14,7 +14,14 @@
  * limitations under the License.
  */
 
-import { For, Show, createMemo, createSignal } from 'solid-js'
+import {
+  For,
+  Show,
+  createMemo,
+  createSignal,
+  onCleanup,
+  onMount,
+} from 'solid-js'
 import { LucideCheck, LucideCopy } from 'lucide-solid'
 import { useNodeViewContext } from '@prosemirror-adapter/solid'
 import { shikiBundledLanguagesInfo } from 'prosekit/extensions/code-block'
@@ -33,6 +40,7 @@ import {
 import { SearchableSelectValue } from '../../editor/searchable-select/SearchableSelectControl'
 import { NodeViewWrapper } from '../../editor/nodeviews/node-view'
 import { ConfigStore } from '../../../config.store'
+import { ExtensionEditorStore } from '../../../editor.store'
 import styles from './code-block-view.module.css'
 import { CodeMirrorView } from './codemirror-view'
 import type {
@@ -44,6 +52,7 @@ import type { NodeViewContextProps } from '@prosemirror-adapter/solid'
 export default function CodeBlockView(props: NodeViewContextProps) {
   const context = useNodeViewContext()
   const configStore = ConfigStore.provide()
+  const editorStore = ExtensionEditorStore.provide()
   const attrLanguage = createMemo(() => context().node.attrs.language)
   const guid = createMemo(() => context().node.attrs.guid)
   const language = () => {
@@ -57,6 +66,8 @@ export default function CodeBlockView(props: NodeViewContextProps) {
         return lang
     }
   }
+
+  const [isActive, setIsActive] = createSignal<boolean>(false)
 
   const setLanguage = (language: string | null) => {
     const attrs: CodeBlockAttrs = { language: language ?? '' }
@@ -80,45 +91,25 @@ export default function CodeBlockView(props: NodeViewContextProps) {
     })
   }
 
+  onMount(() => {
+    const unsubscribe = editorStore.emitter.on(
+      'editor::state-update',
+      (state) => {
+        const pos = context().getPos()
+        if (pos === undefined) return
+        const { from } = state.selection
+        const start = pos
+        const end = pos + context().node.nodeSize
+        const isActive = from >= start && from < end
+        setIsActive(isActive)
+      },
+    )
+    onCleanup(() => unsubscribe())
+  })
+
   return (
     <NodeViewWrapper>
       <div class={`highlight ${styles.CodeBlock}`}>
-        <div class={styles.actions} contenteditable={false}>
-          <div class={styles.LanguageSelector}>
-            <Show
-              fallback={
-                <>
-                  <select
-                    class={styles.Select}
-                    onChange={(event) => setLanguage(event.target.value)}
-                    value={currentValue()?.id || ''}
-                  >
-                    <option value="">Plain Text</option>
-                    <For each={shikiBundledLanguagesInfo}>
-                      {(info) => <option value={info.id}>{info.name}</option>}
-                    </For>
-                  </select>
-                </>
-              }
-              when={!configStore.get.nativeSelectForLanguageSelector}
-            >
-              <CodeBlockLanguageSelector
-                value={currentValue()}
-                onValueChange={setLanguage}
-              />
-            </Show>
-          </div>
-          <button
-            type={'button'}
-            class={'Button Button--small Button--iconOnly Button--invisible'}
-            onClick={copyContent}
-          >
-            <Show fallback={<LucideCheck size={13} />} when={!copied()}>
-              <LucideCopy size={13} />
-            </Show>
-          </button>
-        </div>
-
         <Show
           fallback={
             <>
@@ -129,6 +120,44 @@ export default function CodeBlockView(props: NodeViewContextProps) {
         >
           <div contentEditable={false}>
             <CodeMirrorView />
+          </div>
+        </Show>
+
+        <Show when={isActive()}>
+          <div class={styles.codeBlockActions} contenteditable={false}>
+            <div class={styles.LanguageSelector}>
+              <Show
+                fallback={
+                  <>
+                    <select
+                      class={styles.Select}
+                      onChange={(event) => setLanguage(event.target.value)}
+                      value={currentValue()?.id || ''}
+                    >
+                      <option value="">Plain Text</option>
+                      <For each={shikiBundledLanguagesInfo}>
+                        {(info) => <option value={info.id}>{info.name}</option>}
+                      </For>
+                    </select>
+                  </>
+                }
+                when={!configStore.get.nativeSelectForLanguageSelector}
+              >
+                <CodeBlockLanguageSelector
+                  value={currentValue()}
+                  onValueChange={setLanguage}
+                />
+              </Show>
+            </div>
+            <button
+              type={'button'}
+              class={'Button Button--small Button--iconOnly Button--invisible'}
+              onClick={copyContent}
+            >
+              <Show fallback={<LucideCheck size={13} />} when={!copied()}>
+                <LucideCopy size={13} />
+              </Show>
+            </button>
           </div>
         </Show>
       </div>

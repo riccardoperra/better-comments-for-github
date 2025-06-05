@@ -76,6 +76,7 @@
     "remark-parse": "^11.0.0",
     "remark-rehype": "^11.1.2",
     "remark-stringify": "^11.0.0",
+    "solid-confetti-explosion": "^1.1.8",
     "solid-js": "^1.9.7",
     "statebuilder": "^0.8.1",
     "storybook-solidjs": "^1.0.0-beta.6",
