@@ -43,34 +43,6 @@ Install on Safari (Mac, iOS and iPadOS)
 
 </a>
 
-## Features
-
-### Support GitHub Flavored Markdown
-
-The extension will add support to live editing with support
-for [GitHub Flavored Markdown](https://github.github.com/gfm/).
-
-### Slash Command
-
-You can now use the slash command `/` to toggle a slash command
-
-### More keymaps
-
-Editor will support enhanced keymaps to add blocks with more ease.
-
-### Code block editor
-
-Thanks to WYSYWIG editor, you can now edit code blocks with ease with a custom code block with syntax highlighting (via
-shiki).
-
-### User mentions
-
-You can mention users in comments with `@` and the extension will suggest users to mention.
-
-### Issue references
-
-You can reference issues in comments with `#` and the extension will suggest issues to reference
-
 ## Stack
 
 This project is built with the following technologies:
@@ -131,7 +103,7 @@ This project is built with the following technologies:
 | Feature                 | Status | Notes |
 |-------------------------|--------|-------|
 | Table                   | ✅️     |       |
-| Collapsed section       | ❌️     |       |
+| Collapsed section       | ✅️     |       |
 | Code blocks             | ✅️     |       |
 | Diagrams                | ❌️     |       |
 | Auto linked references  | ⚠️     |       |
