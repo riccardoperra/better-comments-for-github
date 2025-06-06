@@ -161,7 +161,7 @@ export default defineUnlistedScript(() => {
                   const textarea = reactTextareaHandler.findTextarea()
                   setTextareaRef(textarea)
 
-                  editorInjector.mountFooterFn = () =>
+                  editorInjector.mountFooterFn =
                     reactTextareaHandler.getMountFooterFn()
 
                   editorInjector.mountEditorFn =
@@ -185,6 +185,7 @@ export default defineUnlistedScript(() => {
                   childList: true,
                   subtree: true,
                   characterData: true,
+                  attributes: true,
                 })
                 onCleanup(() => {
                   observer.disconnect()

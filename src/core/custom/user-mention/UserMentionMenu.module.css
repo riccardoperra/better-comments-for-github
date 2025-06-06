@@ -19,3 +19,16 @@
   width: 20px;
   height: 20px;
 }
+
+.identifier {
+  color: var(--control-fgColor-rest, var(--color-fg-default));
+  font-size: var(--text-body-size-medium);
+}
+
+.description {
+  color: var(--fgColor-muted, var(--color-fg-muted));
+  font-size: var(--text-body-size-small);
+  font-weight: var(--base-text-weight-normal, 400);
+  line-height: 16px;
+  margin-left: auto;
+}
