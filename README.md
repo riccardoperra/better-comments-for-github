@@ -1,5 +1,5 @@
 <h1 align="center">
-    Leave better comments for GitHub
+    Better comments for GitHub
 </h1>
 
 <p align="center">
