@@ -19,9 +19,14 @@ import { defineStore } from 'statebuilder'
 export interface ConfigState {
   showDebug: false | 'md' | 'node'
   nativeSelectForLanguageSelector: boolean
+  newIssueUrl: string
 }
 
+const defaultDebugMode: ConfigState['showDebug'] = false
+
 export const ConfigStore = defineStore<ConfigState>(() => ({
-  showDebug: import.meta.env.MODE === 'development' ? 'md' : false,
+  showDebug: import.meta.env.MODE === 'development' ? defaultDebugMode : false,
   nativeSelectForLanguageSelector: false,
+  newIssueUrl:
+    'https://github.com/riccardoperra/leave-better-comments-for-github/issues/new',
 }))

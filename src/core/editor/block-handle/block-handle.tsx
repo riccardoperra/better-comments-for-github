@@ -19,12 +19,15 @@ import {
   BlockHandlePopover,
 } from 'prosekit/solid/block-handle'
 import LucideGripVertical from 'lucide-solid/icons/grip-vertical'
+import { clsx } from 'clsx'
 import styles from './block-handle.module.css'
 
 export function EditorBlockHandler() {
   return (
     <BlockHandlePopover class={styles.blockHandle}>
-      <BlockHandleDraggable class={styles.draggable}>
+      <BlockHandleDraggable
+        class={clsx(styles.blockHandleButton, styles.draggable)}
+      >
         <LucideGripVertical size={14} />
       </BlockHandleDraggable>
     </BlockHandlePopover>

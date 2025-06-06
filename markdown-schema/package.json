@@ -21,23 +21,23 @@
   "devDependencies": {
     "@types/mdast": "^4.0.4",
     "@types/unist": "^3.0.3",
-    "@vitest/coverage-v8": "^3.1.4",
-    "@vitest/ui": "^3.1.4",
+    "@vitest/coverage-v8": "^3.2.2",
+    "@vitest/ui": "^3.2.2",
     "prosemirror-test-builder": "^1.1.1",
-    "tsdown": "^0.12.3",
+    "tsdown": "^0.12.7",
     "tsup": "^8.5.0",
     "vfile": "^6.0.3",
-    "vitest": "^3.1.4"
+    "vitest": "^3.2.2"
   },
   "dependencies": {
     "@prosemirror-processor/markdown": "^0.0.1-alpha.3",
     "@prosemirror-processor/unist": "^0.0.1-alpha.6",
-    "happy-dom": "^17.4.7",
+    "happy-dom": "^17.6.3",
     "hast-util-to-html": "^9.0.5",
     "mdast-util-from-markdown": "^2.0.2",
     "mdast-util-to-markdown": "^2.1.2",
     "micromark-util-types": "^2.0.2",
-    "prosekit": "^0.13.2",
+    "prosekit": "^0.13.4",
     "prosemirror-transformer-markdown": "workspace:*",
     "remark-comment-config": "^8.0.0",
     "remark-gfm": "^4.0.1"

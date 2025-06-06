@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-import { mergeProps, render } from 'solid-js/web'
+import { ErrorBoundary, mergeProps, render } from 'solid-js/web'
 import { StateProvider } from 'statebuilder'
 import { Show } from 'solid-js'
 import { clsx } from 'clsx'
 import { Editor, EditorRootContext } from './editor/editor'
+import { OcticonCaution } from './core/custom/githubAlert/icons'
+import { ConfigStore } from './config.store'
 import type { EditorType } from './editor/editor'
 import type { Accessor } from 'solid-js'
 import type { GitHubUploaderHandler } from './core/custom/image/github-file-uploader'
@@ -26,6 +28,7 @@ import type { SuggestionData } from './editor/utils/loadSuggestionData'
 
 export interface RenderEditorProps {
   open: Accessor<boolean>
+  openChange: (open: boolean) => void
   currentUsername: Accessor<string | null>
   suggestionData: Accessor<SuggestionData>
   initialValue: string
@@ -67,42 +70,91 @@ export function SwitchButton(props: {
   )
 }
 
+export interface EditorErrorBoundaryProps {
+  error?: any
+  reload: () => void
+  close: () => void
+}
+
+export function EditorErrorBoundary(props: EditorErrorBoundaryProps) {
+  const configStore = ConfigStore.provide()
+
+  const issueUrl = () => configStore.get.newIssueUrl
+
+  return (
+    <div class={'Banner Banner--error'}>
+      <div class={'Banner-visual'}>
+        <OcticonCaution />
+      </div>
+
+      <div class={'Banner-message'}>
+        <p class={'Banner-title'}>
+          Something went wrong while rendering the editor. Please try again. If
+          the problem persist, please{' '}
+          <a href={issueUrl()} target={'_blank'} class={'Link--inTextBlock'}>
+            open an issue
+          </a>
+          .
+        </p>
+        <br />
+        <p>{props.error.toString()}</p>
+        <button class={'Button Button--danger mt-2'} onClick={props.reload}>
+          Try reload
+        </button>
+      </div>
+    </div>
+  )
+}
+
 export function mountEditor(root: HTMLElement, props: RenderEditorProps) {
   return render(() => {
     return (
       <StateProvider>
         <Show when={props.open()}>
-          <div
-            data-github-better-comment-wrapper=""
-            on:keydown={(event) => {
-              event.stopPropagation()
-            }}
+          <ErrorBoundary
+            fallback={(err, reload) => (
+              <EditorErrorBoundary
+                error={err}
+                reload={reload}
+                close={() => props.openChange(false)}
+              />
+            )}
           >
-            <EditorRootContext.Provider
-              value={{
-                currentUsername: props.currentUsername,
-                data: props.suggestionData,
-                uploadHandler: props.uploadHandler,
-                get initialValue() {
-                  return props.initialValue
-                },
-                get textarea() {
-                  return props.textarea()
-                },
-                get type() {
-                  return props.type
-                },
-                get repository() {
-                  return props.repository
-                },
-                get owner() {
-                  return props.owner
-                },
+            <div
+              data-github-better-comment-wrapper=""
+              on:keydown={(event) => {
+                event.stopPropagation()
               }}
             >
-              <Editor type={props.type} suggestions={props.suggestionData()} />
-            </EditorRootContext.Provider>
-          </div>
+              <EditorRootContext.Provider
+                value={{
+                  currentUsername: props.currentUsername,
+                  data: props.suggestionData,
+                  uploadHandler: props.uploadHandler,
+                  get initialValue() {
+                    return props.initialValue
+                  },
+                  get textarea() {
+                    return props.textarea()!
+                  },
+                  get type() {
+                    return props.type
+                  },
+                  get repository() {
+                    return props.repository
+                  },
+                  get owner() {
+                    return props.owner
+                  },
+                }}
+              >
+                <Editor
+                  type={props.type}
+                  suggestions={props.suggestionData()}
+                />
+              </EditorRootContext.Provider>
+            </div>
+          </ErrorBoundary>
         </Show>
       </StateProvider>
     )

@@ -24,6 +24,7 @@
   border: 1px solid var(--borderColor-default);
   border-radius: var(--borderRadius-large);
   background-color: var(--bgColor-default);
+  min-height: 170px;
 
   &:focus-within {
     border-color: var(--borderColor-accent-emphasis);

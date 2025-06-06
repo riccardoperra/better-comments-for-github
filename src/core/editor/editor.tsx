@@ -15,10 +15,10 @@
  */
 
 import { ProseKit } from 'prosekit/solid'
-import { Toolbar } from './toolbar/toolbar'
-import styles from './editor.module.css'
 import { UserMentionMenu } from '../custom/user-mention/UserMentionMenu'
 import { IssueReferenceMenu } from '../custom/issue-reference/IssueReferenceMenu/IssueReferenceMenu'
+import { Toolbar } from './toolbar/toolbar'
+import styles from './editor.module.css'
 import { EditorBlockHandler } from './block-handle/block-handle'
 import InlineMenu from './inline-menu/InlineMenu'
 import EmojiMenu from './emoji-menu/emoji-menu'
@@ -47,7 +47,6 @@ export function ProsekitEditor(props: ProsekitEditor) {
 
           <SlashMenu />
           <EmojiMenu emojis={props.emojis} />
-
           <UserMentionMenu users={props.mentions} />
           <IssueReferenceMenu issues={props.issues} />
           <InlineMenu />

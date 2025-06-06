@@ -172,15 +172,15 @@ const GroupedMenuItems = groupMenuItems()
 
 export default function SlashMenu() {
   const editor = useEditor<EditorExtension>()
+  const regex = /\/(|\S.*)$/iu
+
   return (
     <AutocompletePopover
-      regex={/(?:^|(?<=\s))\/(?!\/)[^/]*$/iu}
+      regex={regex}
       fitViewport={false}
       class={styles.slashMenu}
     >
       <AutocompleteList>
-        <AutocompleteEmpty>No results</AutocompleteEmpty>
-
         <div class={styles.slashMenuSectionGroup}>
           <For each={GroupedMenuItems}>
             {(group) => (
@@ -235,6 +235,8 @@ export default function SlashMenu() {
             )}
           </For>
         </div>
+
+        <AutocompleteEmpty>No results</AutocompleteEmpty>
       </AutocompleteList>
     </AutocompletePopover>
   )
