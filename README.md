@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="./assets/logo_512x512.png" alt="Logo" width="64">
+    <img src="./brand/logo_512x512.png" alt="Logo" width="64">
 </p>
 <h1 align="center">
     Better comments for GitHub
@@ -16,7 +16,7 @@ to a new <strong>block-based</strong> editor and a seamless real-time preview ex
 </p>
 
 <p align="center">
-<img src="./assets/github_image.png" width="500" alt="Promotional image">
+<img src="./brand/github_image.png" width="500" alt="Promotional image">
 </p>
 
 > [!IMPORTANT]
