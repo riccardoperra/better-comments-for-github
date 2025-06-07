@@ -32,7 +32,7 @@ export function defineListMarkdown() {
         const node = _node as FlatList
         return {
           kind: node.kind,
-          checked: node.kind === 'task' ? node.checked : null,
+          checked: node.kind === 'task' ? node.checked : undefined,
         }
       }),
 

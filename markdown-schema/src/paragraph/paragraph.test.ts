@@ -27,6 +27,7 @@ import {
   getNodesBaseExtensions,
   sameMarkdown,
   sameNode,
+  testUnknownHandler,
 } from '../test-utils'
 import { defineParagraphMarkdown } from './paragraph'
 
@@ -42,7 +43,11 @@ test('markdown -> prosemirror', () => {
     `This is just a paragraph.\n\nThis is the second paragraph.`,
   )
 
-  const result = convertUnistToProsemirror(unist, editor.schema)
+  const result = convertUnistToProsemirror(
+    unist,
+    editor.schema,
+    testUnknownHandler,
+  )
 
   const expected = doc(
     p('This is just a paragraph.'),
@@ -58,7 +63,11 @@ test('prosemirror -> markdown', () => {
     doc(p('This is just a paragraph.'), p('This is the second paragraph')),
   )
 
-  const result = convertPmSchemaToUnist(editor.state.doc, editor.schema)
+  const result = convertPmSchemaToUnist(
+    editor.state.doc,
+    editor.schema,
+    testUnknownHandler,
+  )
 
   sameMarkdown(
     result,

@@ -27,6 +27,7 @@ import {
   getNodesBaseExtensions,
   sameMarkdown,
   sameNode,
+  testUnknownHandler,
 } from '../test-utils'
 import { defineImageMarkdown, remarkHtmlImage } from './image'
 import { remarkInlineImage } from './remarkInlineImage'
@@ -47,7 +48,11 @@ test('markdown -> prosemirror', () => {
     },
   )
 
-  const result = convertUnistToProsemirror(unist, editor.schema)
+  const result = convertUnistToProsemirror(
+    unist,
+    editor.schema,
+    testUnknownHandler,
+  )
 
   const expected = doc(
     p(
@@ -72,7 +77,11 @@ test('markdown (with html) -> prosemirror', () => {
     },
   )
 
-  const result = convertUnistToProsemirror(unist, editor.schema)
+  const result = convertUnistToProsemirror(
+    unist,
+    editor.schema,
+    testUnknownHandler,
+  )
 
   const expected = doc(
     p(

@@ -26,6 +26,7 @@ import {
   getMarksBaseExtensions,
   sameMarkdown,
   sameNode,
+  testUnknownHandler,
 } from '../test-utils'
 import { defineTableMarkdown } from './table'
 
@@ -51,7 +52,11 @@ test('markdown -> prosemirror', () => {
 | Content Cell 3 | Content Cell 4 |`,
   )
 
-  const result = convertUnistToProsemirror(unist, editor.schema)
+  const result = convertUnistToProsemirror(
+    unist,
+    editor.schema,
+    testUnknownHandler,
+  )
 
   sameNode(
     result,

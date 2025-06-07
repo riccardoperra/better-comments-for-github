@@ -26,6 +26,7 @@ import {
   getMarksBaseExtensions,
   sameMarkdown,
   sameNode,
+  testUnknownHandler,
 } from '../test-utils'
 import { remarkUnderline } from './remarkUnderline'
 import { defineUnderlineMarkdown } from './underline'
@@ -46,7 +47,11 @@ test('markdown -> prosemirror', () => {
     },
   )
 
-  const result = convertUnistToProsemirror(unist, editor.schema)
+  const result = convertUnistToProsemirror(
+    unist,
+    editor.schema,
+    testUnknownHandler,
+  )
 
   sameNode(
     result,

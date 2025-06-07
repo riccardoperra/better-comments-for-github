@@ -46,7 +46,6 @@ export function wrapMixedHtmlContent(
       type: options.type,
       children: nodeChildren,
     } as any)
-    console.dir(parent, { depth: null })
     return
   }
 

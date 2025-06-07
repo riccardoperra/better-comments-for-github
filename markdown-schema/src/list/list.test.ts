@@ -26,6 +26,7 @@ import {
   getMarksBaseExtensions,
   sameMarkdown,
   sameNode,
+  testUnknownHandler,
 } from '../test-utils'
 import { defineListMarkdown } from './list'
 import { unistMergeAdjacentList } from './mergeAdjacentList'
@@ -47,7 +48,11 @@ test('(markdown -> prosemirror) Bullet list', () => {
     },
   )
 
-  const result = convertUnistToProsemirror(unist, editor.schema)
+  const result = convertUnistToProsemirror(
+    unist,
+    editor.schema,
+    testUnknownHandler,
+  )
 
   sameNode(
     result,
@@ -72,7 +77,11 @@ test('(markdown -> prosemirror) Ordered list', () => {
     },
   )
 
-  const result = convertUnistToProsemirror(unist, editor.schema)
+  const result = convertUnistToProsemirror(
+    unist,
+    editor.schema,
+    testUnknownHandler,
+  )
 
   sameNode(
     result,
@@ -97,7 +106,11 @@ test('(markdown -> prosemirror) Task list', () => {
     },
   )
 
-  const result = convertUnistToProsemirror(unist, editor.schema)
+  const result = convertUnistToProsemirror(
+    unist,
+    editor.schema,
+    testUnknownHandler,
+  )
 
   sameNode(
     result,

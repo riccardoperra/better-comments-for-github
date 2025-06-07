@@ -27,6 +27,7 @@ import {
   getNodesBaseExtensions,
   sameMarkdown,
   sameNode,
+  testUnknownHandler,
 } from '../test-utils'
 import { defineHeadingMarkdown } from './heading'
 
@@ -52,7 +53,11 @@ test('markdown -> prosemirror', () => {
 ###### Heading 6    
   `)
 
-  const result = convertUnistToProsemirror(unist, editor.schema)
+  const result = convertUnistToProsemirror(
+    unist,
+    editor.schema,
+    testUnknownHandler,
+  )
 
   const expected = doc(
     h1('Heading 1'),
