@@ -1,3 +1,6 @@
+<p align="center">
+    <img src="./assets/logo_512x512.png" alt="Logo" width="64">
+</p>
 <h1 align="center">
     Better comments for GitHub
 </h1>
@@ -12,7 +15,9 @@ An extension that <strong>completely replaces</strong> the GitHub native comment
 to a new <strong>block-based</strong> editor and a seamless real-time preview experience. 
 </p>
 
-<img src="./assets/promo4.png" alt="Promotional image">
+<p align="center">
+<img src="./assets/github_image.png" width="500" alt="Promotional image">
+</p>
 
 > [!IMPORTANT]
 >
