@@ -15,10 +15,8 @@
  */
 
 import { createStore } from 'solid-js/store'
-import type {
-  GitHubFile,
-  GitHubUploaderHandler,
-} from '../src/core/editor/image/github-file-uploader'
+import type { GitHubUploaderHandler } from '@better-comments-for-github/core/editor/utils/uploaderHandler'
+import type { GitHubFile } from '@better-comments-for-github/core/core/custom/image/github-file-uploader'
 
 export class MockUploaderNativeHandler implements GitHubUploaderHandler {
   #store = createStore<Array<GitHubFile>>([])
@@ -63,4 +61,6 @@ export class MockUploaderNativeHandler implements GitHubUploaderHandler {
       }))
     }, 2500)
   }
+
+  destroy(): void {}
 }

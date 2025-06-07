@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { getFiberProps } from '../../core/react-hacks/fiber'
+import { getFiberProps } from '../../react-hacks/fiber'
 
 // This is a trick that automatically encode characters and sanitize the `value`
 const fakeTextarea = document.createElement('textarea')

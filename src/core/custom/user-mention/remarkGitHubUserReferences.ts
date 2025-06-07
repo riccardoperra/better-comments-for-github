@@ -15,7 +15,7 @@
  */
 
 import { findAndReplace } from 'mdast-util-find-and-replace'
-import type { githubIssueReferenceType } from '../../core/custom/issue-reference/remarkGitHubIssueReference'
+import type { githubIssueReferenceType } from '../issue-reference/remarkGitHubIssueReference'
 import type { ReplaceFunction } from 'mdast-util-find-and-replace'
 import type { Node, Root } from 'mdast'
 

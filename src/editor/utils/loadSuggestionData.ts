@@ -25,9 +25,9 @@ import {
   getFiber,
   traverseFiber,
   waitForReactFiber,
-} from '../../core/react-hacks/fiber'
+} from '../../react-hacks/fiber'
 import type { Accessor, JSXElement } from 'solid-js'
-import type { Fiber } from '../../core/react-hacks/fiber'
+import type { Fiber } from '../../react-hacks/fiber'
 
 export interface MentionSuggestion {
   avatarUrl: string
