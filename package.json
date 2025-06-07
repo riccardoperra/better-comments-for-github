@@ -6,8 +6,10 @@
   "scripts": {
     "start": "vite",
     "dev": "vite",
+    "dev:extension": "pnpm --filter ./extension dev",
     "dev:editor-playground": "vite -c vite.editor-playground.config.ts",
     "build:watch": "vite build --watch --mode development",
+    "build:core-libs": "pnpm --filter @prosedoc/markdown-schema --filter prosemirror-transformer-markdown build",
     "build": "vite build",
     "serve": "vite preview",
     "lint": "eslint .",

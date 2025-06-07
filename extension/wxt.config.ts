@@ -25,7 +25,7 @@ export default defineConfig({
   manifest: {
     name: 'Better comments for GitHub',
     description:
-      'A GitHub extension that replaces the native comment editor with a more powerful one',
+      'A chrome extension that will enhance the GitHub native comment editor with a more powerful wysiwyg block based editor',
     author: {
       email: 'riccardo.perra@icloud.com',
     },

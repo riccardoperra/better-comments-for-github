@@ -48,9 +48,22 @@ Install on Safari (Mac, iOS and iPadOS)
 
 </a>
 
+## Project structure
+
+This project is subdivided into several sub packages:
+- **brand**: contains the branding assets, such as logos, promotional assets published in web store.
+- **markdown-schema**: a package that contains the markdown proseMirror nodes used by the editor.
+- **markdown-transformer**: a package that contains the logic to transform the markdown schema into ProseMirror and vice versa.
+- **src**: the source code of the editor
+- **extension**: the extension package, responsible to inject the editor into GitHub pages and handle the extension logic.
+
+> [!NOTE]
+> 
+> Anyway, the project structure will change in the future in order to have the root package.json cleaner.
+
 ## Stack
 
-This project is built with the following technologies:
+Built with the following `core` technologies:
 
 - [WXT Extension Framework](https://github.com/wxt-dev/wxt)
 
@@ -60,12 +73,27 @@ This project is built with the following technologies:
 - [prosekit](https://github.com/prosekit/prosekit)
 - [unified](https://github.com/unifiedjs/unified)
 
+Some of my core own libraries:
+- [statebuilder](https://github.com/riccardoperra/statebuilder)
+- [prosemirror-processor](https://github.com/riccardoperra/prosemirror-processor)
+
 #### UI
 
 - [SolidJS](https://github.com/solidjs/solid)
 - [Kobalte](https://kobalte.dev)
+- GitHub Primer CSS variables
+
+## Running the project
+
+- Install the dependencies via `pnpm install`
+- Build core libs via `pnpm build:core-libs` (or build them individually)
+- Run the extension via `pnpm run dev:extension`
 
 ## Features mapping
+
+> [!CAUTION]
+> 
+> Work in progress
 
 ### Basic formatting syntax
 
