@@ -226,9 +226,9 @@ export function createGitHubPageInstance(
   })
 
   // Will fire after gh page has been changed
-  document.addEventListener('turbo:visit', (event) => {})
+  // document.addEventListener('turbo:visit', (event) => {})
 
-  document.addEventListener('turbo:render', (event) => {})
+  // document.addEventListener('turbo:render', (event) => {})
 
   return result
 }

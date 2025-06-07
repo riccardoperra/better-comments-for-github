@@ -1,5 +1,5 @@
 {
-  "name": "better-comments-for-github",
+  "name": "@better-comments-for-github/extension",
   "description": "manifest.json description",
   "private": true,
   "version": "0.0.2",
@@ -32,6 +32,7 @@
     "storybook-solidjs": "^1.0.0-beta.6",
     "storybook-solidjs-vite": "^1.0.0-beta.6",
     "typescript": "^5.8.3",
+    "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.2.2",
     "wxt": "^0.20.7"
   }

@@ -15,9 +15,9 @@
  */
 
 import { effect } from 'solid-js/web'
-import { createSuggestionData } from '../../../src/editor/utils/loadSuggestionData'
-import { createGitHubUploaderReactHandler } from '../../../src/editor/utils/reactFileUploader'
-import type { SuggestionData } from '../../../src/editor/utils/loadSuggestionData'
+import { createSuggestionData } from '@better-comments-for-github/core/editor/utils/loadSuggestionData'
+import { createGitHubUploaderReactHandler } from '@better-comments-for-github/core/editor/utils/reactFileUploader'
+import type { SuggestionData } from '@better-comments-for-github/core/editor/utils/loadSuggestionData'
 
 export class GitHubReactTextareaHandler {
   readonly classes: { [key: string]: Array<string> } = {}

@@ -1,5 +1,6 @@
 import { defineConfig } from 'wxt'
 import { statebuilder } from 'statebuilder/compiler'
+import tsconfigPaths from 'vite-tsconfig-paths'
 
 // See https://wxt.dev/api/config.html
 export default defineConfig({
@@ -9,6 +10,7 @@ export default defineConfig({
   outDir: './dist',
   vite: (env) => ({
     plugins: [
+      tsconfigPaths(),
       statebuilder({
         autoKey: true,
         dev: env.mode === 'development',

@@ -15,7 +15,7 @@
  */
 
 import styles from '../entrypoints/main.module.css'
-import type { GitHubUploaderHandler } from '../../../src/editor/utils/uploaderHandler'
+import type { GitHubUploaderHandler } from '@better-comments-for-github/core/editor/utils/uploaderHandler'
 
 export class GitHubEditorInjector {
   uploadHandler: null | GitHubUploaderHandler = null

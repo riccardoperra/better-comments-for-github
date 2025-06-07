@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-import { queryComment } from '../../../src/dom/queryComment'
-
-import { mountEditor } from '../../../src/render'
+import { queryComment } from '@better-comments-for-github/core/dom/queryComment'
+import { mountEditor } from '@better-comments-for-github/core/render'
 import {
   createGitHubEditorInstance,
   createGitHubPageInstance,
@@ -27,9 +26,7 @@ import {
 import { GitHubNativeTextareaHandler } from '../utils/gitHubNativeTextareaHandler'
 import { GitHubEditorInjector } from '../utils/injectEditor'
 import { GitHubReactTextareaHandler } from '../utils/gitHubReactTextareaHandler'
-import type { EditorType } from '../../../src/editor/editor'
-
-import './styles.css'
+import type { EditorType } from '@better-comments-for-github/core/editor/editor'
 
 export default defineUnlistedScript(() => {
   createRoot(() => {
