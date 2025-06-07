@@ -71,7 +71,8 @@ export const EditorRootContext = createContext<EditorRootContextProps>()
 function sanitizeMarkdownValue(value: string) {
   return (
     value
-      .replaceAll('\\', '')
+      // Remove all backslashes -> safe?
+      // .replaceAll('\\', '')
       // Handle Alerts:  > [!NOTE]
       .replaceAll('> \\[!', '> [!')
       // Handle github links: https:\//github.com

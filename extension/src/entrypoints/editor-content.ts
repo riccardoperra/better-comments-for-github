@@ -205,7 +205,9 @@ export default defineUnlistedScript(() => {
                     openChange: setShowOldEditor,
                     uploadHandler: editorInjector.uploadHandler!,
                     textarea: textareaRef,
-                    initialValue: textareaRef()?.value ?? '',
+                    get initialValue() {
+                      return textareaRef()?.value ?? ''
+                    },
                     type,
                     repository,
                     owner: repositoryOwner,

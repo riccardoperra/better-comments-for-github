@@ -41,7 +41,6 @@ export function EditorTextShortcut(props: EditorTextShortcutProps) {
         return shortcuts[1]
       case 'keyboard': {
         const k = shortcuts[0]
-        console.log('props.element', props.element, k)
         if (Array.isArray(k)) {
           if (k.length === 0) return null
           return k[0].split('-')
