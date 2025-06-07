@@ -23,14 +23,14 @@ import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from '../../editor/tooltip/tooltip'
+} from '../../ui/tooltip/tooltip'
 import { deleteRange } from '../../../editor/utils/deleteRange'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '../../editor/popover/popover'
-import { TextField } from '../../editor/text-field/text-field'
+} from '../../ui/popover/popover'
+import { TextField } from '../../ui/text-field/text-field'
 import styles from './image-view.module.css'
 
 export interface ImageViewActionsProps {

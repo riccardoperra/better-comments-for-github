@@ -61,7 +61,7 @@ import { defineGitHubIssueReference } from '../custom/issue-reference/issue'
 import { defineImageExtension } from '../custom/image/extension'
 import { defineComment } from '../custom/comment/comment'
 import { defineDetails } from '../custom/details/details'
-import { defineExitable } from './exitable/exitable'
+import { defineExitable } from '../custom/exitable/exitable'
 import type { HeadingAttrs } from 'prosekit/extensions/heading'
 
 function defineCode() {

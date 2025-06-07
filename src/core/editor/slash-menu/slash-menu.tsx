@@ -25,8 +25,8 @@ import {
 } from '../autocomplete/Autocomplete'
 
 import { githubAlertTypeMap } from '../../custom/githubAlert/config'
-import { EditorTextShortcut } from '../kbd/kbd'
-import { EditorActionIcon } from '../action-icon/ActionIcon'
+import { EditorTextShortcut } from '../../ui/kbd/kbd'
+import { EditorActionIcon } from '../../ui/action-icon/ActionIcon'
 import styles from './slash-menu.module.css'
 import type { JSX } from 'solid-js'
 import type { LucideProps } from 'lucide-solid'

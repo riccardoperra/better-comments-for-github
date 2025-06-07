@@ -19,16 +19,25 @@ import { handleMarkExit } from './exit'
 
 declare module 'prosemirror-model' {
   interface MarkSpec {
+    /**
+     * Whether the mark is exitable via Arrow-Right command
+     */
     exitable?: boolean
   }
 }
 
 declare module 'prosemirror-model' {
   interface NodeSpec {
+    /**
+     * Whether the node is exitable via Arrow-Right command
+     */
     exitable?: boolean
   }
 }
 
+/**
+ *
+ */
 export function defineExitable() {
   const exitable = '$exitable'
   type ExitableData = {

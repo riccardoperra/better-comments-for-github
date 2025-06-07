@@ -29,9 +29,9 @@ import {
   SearchableSelectProvider,
   SearchableSelectRoot,
   SearchableSelectTrigger,
-} from '../../editor/searchable-select/SearchableSelect'
-import { SearchableSelectValue } from '../../editor/searchable-select/SearchableSelectControl'
-import { NodeViewWrapper } from '../../editor/nodeviews/node-view'
+} from '../../ui/searchable-select/SearchableSelect'
+import { SearchableSelectValue } from '../../ui/searchable-select/SearchableSelectControl'
+import { NodeViewWrapper } from '../../editor/primitives/node-view'
 import { ConfigStore } from '../../../config.store'
 import styles from './code-block-view.module.css'
 import type {

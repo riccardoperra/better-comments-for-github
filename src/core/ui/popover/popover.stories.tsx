@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Popover, PopoverContent, PopoverTrigger } from './Popover'
+import { Popover, PopoverContent, PopoverTrigger } from './popover'
 import type { Meta, StoryObj } from 'storybook-solidjs'
 
 // More on how to set up stories at: https://storybook.js.org/docs/7.0/solid/writing-stories/introduction

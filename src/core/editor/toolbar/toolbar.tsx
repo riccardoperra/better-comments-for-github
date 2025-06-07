@@ -19,18 +19,26 @@ import LucideCog from 'lucide-solid/icons/cog'
 import { For, createMemo } from 'solid-js'
 import { Dynamic } from 'solid-js/web'
 import LucideChevronDown from 'lucide-solid/icons/chevron-down'
-import { Popover, PopoverContent, PopoverTrigger } from '../popover/popover'
-import { Tooltip, TooltipContent, TooltipTrigger } from '../tooltip/tooltip'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '../../ui/popover/popover'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '../../ui/tooltip/tooltip'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '../dropdown-menu/dropdown-menu'
+} from '../../ui/dropdown-menu/dropdown-menu'
 import { githubAlertTypeMap } from '../../custom/githubAlert/config'
 import { Settings } from '../settings/settings'
-import { EditorTextShortcut } from '../kbd/kbd'
-import { EditorActionIcon } from '../action-icon/ActionIcon'
+import { EditorTextShortcut } from '../../ui/kbd/kbd'
+import { EditorActionIcon } from '../../ui/action-icon/ActionIcon'
 import { EditorActionConfig } from '../../../actions'
 import styles from './toolbar.module.css'
 import type { GithubAlertType } from '../../custom/githubAlert/config'

@@ -32,7 +32,7 @@ import {
   HoverCardArrow,
   HoverCardContent,
   HoverCardTrigger,
-} from '../../../editor/hover-card/HoverCard'
+} from '../../../ui/hover-card/HoverCard'
 import { getUserHoverCardContent } from '../../../../github/data'
 import { EditorRootContext } from '../../../../editor/editor'
 import styles from './UserMentionView.module.css'
