@@ -31,7 +31,14 @@ const HoverCardArrow: Component<HoverCardPrimitive.HoverCardArrowProps> = (
 }
 
 const HoverCard: Component<HoverCardPrimitive.HoverCardRootProps> = (props) => {
-  return <HoverCardPrimitive.Root gutter={4} {...props} />
+  return (
+    <HoverCardPrimitive.Root
+      closeDelay={0}
+      openDelay={100}
+      gutter={4}
+      {...props}
+    />
+  )
 }
 
 type HoverCardContentProps<T extends ValidComponent = 'div'> =

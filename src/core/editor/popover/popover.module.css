@@ -15,7 +15,7 @@
  */
 
 .popoverContent {
-  --inline-menu-background: var(--menu-bgColor-active);
+  --inline-menu-background: var(--overlay-bgColor);
   --popover-padding-inline: var(--base-size-6);
   --popover-padding-block: var(--base-size-6);
   position: relative;
