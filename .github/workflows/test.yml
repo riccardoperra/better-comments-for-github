@@ -28,9 +28,17 @@ jobs:
         run: |
           pnpm build:core-libs
 
+      - name: Cache packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            markdown-schema/dist
+            markdown-transformer/dist
+          key: packages-dist-${{ github.run_id }}-${{ github.run_number }}
+
   test:
     name: test
-    needs: install
+    needs: [ install, build ]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout PR
@@ -39,6 +47,11 @@ jobs:
         uses: ./.github/actions/setup-job
       - name: 📥 Monorepo install
         uses: ./.github/actions/pnpm-install
+      - name: Restore dist
+        uses: actions/cache@v4
+        with:
+          path: packages
+          key: packages-dist-${{ github.run_id }}-${{ github.run_number }}
 
       - name: Tests
         run: |
