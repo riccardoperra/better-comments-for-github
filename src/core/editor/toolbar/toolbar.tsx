@@ -31,6 +31,7 @@ import { githubAlertTypeMap } from '../../custom/githubAlert/config'
 import { Settings } from '../settings/settings'
 import { EditorTextShortcut } from '../kbd/kbd'
 import { EditorActionIcon } from '../action-icon/ActionIcon'
+import { EditorActionConfig } from '../../../actions'
 import styles from './toolbar.module.css'
 import type { GithubAlertType } from '../../custom/githubAlert/config'
 import type { FlowProps, JSX } from 'solid-js'
@@ -45,6 +46,12 @@ export function Toolbar() {
       return node.isActive({ textAlign: value })
     })
   }
+
+  const textAlignments = [
+    ['left', EditorActionConfig['textAlign>left']],
+    ['center', EditorActionConfig['textAlign>center']],
+    ['right', EditorActionConfig['textAlign>right']],
+  ] as const
 
   const currentTextAlign = createMemo(() => {
     let isLeft = false
@@ -72,7 +79,12 @@ export function Toolbar() {
       <ToolbarAction
         label={
           <>
-            Bold (<EditorTextShortcut type={'keyboard'} element={'bold'} />)
+            Bold{' '}
+            <EditorTextShortcut
+              wrappedInParenthesis
+              type={'keyboard'}
+              element={'bold'}
+            />
           </>
         }
         isPressed={editor().marks.bold.isActive()}
@@ -84,7 +96,12 @@ export function Toolbar() {
       <ToolbarAction
         label={
           <>
-            Italic (<EditorTextShortcut type={'keyboard'} element={'italic'} />)
+            Italic{' '}
+            <EditorTextShortcut
+              wrappedInParenthesis
+              type={'keyboard'}
+              element={'italic'}
+            />
           </>
         }
         isPressed={editor().marks.italic.isActive()}
@@ -96,8 +113,12 @@ export function Toolbar() {
       <ToolbarAction
         label={
           <>
-            Strike (
-            <EditorTextShortcut type={'keyboard'} element={'strikethrough'} />)
+            Strike{' '}
+            <EditorTextShortcut
+              wrappedInParenthesis
+              type={'keyboard'}
+              element={'strikethrough'}
+            />
           </>
         }
         isPressed={editor().marks.strike.isActive()}
@@ -110,8 +131,12 @@ export function Toolbar() {
       <ToolbarAction
         label={
           <>
-            Underline (
-            <EditorTextShortcut type={'keyboard'} element={'underline'} />)
+            Underline{' '}
+            <EditorTextShortcut
+              wrappedInParenthesis
+              type={'keyboard'}
+              element={'underline'}
+            />
           </>
         }
         isPressed={editor().marks.underline.isActive()}
@@ -124,8 +149,12 @@ export function Toolbar() {
       <ToolbarAction
         label={
           <>
-            Subscript (
-            <EditorTextShortcut type={'keyboard'} element={'subscript'} />)
+            Subscript{' '}
+            <EditorTextShortcut
+              wrappedInParenthesis
+              type={'keyboard'}
+              element={'subscript'}
+            />
           </>
         }
         isPressed={editor().marks.subscript.isActive()}
@@ -138,8 +167,12 @@ export function Toolbar() {
       <ToolbarAction
         label={
           <>
-            Superscript (
-            <EditorTextShortcut type={'keyboard'} element={'superscript'} />)
+            Superscript{' '}
+            <EditorTextShortcut
+              wrappedInParenthesis
+              type={'keyboard'}
+              element={'superscript'}
+            />
           </>
         }
         isPressed={editor().marks.superscript.isActive()}
@@ -154,8 +187,12 @@ export function Toolbar() {
       <ToolbarAction
         label={
           <>
-            Blockquote (
-            <EditorTextShortcut type={'keyboard'} element={'blockquote'} />)
+            Blockquote{' '}
+            <EditorTextShortcut
+              type={'keyboard'}
+              element={'blockquote'}
+              wrappedInParenthesis
+            />
           </>
         }
         isPressed={editor().nodes.blockquote.isActive()}
@@ -168,8 +205,12 @@ export function Toolbar() {
       <ToolbarAction
         label={
           <>
-            Code block (
-            <EditorTextShortcut type={'keyboard'} element={'codeBlock'} />)
+            Code block{' '}
+            <EditorTextShortcut
+              wrappedInParenthesis
+              type={'keyboard'}
+              element={'codeBlock'}
+            />
           </>
         }
         isPressed={editor().nodes.codeBlock.isActive()}
@@ -182,8 +223,12 @@ export function Toolbar() {
       <ToolbarAction
         label={
           <>
-            Code (
-            <EditorTextShortcut type={'keyboard'} element={'code'} />)
+            Code{' '}
+            <EditorTextShortcut
+              wrappedInParenthesis
+              type={'keyboard'}
+              element={'code'}
+            />
           </>
         }
         isPressed={editor().marks.code.isActive()}
@@ -206,25 +251,25 @@ export function Toolbar() {
           <TooltipContent>Align text</TooltipContent>
         </Tooltip>
         <DropdownMenuContent>
-          <For each={['left', 'center', 'right'] as const}>
-            {(value) => (
+          <For each={textAlignments}>
+            {([alignType, info]) => (
               <Tooltip placement={'right'}>
                 <TooltipTrigger
                   as={DropdownMenuItem}
                   class={styles.ToolbarMenuCenteredItem}
-                  data-pressed={isTextAlignActive(value)}
-                  disabled={!editor().commands.setTextAlign.canExec(value)}
-                  onClick={() => editor().commands.setTextAlign(value)}
+                  data-pressed={isTextAlignActive(alignType)}
+                  disabled={!editor().commands.setTextAlign.canExec(alignType)}
+                  onClick={() => editor().commands.setTextAlign(alignType)}
                 >
-                  <Dynamic component={alignIcons[value]} size={16} />
+                  <Dynamic component={info.icon} size={16} />
                 </TooltipTrigger>
                 <TooltipContent>
-                  Align {value} (
+                  Align {alignType}
                   <EditorTextShortcut
+                    wrappedInParenthesis
                     type={'keyboard'}
-                    element={`textAlign>${value}`}
+                    element={`textAlign>${alignType}`}
                   />
-                  )
                 </TooltipContent>
               </Tooltip>
             )}

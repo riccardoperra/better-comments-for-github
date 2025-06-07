@@ -53,7 +53,7 @@ export interface EditorActionConfigData {
   }
 }
 
-export const EditorActionConfig: EditorActionConfigData = {
+export const EditorActionConfig = {
   // marks
   bold: {
     icon: LucideBold,
@@ -161,4 +161,4 @@ export const EditorActionConfig: EditorActionConfigData = {
     }),
     {} as EditorActionConfigData,
   ),
-} as const
+} as const satisfies EditorActionConfigData

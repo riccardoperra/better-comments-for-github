@@ -19,6 +19,15 @@
   line-height: inherit;
   align-items: center;
 
+  &:not(:empty)[data-wrapped-in-parenthesis] {
+    &::before {
+      content: '(';
+    }
+    &::after {
+      content: ')';
+    }
+  }
+
   span {
     text-transform: capitalize;
   }

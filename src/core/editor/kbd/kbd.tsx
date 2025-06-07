@@ -18,37 +18,47 @@ import { For, Match, Show, Switch } from 'solid-js'
 import { clsx } from 'clsx'
 import { EditorActionConfig } from '../../../actions'
 import styles from './kbd.module.css'
+import type { EditorActionConfigData } from '../../../actions'
 
 export interface EditorTextShortcutProps {
   element: string
   type: 'keyboard' | 'inputRule'
+  wrappedInParenthesis?: boolean
 }
 
 export function EditorTextShortcut(props: EditorTextShortcutProps) {
   const isMac = /Mac|iPod|iPhone|iPad/.test(navigator.platform)
 
-  const config = () => EditorActionConfig[props.element]
+  const config = (): EditorActionConfigData[string] | undefined =>
+    EditorActionConfig[props.element as keyof typeof EditorActionConfig]
 
   const label = () => {
     if (!config()) return null
-    const { shortcuts } = config()
+    const { shortcuts } = config()!
     const type = props.type
     switch (type) {
       case 'inputRule':
         return shortcuts[1]
       case 'keyboard': {
         const k = shortcuts[0]
-        return typeof k === 'string'
-          ? k.split('-')
-          : Array.isArray(k)
-            ? k[0].split('-')
-            : k
+        console.log('props.element', props.element, k)
+        if (Array.isArray(k)) {
+          if (k.length === 0) return null
+          return k[0].split('-')
+        }
+        if (typeof k === 'string') {
+          return k.split('-')
+        }
+        return k
       }
     }
   }
 
   return (
-    <span class={styles.editorTextShortcut}>
+    <span
+      class={styles.editorTextShortcut}
+      data-wrapped-in-parenthesis={props.wrappedInParenthesis ? '' : null}
+    >
       <Show when={label()}>
         {(label) => (
           <Show
