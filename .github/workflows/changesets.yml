@@ -62,43 +62,6 @@ jobs:
         run: |
           pnpm --filter ./markdown-schema --filter ./ run test
 
-  build:
-    name: build
-    needs: [ install, build-core, test ]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout PR
-        uses: actions/checkout@v4
-      - name: 📥 Setup
-        uses: ./.github/actions/setup-job
-      - name: 📥 Monorepo install
-        uses: ./.github/actions/pnpm-install
-
-      - name: Restore dist
-        uses: actions/cache@v4
-        with:
-          path: |
-            ./markdown-schema/dist
-            ./markdown-transformer/dist
-          key: packages-dist-${{ github.run_id }}-${{ github.run_number }}
-
-      - name: Build
-        run: |
-          cd extension
-          pnpm build
-
-      - name: Cache packages
-        uses: actions/cache@v4
-        with:
-          path: |
-            ./markdown-schema/dist
-            ./markdown-transformer/dist
-          key: packages-dist-${{ github.run_id }}-${{ github.run_number }}
-
-      - name: Tests
-        run: |
-          pnpm --filter ./markdown-schema --filter ./ run test
-
 
   submit:
     runs-on: ubuntu-latest
