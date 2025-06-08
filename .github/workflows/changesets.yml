@@ -126,7 +126,7 @@ jobs:
         run: |
           pnpm run ci:check-tag
 
-      - name: Check if tag exists
-        if: needs.check.outputs.tag_exists == 'false'
+      - name: Check if tag exists (${ needs.submit.outputs.tag_exists })
+        if: needs.submit.outputs.tag_exists == 'false'
         run: |
           echo "Tag does not exist, proceeding with submission."
