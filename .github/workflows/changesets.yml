@@ -80,7 +80,7 @@ jobs:
         uses: ./.github/actions/pnpm-install
 
       - name: Create Release Pull Request
-        id: changeset_pr
+        id: changeset
         uses: changesets/action@v1
         with:
           createGithubReleases: false
@@ -89,7 +89,7 @@ jobs:
 
       - name: Check tag
         id: check_tag
-        if: steps.changesets.outputs.hasChangesets == 'false'
+        if: steps.changeset.outputs.hasChangesets == 'false'
         run: |
           pnpm run ci:check-tag
     
