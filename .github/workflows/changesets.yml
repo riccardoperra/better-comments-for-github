@@ -123,10 +123,11 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Check tag
+        id: check_tag
         run: |
           pnpm run ci:check-tag
 
-      - name: Check if tag exists (${ needs.submit.outputs.tag_exists })
-        if: needs.submit.outputs.tag_exists == 'false'
+      - name: Create release if tag does not exist
+        if: steps.check_tag.outputs.tag_exists == 'false'
         run: |
           echo "Tag does not exist, proceeding with submission."
