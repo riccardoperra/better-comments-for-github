@@ -1,0 +1,132 @@
+name: Release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@v4
+      - name: 📥 Setup
+        uses: ./.github/actions/setup-job
+      - name: 📥 Monorepo install
+        uses: ./.github/actions/pnpm-install
+
+  build-core:
+    name: build-core
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@v4
+      - name: 📥 Setup
+        uses: ./.github/actions/setup-job
+      - name: 📥 Monorepo install
+        uses: ./.github/actions/pnpm-install
+
+      - name: Build
+        run: |
+          pnpm build:core-libs
+
+      - name: Cache packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ./markdown-schema/dist
+            ./markdown-transformer/dist
+          key: packages-dist-${{ github.run_id }}-${{ github.run_number }}
+
+  test:
+    name: test
+    needs: [ install, build-core ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@v4
+      - name: 📥 Setup
+        uses: ./.github/actions/setup-job
+      - name: 📥 Monorepo install
+        uses: ./.github/actions/pnpm-install
+
+      - name: Restore dist
+        uses: actions/cache@v4
+        with:
+          path: |
+            ./markdown-schema/dist
+            ./markdown-transformer/dist
+          key: packages-dist-${{ github.run_id }}-${{ github.run_number }}
+
+      - name: Tests
+        run: |
+          pnpm --filter ./markdown-schema --filter ./ run test
+
+  build:
+    name: build
+    needs: [ install, build-core, test ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@v4
+      - name: 📥 Setup
+        uses: ./.github/actions/setup-job
+      - name: 📥 Monorepo install
+        uses: ./.github/actions/pnpm-install
+
+      - name: Restore dist
+        uses: actions/cache@v4
+        with:
+          path: |
+            ./markdown-schema/dist
+            ./markdown-transformer/dist
+          key: packages-dist-${{ github.run_id }}-${{ github.run_number }}
+
+      - name: Build
+        run: |
+          cd extension
+          pnpm build
+
+      - name: Zip
+        run: |
+          cd extension
+          pnpm zip
+
+      - name: Cache packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ./markdown-schema/dist
+            ./markdown-transformer/dist
+          key: packages-dist-${{ github.run_id }}-${{ github.run_number }}
+
+      - name: Tests
+        run: |
+          pnpm --filter ./markdown-schema --filter ./ run test
+
+
+  submit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@v4
+      - name: 📥 Setup
+        uses: ./.github/actions/setup-job
+      - name: 📥 Monorepo install
+        uses: ./.github/actions/pnpm-install
+
+      - name: Create Release Pull Request
+        uses: changesets/action@v1
+        with:
+          createGithubReleases: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check tag
+        run: |
+          pnpm run ci:check-tag
+
+      - name: Check if tag exists
+        if: needs.check.outputs.tag_exists == 'false'
+        run: |
+          echo "Tag does not exist, proceeding with submission."
