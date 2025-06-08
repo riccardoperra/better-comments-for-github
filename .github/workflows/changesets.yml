@@ -2,6 +2,7 @@ name: Release
 
 permissions:
   contents: write
+  pull-requests: write
 
 on:
   push:
@@ -88,8 +89,6 @@ jobs:
       - name: Create Release Pull Request
         id: changeset
         uses: changesets/action@v1
-        with:
-          createGithubReleases: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

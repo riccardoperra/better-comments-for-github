@@ -35,7 +35,6 @@ export default defineConfig({
     author: {
       email: 'riccardo.perra@icloud.com',
     },
-    permissions: [],
     web_accessible_resources: [
       {
         resources: ['editor-content.js'],

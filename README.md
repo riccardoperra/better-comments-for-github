@@ -29,19 +29,31 @@ to a new <strong>block-based</strong> editor and a seamless real-time preview ex
 
 [link-chrome]: https://chrome.google.com/webstore/detail/better-comments-for-githu/hkpjbleacapfcfeneimhmcipjkfbgdpg 'Version published on Chrome Web Store'
 
-[<img src="https://raw.githubusercontent.com/alrra/browser-logos/90fdf03c/src/chrome/chrome.svg" width="48" alt="Chrome" valign="middle">][link-chrome] [<img valign="middle" src="https://img.shields.io/chrome-web-store/v/hkpjbleacapfcfeneimhmcipjkfbgdpg.svg?label=%20">][link-chrome] and other Chromium browsers
+[<img src="https://raw.githubusercontent.com/alrra/browser-logos/90fdf03c/src/chrome/chrome.svg" width="48" alt="Chrome" valign="middle">][link-chrome] [<img valign="middle" src="https://img.shields.io/chrome-web-store/v/hkpjbleacapfcfeneimhmcipjkfbgdpg.svg?label=%20">][link-chrome]
+and other Chromium browsers
+
+Or install manually:
+
+- Download the [latest release](https://github.com/riccardoperra/better-comments-for-github/releases/latest) or
+  any [other version](https://github.com/riccardoperra/better-comments-for-github/releases) from the release page
+- Load the unpacked extension
+    - In chrome, go to `chrome://extensions`, then drag the zip into the page or just click on "Load unpacked" and
+      select the zip file.
 
 ## Project structure
 
 This project is subdivided into several sub packages:
+
 - **brand**: contains the branding assets, such as logos, promotional assets published in web store.
 - **markdown-schema**: a package that contains the markdown proseMirror nodes used by the editor.
-- **markdown-transformer**: a package that contains the logic to transform the markdown schema into ProseMirror and vice versa.
+- **markdown-transformer**: a package that contains the logic to transform the markdown schema into ProseMirror and vice
+  versa.
 - **src**: the source code of the editor
-- **extension**: the extension package, responsible to inject the editor into GitHub pages and handle the extension logic.
+- **extension**: the extension package, responsible to inject the editor into GitHub pages and handle the extension
+  logic.
 
 > [!NOTE]
-> 
+>
 > Anyway, the project structure will change in the future in order to have the root package.json cleaner.
 
 ## Stack
@@ -57,6 +69,7 @@ Built with the following `core` technologies:
 - [unified](https://github.com/unifiedjs/unified)
 
 Some of my core own libraries:
+
 - [statebuilder](https://github.com/riccardoperra/statebuilder)
 - [prosemirror-processor](https://github.com/riccardoperra/prosemirror-processor)
 
@@ -75,7 +88,7 @@ Some of my core own libraries:
 ## Features mapping
 
 > [!CAUTION]
-> 
+>
 > Work in progress
 
 ### Basic formatting syntax
