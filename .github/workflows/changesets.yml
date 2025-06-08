@@ -123,6 +123,15 @@ jobs:
         run: |
           pnpm run ci:check-tag
 
+      - name: Restore dist
+        uses: actions/cache@v4
+        if: steps.check_tag.outputs.tag_exists == 'false'
+        with:
+          path: |
+            ./markdown-schema/dist
+            ./markdown-transformer/dist
+          key: packages-dist-${{ github.run_id }}-${{ github.run_number }}
+
       - name: Create release if tag does not exist
         if: steps.check_tag.outputs.tag_exists == 'false'
         run: |
