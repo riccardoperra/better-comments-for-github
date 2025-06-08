@@ -20,20 +20,21 @@ import { execSync } from 'node:child_process'
 
 const dirname = import.meta.dirname
 
-const statusPath = path.posix.join(dirname, '../release-meta.json')
-const cwd = process.cwd()
-
 const mainExtensionVersion = path.join(dirname, '../extension/package.json')
 
 const { version } = JSON.parse(fs.readFileSync(mainExtensionVersion, 'utf8'))
 
 const tag = `v${version}`
 
+console.log('Check tag: ', tag)
+
 // Get list of tags and check for the target
-const tags = execSync('git tag', { encoding: 'utf-8' })
+const tags = execSync(`git tag -l ${tag}`, { encoding: 'utf-8' })
   .split('\n')
   .map((t) => t.trim())
 const exists = tags.includes(tag)
+
+console.log('Tag exists: ', exists)
 
 // Set output in GitHub Actions
 const githubOutput = process.env.GITHUB_OUTPUT
