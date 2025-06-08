@@ -23,6 +23,10 @@ export default defineConfig({
     startUrls: ['https://github.com/riccardoperra/better-writer-for-github'],
   },
 
+  zip: {
+    name: 'better-comments-for-github',
+  },
+
   modules: ['@wxt-dev/module-solid'],
   manifest: {
     name: 'Better comments for GitHub',

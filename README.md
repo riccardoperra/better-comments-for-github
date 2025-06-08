@@ -27,26 +27,9 @@ to a new <strong>block-based</strong> editor and a seamless real-time preview ex
 
 ## Install
 
-<a href="">
+[link-chrome]: https://chrome.google.com/webstore/detail/better-comments-for-githu/hkpjbleacapfcfeneimhmcipjkfbgdpg 'Version published on Chrome Web Store'
 
-![Chrome Web Store Version](https://img.shields.io/chrome-web-store/v/leave-better-comments-for-github?style=flat&label=%20&color=%230d61b5)
-Install on Chrome and other chromium browsers
-
-</a>
-
-<a href="">
-
-![Chrome Web Store Version](https://img.shields.io/chrome-web-store/v/leave-better-comments-for-github?style=flat&label=%20&color=%230d61b5)
-Install on Firefox
-
-</a>
-
-<a href="">
-
-![Chrome Web Store Version](https://img.shields.io/chrome-web-store/v/leave-better-comments-for-github?style=flat&label=%20&color=%230d61b5)
-Install on Safari (Mac, iOS and iPadOS)
-
-</a>
+[<img src="https://raw.githubusercontent.com/alrra/browser-logos/90fdf03c/src/chrome/chrome.svg" width="48" alt="Chrome" valign="middle">][link-chrome] [<img valign="middle" src="https://img.shields.io/chrome-web-store/v/hkpjbleacapfcfeneimhmcipjkfbgdpg.svg?label=%20">][link-chrome] and other Chromium browsers
 
 ## Project structure
 
