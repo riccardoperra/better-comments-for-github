@@ -39,4 +39,5 @@ const exists = tags.includes(tag)
 const githubOutput = process.env.GITHUB_OUTPUT
 if (githubOutput) {
   fs.appendFileSync(githubOutput, `tag_exists=${exists}\n`)
+  fs.appendFileSync(githubOutput, `new_tag=${tag}\n`)
 }
