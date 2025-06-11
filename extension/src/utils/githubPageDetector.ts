@@ -31,7 +31,7 @@ export interface GithubPageInstanceResult {
 
 export interface GitHubPageInstanceOptions {
   readonly onReady?: (this: GithubPageInstanceResult, event: Event) => void
-  readonly onClickLink?: (this: GithubPageInstanceResult, event: Event) => void
+  readonly onDestroy?: (this: GithubPageInstanceResult, event: Event) => void
 }
 
 export interface GitHubEditorInstance {
@@ -221,8 +221,13 @@ export function createGitHubPageInstance(
   })
 
   // Will fire after a link which will redirect to a new gh page has been clicked
-  document.addEventListener('turbo:click', (event) => {
-    options.onClickLink?.call(result, event)
+  // document.addEventListener('turbo:click', (event) => {
+  //   options.onDestroy?.call(result, event)
+  // })
+
+  // https://turbo.hotwired.dev/reference/events#turbo%3Abefore-cache
+  document.addEventListener('turbo:before-cache', (event) => {
+    options.onDestroy?.call(result, event)
   })
 
   // Will fire after gh page has been changed

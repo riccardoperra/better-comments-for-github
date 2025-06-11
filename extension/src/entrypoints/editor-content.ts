@@ -34,7 +34,7 @@ export default defineUnlistedScript(() => {
     let rootDisposer: undefined | (() => void)
 
     createGitHubPageInstance({
-      onClickLink(this) {
+      onDestroy(this) {
         if (observerDisposer) {
           observerDisposer()
           observerDisposer = undefined

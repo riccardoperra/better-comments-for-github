@@ -86,9 +86,11 @@ export function createSuggestionData(element: HTMLElement) {
     })
   }
   if (!fiber) {
-    waitForReactFiber(element).then((fiber) => {
-      register(fiber)
-    })
+    waitForReactFiber(element)
+      .then((fiber) => {
+        register(fiber)
+      })
+      .catch(() => {})
   } else {
     register(fiber)
   }
