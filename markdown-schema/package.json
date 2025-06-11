@@ -38,7 +38,7 @@
     "mdast-util-from-markdown": "^2.0.2",
     "mdast-util-to-markdown": "^2.1.2",
     "micromark-util-types": "^2.0.2",
-    "prosekit": "^0.13.4",
+    "prosekit": "^0.13.5",
     "prosemirror-transformer-markdown": "workspace:*",
     "remark-comment-config": "^8.0.0",
     "remark-gfm": "^4.0.1"

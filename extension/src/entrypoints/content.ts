@@ -11,7 +11,7 @@ export default defineContentScript({
       ;(document.head || document.documentElement).appendChild(script)
     } else {
       await injectScript('/editor-content.js', {
-        keepInDom: true,
+        keepInDom: false,
       })
     }
   },
