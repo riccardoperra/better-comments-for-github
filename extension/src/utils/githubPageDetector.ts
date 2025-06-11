@@ -153,7 +153,12 @@ export function createGitHubEditorInstance(
     suggestionData,
     setSuggestionData,
     textareaRef,
-    setTextareaRef,
+    setTextareaRef(updater) {
+      setTextareaRef(updater)
+      if (textareaRef()) {
+        Reflect.set(textareaRef()!, 'better-comments-for-github', true)
+      }
+    },
     setInjector: (_injector) => {
       injector = _injector
     },

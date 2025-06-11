@@ -16,8 +16,21 @@
 
 import { createComputed, createSignal } from 'solid-js'
 
+function joinSelectors(selectors: string | Array<string>) {
+  return typeof selectors === 'string' ? selectors : selectors.join(', ')
+}
+
+function matchAll(selectors: string | Array<string>, parentNode: HTMLElement) {
+  return (
+    [selectors]
+      .flat()
+      // I know could just join the selectors with a comma, but I need to preserve the order of the given selectors.
+      .flatMap((selector) => [...parentNode.querySelectorAll(selector)])
+  )
+}
+
 export function query(
-  selector: string,
+  selectors: string | Array<string>,
   parentNode: HTMLElement | null = null,
   options?: {
     onAdded?: (el: HTMLElement) => void
@@ -49,41 +62,74 @@ export function query(
     parentNode = globalThis.document.body
   }
 
-  const elementsOnInit = parentNode.querySelectorAll(selector)
+  const elementsOnInit = matchAll(selectors, parentNode)
   setElements(() => Array.from(elementsOnInit) as Array<HTMLElement>)
+
+  function handle(node: Node, array: Array<HTMLElement>) {
+    let matchedNode: HTMLElement | null = null
+    if ('matches' in node) {
+      const selectorsToMatch = [selectors].flat()
+      for (const selector of selectorsToMatch) {
+        if ((node as Element).matches(selector)) {
+          matchedNode = node as HTMLElement
+          break
+        }
+      }
+    } else {
+      if ('querySelector' in node) {
+        matchedNode = matchAll(
+          selectors,
+          node as HTMLElement,
+        )[0] as HTMLElement | null
+      }
+    }
+    if (matchedNode) {
+      array.push(matchedNode)
+    }
+  }
+
+  function skipNode(node: Node) {
+    if (
+      ('tagName' in node &&
+        typeof node.tagName === 'string' &&
+        (node.tagName === 'SCRIPT' ||
+          node.tagName === 'STYLE' ||
+          node.tagName === 'LINK' ||
+          node.tagName === 'INPUT' ||
+          node.tagName === 'BUTTON' ||
+          node.tagName === 'SPAN' ||
+          node.tagName === 'INCLUDE-FRAGMENT' ||
+          node.tagName === 'TOOL-TIP' ||
+          node.tagName.startsWith('COPILOT-') ||
+          node.tagName.startsWith('REACT-') ||
+          node.tagName.startsWith('PROSEKIT-'))) ||
+      node.nodeType === Node.TEXT_NODE
+    ) {
+      return true
+    }
+    return false
+  }
 
   const observer = new MutationObserver((mutations) => {
     const addedEls: Array<HTMLElement> = []
     const removedEls: Array<HTMLElement> = []
-    const addedNodes = []
 
     for (const mutation of mutations) {
       mutation.addedNodes.forEach((node) => {
-        if ('matches' in node && (node as Element).matches(selector)) {
-          addedEls.push(node as HTMLElement)
-        } else if ('querySelector' in node) {
-          const matchedEl = (node as Element).querySelector<HTMLElement>(
-            selector,
-          )
-          if (matchedEl) {
-            addedEls.push(matchedEl)
-          }
+        if (skipNode(node)) {
+          return
         }
-        addedNodes.push(node)
+        handle(node, addedEls)
       })
       mutation.removedNodes.forEach((node) => {
-        if ('matches' in node && (node as Element).matches(selector)) {
-          removedEls.push(node as HTMLElement)
-        } else if ('querySelector' in node) {
-          const matchedEl = (node as Element).querySelector<HTMLElement>(
-            selector,
-          )
-          if (matchedEl) {
-            removedEls.push(matchedEl)
-          }
+        if (skipNode(node)) {
+          return
         }
+        handle(node, removedEls)
       })
     }
+
+    console.log('added nodes', addedEls)
 
     setElements((els) => {
       const newElements = els

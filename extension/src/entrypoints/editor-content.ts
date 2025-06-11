@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { queryComment } from '@better-comments-for-github/core/dom/queryComment'
 import { mountEditor } from '@better-comments-for-github/core/render'
 import {
   createGitHubEditorInstance,
@@ -26,6 +25,7 @@ import {
 import { GitHubNativeTextareaHandler } from '../utils/gitHubNativeTextareaHandler'
 import { GitHubEditorInjector } from '../utils/injectEditor'
 import { GitHubReactTextareaHandler } from '../utils/gitHubReactTextareaHandler'
+import { githubQueryEditorParent } from '../utils/githubQueryEditorParent'
 import type { EditorType } from '@better-comments-for-github/core/editor/editor'
 
 export default defineUnlistedScript(() => {
@@ -61,7 +61,7 @@ export default defineUnlistedScript(() => {
 
         createRoot((_rootDisposer) => {
           rootDisposer = _rootDisposer
-          ;[, , , observerDisposer] = queryComment({
+          ;[, , , observerDisposer] = githubQueryEditorParent({
             onNodeRemoved: (element) => {
               const instance = getGitHubEditorInstanceFromElement(element)
               if (instance) {
@@ -69,6 +69,15 @@ export default defineUnlistedScript(() => {
               }
             },
             onNodeAdded: (element) => {
+              const textarea = element.querySelector('textarea')
+              if (
+                textarea &&
+                Reflect.has(textarea, 'better-comments-for-github')
+              ) {
+                // This is already an instance of the editor, so we don't need to create a new one
+                return
+              }
+
               createRoot((dispose) => {
                 const editorInstance = createGitHubEditorInstance(
                   element,
