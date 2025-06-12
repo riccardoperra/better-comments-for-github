@@ -69,15 +69,6 @@ export default defineUnlistedScript(() => {
               }
             },
             onNodeAdded: (element) => {
-              const textarea = element.querySelector('textarea')
-              if (
-                textarea &&
-                Reflect.has(textarea, 'better-comments-for-github')
-              ) {
-                // This is already an instance of the editor, so we don't need to create a new one
-                return
-              }
-
               createRoot((dispose) => {
                 const editorInstance = createGitHubEditorInstance(
                   element,

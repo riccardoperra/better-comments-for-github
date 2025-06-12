@@ -16,10 +16,6 @@
 
 import { createComputed, createSignal } from 'solid-js'
 
-function joinSelectors(selectors: string | Array<string>) {
-  return typeof selectors === 'string' ? selectors : selectors.join(', ')
-}
-
 function matchAll(selectors: string | Array<string>, parentNode: HTMLElement) {
   return (
     [selectors]
@@ -128,8 +124,6 @@ export function query(
         handle(node, removedEls)
       })
     }
-
-    console.log('added nodes', addedEls)
 
     setElements((els) => {
       const newElements = els

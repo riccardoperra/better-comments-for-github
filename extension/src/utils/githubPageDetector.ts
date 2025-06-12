@@ -59,6 +59,15 @@ export interface GitHubEditorInstance {
 
 export const $GITHUB_EDITOR_INSTANCE = Symbol('GITHUB_EDITOR_INSTANCE')
 
+export const textAreaContainerRefs = new WeakMap<
+  HTMLTextAreaElement,
+  Array<WeakRef<HTMLElement>>
+>()
+
+export function isTextareaHandled(textarea: HTMLTextAreaElement) {
+  return textAreaContainerRefs.has(textarea)
+}
+
 export function registerGitHubEditorInstance(
   page: GithubPageInstanceResult,
   instance: GitHubEditorInstance,
@@ -156,6 +165,13 @@ export function createGitHubEditorInstance(
     setTextareaRef(updater) {
       setTextareaRef(updater)
       if (textareaRef()) {
+        const ref = textareaRef()
+        if (ref) {
+          textAreaContainerRefs.set(
+            ref,
+            (textAreaContainerRefs.get(ref) ?? []).concat(new WeakRef(el)),
+          )
+        }
         Reflect.set(textareaRef()!, 'better-comments-for-github', true)
       }
     },
