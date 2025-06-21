@@ -75,7 +75,6 @@ export function registerGitHubEditorInstance(
 ) {
   Reflect.set(textarea, $GITHUB_EDITOR_INSTANCE, instance)
   page.addInstance(instance)
-  console.log('add instances', instance, page.instances)
 }
 
 export function removeGitHubEditorInstance(
