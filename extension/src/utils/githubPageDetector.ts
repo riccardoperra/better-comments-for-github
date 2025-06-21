@@ -31,7 +31,7 @@ export interface GithubPageInstanceResult {
 
 export interface GitHubPageInstanceOptions {
   readonly onReady?: (this: GithubPageInstanceResult, event: Event) => void
-  readonly onClickLink?: (this: GithubPageInstanceResult, event: Event) => void
+  readonly onDestroy?: (this: GithubPageInstanceResult, event: Event) => void
 }
 
 export interface GitHubEditorInstance {
@@ -59,19 +59,30 @@ export interface GitHubEditorInstance {
 
 export const $GITHUB_EDITOR_INSTANCE = Symbol('GITHUB_EDITOR_INSTANCE')
 
+export const textAreaContainerRefs = new WeakMap<
+  HTMLTextAreaElement,
+  Array<WeakRef<HTMLElement>>
+>()
+
+export function isTextareaHandled(textarea: HTMLTextAreaElement) {
+  return textAreaContainerRefs.has(textarea)
+}
+
 export function registerGitHubEditorInstance(
   page: GithubPageInstanceResult,
+  textarea: HTMLTextAreaElement,
   instance: GitHubEditorInstance,
 ) {
-  Reflect.set(instance.rootElement, $GITHUB_EDITOR_INSTANCE, instance)
+  Reflect.set(textarea, $GITHUB_EDITOR_INSTANCE, instance)
   page.addInstance(instance)
 }
 
 export function removeGitHubEditorInstance(
   page: GithubPageInstanceResult,
+  textarea: HTMLTextAreaElement,
   instance: GitHubEditorInstance,
 ) {
-  Reflect.set(instance.rootElement, $GITHUB_EDITOR_INSTANCE, null)
+  Reflect.set(textarea, $GITHUB_EDITOR_INSTANCE, null)
 
   instance.switchButton.dispose?.()
   instance.editorElement.dispose?.()
@@ -89,10 +100,11 @@ export function getGitHubEditorInstanceFromElement(el: Element) {
 
 export function createGitHubEditorInstance(
   el: HTMLElement,
+  textarea: HTMLTextAreaElement,
   ownerDisposer: () => void,
 ): GitHubEditorInstance {
   const [textareaRef, setTextareaRef] =
-    createSignal<HTMLTextAreaElement | null>(null)
+    createSignal<HTMLTextAreaElement | null>(textarea)
   const [showOldEditor, setShowOldEditor] = createSignal<boolean>(true)
   const [suggestionData, setSuggestionData] = createSignal<SuggestionData>({
     mentions: [],
@@ -153,7 +165,9 @@ export function createGitHubEditorInstance(
     suggestionData,
     setSuggestionData,
     textareaRef,
-    setTextareaRef,
+    setTextareaRef(updater) {
+      setTextareaRef(updater)
+    },
     setInjector: (_injector) => {
       injector = _injector
     },
@@ -221,8 +235,13 @@ export function createGitHubPageInstance(
   })
 
   // Will fire after a link which will redirect to a new gh page has been clicked
-  document.addEventListener('turbo:click', (event) => {
-    options.onClickLink?.call(result, event)
+  // document.addEventListener('turbo:click', (event) => {
+  //   options.onDestroy?.call(result, event)
+  // })
+
+  // https://turbo.hotwired.dev/reference/events#turbo%3Abefore-cache
+  document.addEventListener('turbo:before-cache', (event) => {
+    options.onDestroy?.call(result, event)
   })
 
   // Will fire after gh page has been changed

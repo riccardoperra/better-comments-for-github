@@ -16,8 +16,17 @@
 
 import { createComputed, createSignal } from 'solid-js'
 
+function matchAll(selectors: string | Array<string>, parentNode: HTMLElement) {
+  return (
+    [selectors]
+      .flat()
+      // I know could just join the selectors with a comma, but I need to preserve the order of the given selectors.
+      .flatMap((selector) => [...parentNode.querySelectorAll(selector)])
+  )
+}
+
 export function query(
-  selector: string,
+  selectors: string | Array<string>,
   parentNode: HTMLElement | null = null,
   options?: {
     onAdded?: (el: HTMLElement) => void
@@ -32,57 +41,83 @@ export function query(
     },
   })
 
-  const onAddedListeners = new Set<(el: HTMLElement) => void>()
-  const onRemovedListeners = new Set<(el: HTMLElement) => void>()
-
-  const onAdded = (fn: (el: HTMLElement) => void) => {
-    onAddedListeners.add(fn)
-    return () => onAddedListeners.delete(fn)
-  }
-
-  const onRemoved = (fn: (el: HTMLElement) => void) => {
-    onRemovedListeners.add(fn)
-    return () => onRemovedListeners.delete(fn)
-  }
-
   if (!parentNode) {
     parentNode = globalThis.document.body
   }
 
-  const elementsOnInit = parentNode.querySelectorAll(selector)
+  const elementsOnInit = matchAll(selectors, parentNode)
   setElements(() => Array.from(elementsOnInit) as Array<HTMLElement>)
+
+  function handleMutationRemoveNodes(nodes: NodeList, array: Array<Node>) {
+    nodes.forEach((node) => {
+      if ('querySelectorAll' in node) {
+        array.push(node)
+        const descendants = (node as HTMLElement).querySelectorAll('*')
+        for (const descendant of descendants) {
+          array.push(descendant)
+        }
+      }
+    })
+  }
+
+  function handleMutation(node: Node, array: Array<HTMLElement>) {
+    let matchedNode: HTMLElement | null = null
+    if ('matches' in node) {
+      const selectorsToMatch = [selectors].flat()
+      for (const selector of selectorsToMatch) {
+        if ((node as Element).matches(selector)) {
+          matchedNode = node as HTMLElement
+          break
+        }
+      }
+    }
+
+    if (!matchedNode && 'querySelector' in node) {
+      matchedNode = matchAll(
+        selectors,
+        node as HTMLElement,
+      )[0] as HTMLElement | null
+    }
+
+    if (matchedNode) {
+      array.push(matchedNode)
+    }
+  }
+
+  function skipNode(node: Node) {
+    if (
+      ('tagName' in node &&
+        typeof node.tagName === 'string' &&
+        (node.tagName === 'SCRIPT' ||
+          node.tagName === 'STYLE' ||
+          node.tagName === 'LINK' ||
+          node.tagName === 'INPUT' ||
+          node.tagName === 'BUTTON' ||
+          node.tagName === 'SPAN' ||
+          node.tagName === 'INCLUDE-FRAGMENT' ||
+          node.tagName === 'TOOL-TIP' ||
+          node.tagName.startsWith('COPILOT-') ||
+          node.tagName.startsWith('REACT-') ||
+          node.tagName.startsWith('PROSEKIT-'))) ||
+      node.nodeType === Node.TEXT_NODE
+    ) {
+      return true
+    }
+    return false
+  }
 
   const observer = new MutationObserver((mutations) => {
     const addedEls: Array<HTMLElement> = []
     const removedEls: Array<HTMLElement> = []
-    const addedNodes = []
 
     for (const mutation of mutations) {
       mutation.addedNodes.forEach((node) => {
-        if ('matches' in node && (node as Element).matches(selector)) {
-          addedEls.push(node as HTMLElement)
-        } else if ('querySelector' in node) {
-          const matchedEl = (node as Element).querySelector<HTMLElement>(
-            selector,
-          )
-          if (matchedEl) {
-            addedEls.push(matchedEl)
-          }
+        if (skipNode(node)) {
+          return
         }
-        addedNodes.push(node)
+        handleMutation(node, addedEls)
       })
-      mutation.removedNodes.forEach((node) => {
-        if ('matches' in node && (node as Element).matches(selector)) {
-          removedEls.push(node as HTMLElement)
-        } else if ('querySelector' in node) {
-          const matchedEl = (node as Element).querySelector<HTMLElement>(
-            selector,
-          )
-          if (matchedEl) {
-            removedEls.push(matchedEl)
-          }
-        }
-      })
+      handleMutationRemoveNodes(mutation.removedNodes, removedEls)
     }
 
     setElements((els) => {
@@ -109,22 +144,19 @@ export function query(
         removedEls.push(el)
       }
     }
-
     for (const addedEl of addedEls) {
       options?.onAdded?.(addedEl)
-      onAddedListeners.forEach((fn) => fn(addedEl))
     }
     for (const removedEl of removedEls) {
       options?.onRemoved?.(removedEl)
-      onAddedListeners.forEach((fn) => fn(removedEl))
     }
-
     previousElements = updatedElements
   })
 
   observer.observe(parentNode, {
     childList: true,
     subtree: true,
+    attributes: true,
   })
 
   const dispose = () => {
@@ -139,5 +171,5 @@ export function query(
     // setElements([])
   }
 
-  return [elements, onAdded, onRemoved, dispose] as const
+  return [elements, dispose] as const
 }

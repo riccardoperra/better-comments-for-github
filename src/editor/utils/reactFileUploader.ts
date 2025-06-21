@@ -92,9 +92,11 @@ export function createGitHubUploaderReactHandler(element: HTMLElement) {
   const [reactiveFiber, setFiber] = createSignal()
 
   if (!fiber) {
-    waitForReactFiber(element).then((fiber) => {
-      setFiber(fiber)
-    })
+    waitForReactFiber(element)
+      .then((fiber) => {
+        setFiber(fiber)
+      })
+      .catch(() => setFiber(null))
   } else {
     setFiber(fiber)
   }

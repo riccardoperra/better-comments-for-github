@@ -36,6 +36,10 @@ export class GitHubReactTextareaHandler {
   }
 
   findModuleContainer() {
+    if (this.root.matches('[class*="MarkdownEditor-module__container"]')) {
+      return this.root
+    }
+
     return this.root.querySelector(
       '[class*="MarkdownEditor-module__container"]',
     )

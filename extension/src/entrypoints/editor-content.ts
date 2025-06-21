@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { queryComment } from '@better-comments-for-github/core/dom/queryComment'
 import { mountEditor } from '@better-comments-for-github/core/render'
 import {
   createGitHubEditorInstance,
@@ -26,6 +25,7 @@ import {
 import { GitHubNativeTextareaHandler } from '../utils/gitHubNativeTextareaHandler'
 import { GitHubEditorInjector } from '../utils/injectEditor'
 import { GitHubReactTextareaHandler } from '../utils/gitHubReactTextareaHandler'
+import { githubQueryEditorParent } from '../utils/githubQueryEditorParent'
 import type { EditorType } from '@better-comments-for-github/core/editor/editor'
 
 export default defineUnlistedScript(() => {
@@ -34,7 +34,7 @@ export default defineUnlistedScript(() => {
     let rootDisposer: undefined | (() => void)
 
     createGitHubPageInstance({
-      onClickLink(this) {
+      onDestroy(this) {
         if (observerDisposer) {
           observerDisposer()
           observerDisposer = undefined
@@ -61,22 +61,23 @@ export default defineUnlistedScript(() => {
 
         createRoot((_rootDisposer) => {
           rootDisposer = _rootDisposer
-          ;[, , , observerDisposer] = queryComment({
-            onNodeRemoved: (element) => {
-              const instance = getGitHubEditorInstanceFromElement(element)
+          ;[, observerDisposer] = githubQueryEditorParent({
+            onNodeRemoved: (textarea) => {
+              const instance = getGitHubEditorInstanceFromElement(textarea)
               if (instance) {
-                removeGitHubEditorInstance(this, instance)
+                removeGitHubEditorInstance(this, textarea, instance)
               }
             },
-            onNodeAdded: (element) => {
+            onNodeAdded: (textarea, element) => {
               createRoot((dispose) => {
                 const editorInstance = createGitHubEditorInstance(
                   element,
+                  textarea,
                   dispose,
                 )
                 const editorInjector = new GitHubEditorInjector()
                 editorInstance.setInjector(editorInjector)
-                registerGitHubEditorInstance(this, editorInstance)
+                registerGitHubEditorInstance(this, textarea, editorInstance)
 
                 const {
                   textareaRef,
