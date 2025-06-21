@@ -88,7 +88,6 @@ export function removeGitHubEditorInstance(
   instance.editorElement.dispose?.()
   instance.unmount()
   page.removeInstance(instance)
-  console.log('remove instance', instance, page.instances)
 }
 
 export function getGitHubEditorInstanceFromElement(el: Element) {
