@@ -1,6 +1,6 @@
-# @better-comments-for-github/extension
+# @better-comments-for-github/core
 
-## 0.0.5
+## 0.0.1
 
 ### Patch Changes
 
@@ -8,11 +8,3 @@
 
   - Support multiple parents when slash-command-feature is disabled
   - Fix an issue where editor was loaded twice for the same textarea
-
-- 4cb85f1: Fix an issue where editor script was loaded twice
-
-## 0.0.4
-
-### Patch Changes
-
-- 1268f80: Add support for firefox
