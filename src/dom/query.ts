@@ -41,19 +41,6 @@ export function query(
     },
   })
 
-  const onAddedListeners = new Set<(el: HTMLElement) => void>()
-  const onRemovedListeners = new Set<(el: HTMLElement) => void>()
-
-  const onAdded = (fn: (el: HTMLElement) => void) => {
-    onAddedListeners.add(fn)
-    return () => onAddedListeners.delete(fn)
-  }
-
-  const onRemoved = (fn: (el: HTMLElement) => void) => {
-    onRemovedListeners.add(fn)
-    return () => onRemovedListeners.delete(fn)
-  }
-
   if (!parentNode) {
     parentNode = globalThis.document.body
   }
@@ -61,7 +48,19 @@ export function query(
   const elementsOnInit = matchAll(selectors, parentNode)
   setElements(() => Array.from(elementsOnInit) as Array<HTMLElement>)
 
-  function handle(node: Node, array: Array<HTMLElement>) {
+  function handleMutationRemoveNodes(nodes: NodeList, array: Array<Node>) {
+    nodes.forEach((node) => {
+      if ('querySelectorAll' in node) {
+        array.push(node)
+        const descendants = (node as HTMLElement).querySelectorAll('*')
+        for (const descendant of descendants) {
+          array.push(descendant)
+        }
+      }
+    })
+  }
+
+  function handleMutation(node: Node, array: Array<HTMLElement>) {
     let matchedNode: HTMLElement | null = null
     if ('matches' in node) {
       const selectorsToMatch = [selectors].flat()
@@ -71,14 +70,15 @@ export function query(
           break
         }
       }
-    } else {
-      if ('querySelector' in node) {
-        matchedNode = matchAll(
-          selectors,
-          node as HTMLElement,
-        )[0] as HTMLElement | null
-      }
     }
+
+    if (!matchedNode && 'querySelector' in node) {
+      matchedNode = matchAll(
+        selectors,
+        node as HTMLElement,
+      )[0] as HTMLElement | null
+    }
+
     if (matchedNode) {
       array.push(matchedNode)
     }
@@ -115,14 +115,9 @@ export function query(
         if (skipNode(node)) {
           return
         }
-        handle(node, addedEls)
+        handleMutation(node, addedEls)
       })
-      mutation.removedNodes.forEach((node) => {
-        if (skipNode(node)) {
-          return
-        }
-        handle(node, removedEls)
-      })
+      handleMutationRemoveNodes(mutation.removedNodes, removedEls)
     }
 
     setElements((els) => {
@@ -149,22 +144,19 @@ export function query(
         removedEls.push(el)
       }
     }
-
     for (const addedEl of addedEls) {
       options?.onAdded?.(addedEl)
-      onAddedListeners.forEach((fn) => fn(addedEl))
     }
     for (const removedEl of removedEls) {
       options?.onRemoved?.(removedEl)
-      onAddedListeners.forEach((fn) => fn(removedEl))
     }
-
     previousElements = updatedElements
   })
 
   observer.observe(parentNode, {
     childList: true,
     subtree: true,
+    attributes: true,
   })
 
   const dispose = () => {
@@ -179,5 +171,5 @@ export function query(
     // setElements([])
   }
 
-  return [elements, onAdded, onRemoved, dispose] as const
+  return [elements, dispose] as const
 }

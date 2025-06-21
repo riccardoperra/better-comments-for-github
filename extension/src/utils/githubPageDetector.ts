@@ -70,22 +70,26 @@ export function isTextareaHandled(textarea: HTMLTextAreaElement) {
 
 export function registerGitHubEditorInstance(
   page: GithubPageInstanceResult,
+  textarea: HTMLTextAreaElement,
   instance: GitHubEditorInstance,
 ) {
-  Reflect.set(instance.rootElement, $GITHUB_EDITOR_INSTANCE, instance)
+  Reflect.set(textarea, $GITHUB_EDITOR_INSTANCE, instance)
   page.addInstance(instance)
+  console.log('add instances', instance, page.instances)
 }
 
 export function removeGitHubEditorInstance(
   page: GithubPageInstanceResult,
+  textarea: HTMLTextAreaElement,
   instance: GitHubEditorInstance,
 ) {
-  Reflect.set(instance.rootElement, $GITHUB_EDITOR_INSTANCE, null)
+  Reflect.set(textarea, $GITHUB_EDITOR_INSTANCE, null)
 
   instance.switchButton.dispose?.()
   instance.editorElement.dispose?.()
   instance.unmount()
   page.removeInstance(instance)
+  console.log('remove instance', instance, page.instances)
 }
 
 export function getGitHubEditorInstanceFromElement(el: Element) {
@@ -98,10 +102,11 @@ export function getGitHubEditorInstanceFromElement(el: Element) {
 
 export function createGitHubEditorInstance(
   el: HTMLElement,
+  textarea: HTMLTextAreaElement,
   ownerDisposer: () => void,
 ): GitHubEditorInstance {
   const [textareaRef, setTextareaRef] =
-    createSignal<HTMLTextAreaElement | null>(null)
+    createSignal<HTMLTextAreaElement | null>(textarea)
   const [showOldEditor, setShowOldEditor] = createSignal<boolean>(true)
   const [suggestionData, setSuggestionData] = createSignal<SuggestionData>({
     mentions: [],
@@ -164,16 +169,6 @@ export function createGitHubEditorInstance(
     textareaRef,
     setTextareaRef(updater) {
       setTextareaRef(updater)
-      if (textareaRef()) {
-        const ref = textareaRef()
-        if (ref) {
-          textAreaContainerRefs.set(
-            ref,
-            (textAreaContainerRefs.get(ref) ?? []).concat(new WeakRef(el)),
-          )
-        }
-        Reflect.set(textareaRef()!, 'better-comments-for-github', true)
-      }
     },
     setInjector: (_injector) => {
       injector = _injector

@@ -17,28 +17,43 @@
 import { query } from '@better-comments-for-github/core/dom/query'
 
 export function githubQueryEditorParent(options: {
-  onNodeAdded: (element: HTMLElement) => void
-  onNodeRemoved: (element: HTMLElement) => void
+  onNodeAdded: (textarea: HTMLTextAreaElement, parent: HTMLElement) => void
+  onNodeRemoved: (textarea: HTMLTextAreaElement) => void
 }) {
-  return query(
-    [
-      // Only if slash-command feature flag is enabled
-      'slash-command-expander',
-      //
-      'fieldset[class*=MarkdownEditor-module__fieldSet]',
-      'div[class*=MarkdownEditor-module__container]',
-      '[class*=IssueCommentComposer-module__commentComposerWrapper]',
-      'tab-container',
-      // PR edit
-      '.js-previewable-comment-form',
-      '.js-inline-comment-form',
-      // PR code review comments
-      '.inline-comments',
-    ],
-    undefined,
-    {
-      onAdded: options.onNodeAdded,
-      onRemoved: options.onNodeRemoved,
+  // new SelectorObserver(document.body).observe('textarea', {
+  // add: (x) => console.log('add selector observer', x),
+  // remove: (x) => console.log('remove SELECTOR OBSERVER', x),
+  // })
+  return query('textarea', document.body, {
+    onAdded: (textarea) => {
+      const parents = [
+        // Only if slash-command feature flag is enabled
+        'slash-command-expander',
+        //
+        'fieldset[class*=MarkdownEditor-module__fieldSet]',
+        'div[class*=MarkdownEditor-module__container]',
+        '[class*=IssueCommentComposer-module__commentComposerWrapper]',
+        'tab-container',
+        // PR edit
+        '.js-previewable-comment-form',
+        '.js-inline-comment-form',
+        // PR code review comments
+        '.inline-comments',
+      ]
+      while (parents.length) {
+        const parent = parents.shift()
+        const closestElement = !!parent && textarea.closest(parent)
+        if (closestElement) {
+          options.onNodeAdded(
+            textarea as HTMLTextAreaElement,
+            closestElement as HTMLElement,
+          )
+          break
+        }
+      }
     },
-  )
+    onRemoved: (textarea) => {
+      options.onNodeRemoved(textarea as HTMLTextAreaElement)
+    },
+  })
 }
