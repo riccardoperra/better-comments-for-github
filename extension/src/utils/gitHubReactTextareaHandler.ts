@@ -68,9 +68,7 @@ export class GitHubReactTextareaHandler {
   }
 
   getMountFooterFn(): (node: HTMLElement) => void {
-    const footerModule = this.root.querySelector(
-      'footer[class*="Footer-module"]',
-    )
+    const footerModule = this.root.querySelector('[class*="Footer-module"]')
     if (footerModule) {
       return () => {
         const actionsWrapper = footerModule.firstElementChild

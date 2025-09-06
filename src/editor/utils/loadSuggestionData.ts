@@ -126,12 +126,34 @@ function makeSuggestionData(fiber: Fiber): Accessor<SuggestionData> {
     notifier()
 
     return {
-      mentions: fiber.memoizedProps.mentionSuggestions,
-      emojis: fiber.memoizedProps.emojiSuggestions,
-      savedReplies: fiber.memoizedProps.savedReplies,
-      references: fiber.memoizedProps.referenceSuggestions,
+      mentions: getSafeSuggestionValueValue(
+        fiber.memoizedProps.mentionSuggestions,
+        [],
+      ),
+      emojis: getSafeSuggestionValueValue(
+        fiber.memoizedProps.emojiSuggestions,
+        [],
+      ),
+      savedReplies: getSafeSuggestionValueValue(
+        fiber.memoizedProps.savedReplies,
+        [],
+      ),
+      references: getSafeSuggestionValueValue(
+        fiber.memoizedProps.referenceSuggestions,
+        [],
+      ),
     } as SuggestionData
   }
 
   return createMemo(getDataFromFiber)
+}
+
+function getSafeSuggestionValueValue<T>(value: unknown, fallback: T): T {
+  if (value === 'loading') {
+    return fallback
+  }
+  if (typeof value === typeof fallback) {
+    return value as T
+  }
+  return fallback
 }
