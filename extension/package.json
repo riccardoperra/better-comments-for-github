@@ -17,8 +17,8 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
-    "solid-js": "^1.9.7",
-    "statebuilder": "^0.8.1"
+    "solid-js": "catalog:",
+    "statebuilder": "catalog:"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^3.2.4",
@@ -27,13 +27,13 @@
     "@storybook/blocks": "^8.6.0-beta.8",
     "@storybook/test": "^8.6.0-beta.8",
     "@types/chrome": "^0.0.326",
-    "@wxt-dev/module-solid": "^1.1.2",
+    "@wxt-dev/module-solid": "^1.1.4",
     "storybook": "^8.6.0-beta.8",
     "storybook-solidjs": "^1.0.0-beta.6",
     "storybook-solidjs-vite": "^1.0.0-beta.6",
-    "typescript": "^5.8.3",
+    "typescript": "catalog:",
     "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "^3.2.2",
-    "wxt": "^0.20.7"
+    "vitest": "catalog:",
+    "wxt": "^0.20.11"
   }
 }

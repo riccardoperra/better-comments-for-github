@@ -23,6 +23,7 @@ import { EditorBlockHandler } from './block-handle/block-handle'
 import InlineMenu from './inline-menu/InlineMenu'
 import EmojiMenu from './emoji-menu/emoji-menu'
 import SlashMenu from './slash-menu/slash-menu'
+import { DropIndicator } from './drop-indicator/DropIndicator'
 import type { Editor } from 'prosekit/core'
 import type { SuggestionData } from '../../editor/utils/loadSuggestionData'
 
@@ -51,6 +52,7 @@ export function ProsekitEditor(props: ProsekitEditor) {
           <IssueReferenceMenu issues={props.issues} />
           <InlineMenu />
           <EditorBlockHandler />
+          <DropIndicator />
         </div>
       </div>
     </ProseKit>

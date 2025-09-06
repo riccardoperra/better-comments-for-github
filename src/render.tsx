@@ -16,7 +16,7 @@
 
 import { ErrorBoundary, mergeProps, render } from 'solid-js/web'
 import { StateProvider } from 'statebuilder'
-import { Show } from 'solid-js'
+import { Show, onMount } from 'solid-js'
 import { clsx } from 'clsx'
 import { Editor, EditorRootContext } from './editor/editor'
 import { OcticonCaution } from './core/custom/githubAlert/icons'
@@ -80,6 +80,12 @@ export function EditorErrorBoundary(props: EditorErrorBoundaryProps) {
   const configStore = ConfigStore.provide()
 
   const issueUrl = () => configStore.get.newIssueUrl
+
+  onMount(() => {
+    if (props.error) {
+      console.error(props.error)
+    }
+  })
 
   return (
     <div class={'Banner Banner--error'}>
