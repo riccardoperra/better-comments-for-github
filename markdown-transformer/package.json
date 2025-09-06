@@ -52,7 +52,7 @@
     "vfile": "^6.0.3"
   },
   "devDependencies": {
-    "prettier": "^3.5.1",
+    "prettier": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
