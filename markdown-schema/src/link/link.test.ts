@@ -32,7 +32,6 @@ import { defineLinkMarkdown } from './link'
 
 const extension = getMarksBaseExtensions([defineLinkMarkdown()])
 
-console.log(extension.schema)
 const { doc, p, link } = builders(extension.schema!, {
   p: { nodeType: 'paragraph' },
   link: { markType: 'link' },
