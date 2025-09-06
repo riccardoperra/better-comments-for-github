@@ -24,7 +24,7 @@
     "@types/unist": "catalog:",
     "@vitest/coverage-v8": "catalog:",
     "@vitest/ui": "catalog:",
-    "prosemirror-test-builder": "^1.1.1",
+    "prosemirror-test-builder": "catalog:",
     "tsdown": "catalog:",
     "vfile": "^6.0.3",
     "vitest": "catalog:"

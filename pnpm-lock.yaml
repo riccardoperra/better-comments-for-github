@@ -48,6 +48,9 @@ catalogs:
     prosemirror-state:
       specifier: ^1.4.3
       version: 1.4.3
+    prosemirror-test-builder:
+      specifier: ^1.1.1
+      version: 1.1.1
     prosemirror-view:
       specifier: ^1.40.1
       version: 1.40.1
@@ -342,7 +345,7 @@ importers:
         specifier: 'catalog:'
         version: 3.2.4(vitest@3.2.4)
       prosemirror-test-builder:
-        specifier: ^1.1.1
+        specifier: 'catalog:'
         version: 1.1.1
       tsdown:
         specifier: 'catalog:'
@@ -6317,9 +6320,6 @@ packages:
 
   prosemirror-keymap@1.2.3:
     resolution: {integrity: sha512-4HucRlpiLd1IPQQXNqeo81BGtkY8Ai5smHhKW9jjPKRc2wQIxksg7Hl1tTI2IfT2B/LgX6bfYvXxEpJl7aKYKw==}
-
-  prosemirror-model@1.25.1:
-    resolution: {integrity: sha512-AUvbm7qqmpZa5d9fPKMvH1Q5bqYQvAZWOGRvxsB6iFLyycvC9MwNemNVjHVrWgjaoxAfY8XVg7DbvQ/qxvI9Eg==}
 
   prosemirror-model@1.25.3:
     resolution: {integrity: sha512-dY2HdaNXlARknJbrManZ1WyUtos+AP97AmvqdOQtWtrrC5g4mohVX5DTi9rXNFSk09eczLq9GuNTtq3EfMeMGA==}
@@ -14921,10 +14921,6 @@ snapshots:
       prosemirror-state: 1.4.3
       w3c-keyname: 2.2.8
 
-  prosemirror-model@1.25.1:
-    dependencies:
-      orderedmap: 2.1.1
-
   prosemirror-model@1.25.3:
     dependencies:
       orderedmap: 2.1.1
@@ -14972,7 +14968,7 @@ snapshots:
 
   prosemirror-test-builder@1.1.1:
     dependencies:
-      prosemirror-model: 1.25.1
+      prosemirror-model: 1.25.3
       prosemirror-schema-basic: 1.2.4
       prosemirror-schema-list: 1.5.0
 

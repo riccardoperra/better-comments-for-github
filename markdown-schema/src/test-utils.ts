@@ -17,7 +17,6 @@
 import { markdownFromUnistNode } from 'prosemirror-transformer-markdown/unified'
 import { union } from 'prosekit/core'
 import { createTestEditor } from 'prosekit/core/test'
-import { VFile } from 'vfile'
 import { assert } from 'vitest'
 import { defineDocMarkdown } from './doc/doc'
 import { defineTextMarkdown } from './text/text'
@@ -35,7 +34,7 @@ export function sameNode(node: ProseMirrorNode, expected: ProseMirrorNode) {
 }
 
 export function sameMarkdown(result: UnistNode, expected: string) {
-  const markdown = markdownFromUnistNode(result as Root, new VFile())
+  const markdown = markdownFromUnistNode(result as Root)
   assert.equal(markdown, expected + '\n')
 }
 
