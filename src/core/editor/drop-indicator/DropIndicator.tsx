@@ -14,24 +14,8 @@
  * limitations under the License.
  */
 
-import { defineNodeSpec, union } from 'prosekit/core'
-import { defineHardBreak } from 'prosekit/extensions/hard-break'
-import {
-  fromProseMirrorNode,
-  toProseMirrorNode,
-} from '@prosemirror-processor/unist/mdast'
+import { DropIndicator as ProseKitDropIndicator } from 'prosekit/solid/drop-indicator'
 
-export function defineHardbreakMarkdown() {
-  return union(
-    defineHardBreak(),
-    defineNodeSpec({
-      name: 'hardBreak',
-      unistName: 'break',
-      selectable: false,
-      __toUnist: fromProseMirrorNode('break'),
-      __fromUnist: toProseMirrorNode('hardBreak'),
-    }),
-  )
+export function DropIndicator() {
+  return <ProseKitDropIndicator />
 }
-
-export { remarkHtmlHardbreak } from './remarkHtmlHardbreak'

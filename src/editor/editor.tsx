@@ -30,8 +30,6 @@ import {
   convertUnistToProsemirror,
 } from 'prosemirror-transformer-markdown/prosemirror'
 
-import 'prosemirror-example-setup/style/style.css'
-
 import './editor.css'
 
 import { unistMergeAdjacentList } from '@prosedoc/markdown-schema'

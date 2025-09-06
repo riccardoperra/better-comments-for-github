@@ -24,7 +24,6 @@ import {
   union,
   withPriority,
 } from 'prosekit/core'
-import { defineDropCursor } from 'prosekit/extensions/drop-cursor'
 import { defineGapCursor } from 'prosekit/extensions/gap-cursor'
 import { defineModClickPrevention } from 'prosekit/extensions/mod-click-prevention'
 import { defineVirtualSelection } from 'prosekit/extensions/virtual-selection'
@@ -99,7 +98,6 @@ export function defineMarkdownExtension() {
     defineComment(),
     defineDetails(),
 
-    defineDropCursor(),
     defineGapCursor(),
     defineHorizontalRuleMarkdown(),
     defineVirtualSelection(),
