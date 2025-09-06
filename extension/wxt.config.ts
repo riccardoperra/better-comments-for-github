@@ -45,6 +45,7 @@ export default defineConfig({
       {
         css: ['assets/main.css', 'assets/editor-content.css'],
         matches: ['*://github.com/*'],
+        exclude_matches: ['https://*/login/*'],
       },
     ],
   },
