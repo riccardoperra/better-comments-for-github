@@ -16,38 +16,43 @@
 
 import { defineKeymap } from 'prosekit/core'
 import { TextSelection } from 'prosemirror-state'
+import type { Command } from 'prosemirror-state'
 
 const TAB_CHAR = '\u00A0\u00A0'
+
+export const selectCodeBlock: Command = (state, dispatch) => {
+  const { $head, from, to } = state.selection
+  const parent = $head.parent
+  if (parent.isTextblock && parent.type.spec.code) {
+    const start = $head.start($head.depth)
+    const end = $head.end()
+    const isSelectingAll = from === start && to === end
+    if (isSelectingAll) {
+      console.log('is selecting all')
+      return false
+    }
+    if (from >= start && to <= end) {
+      console.log('set selection inner')
+      if (dispatch) {
+        const tr = state.tr.setSelection(
+          TextSelection.create(state.doc, start, end),
+        )
+        dispatch(tr)
+      }
+      return true
+    }
+
+    return false
+  }
+
+  return false
+}
 
 export function defineCodeBlockCustomCommands() {
   return defineKeymap({
     // Mod-A just select only content into the code block. If everything about this node is already selected (example double-press),
     // we will select the whole content.
-    'Mod-a': (state, dispatch) => {
-      const { $head, from, to } = state.selection
-      const parent = $head.parent
-      if (parent.isTextblock && parent.type.spec.code) {
-        const start = $head.start($head.depth)
-        const end = $head.end()
-        const isSelectingAll = from === start && to === end
-        if (isSelectingAll) {
-          return false
-        }
-        if (from >= start && to <= end) {
-          if (dispatch) {
-            const tr = state.tr.setSelection(
-              TextSelection.create(state.doc, start, end),
-            )
-            dispatch(tr)
-          }
-          return true
-        }
-
-        return false
-      }
-
-      return false
-    },
+    'Mod-a': selectCodeBlock,
     // Support for tab char
     Tab: (state, dispatch) => {
       if (!state.selection.empty) {

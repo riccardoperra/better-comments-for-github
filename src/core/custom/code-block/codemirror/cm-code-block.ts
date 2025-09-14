@@ -16,6 +16,7 @@
 
 import {
   defineCommands,
+  defineKeymap,
   defineNodeSpec,
   insertNode,
   setBlockType,
@@ -24,11 +25,34 @@ import {
   union,
 } from 'prosekit/core'
 import { pmNode } from '@prosemirror-processor/unist'
+import { Selection } from 'prosemirror-state'
 import { defineCodeBlockCustomView } from './codemirror-editor'
 import CmCodeBlockView from './cm-code-block-view'
 import { codeMirrorLanguages } from './supported-languages'
+import type { Command } from 'prosemirror-state'
 import type { CodeBlockAttrs } from 'prosekit/extensions/code-block'
 import type { Code, Text } from 'mdast'
+
+function arrowHandler(
+  dir: 'up' | 'down' | 'left' | 'right' | 'forward' | 'backward',
+): Command {
+  return (state, dispatch, view) => {
+    if (state.selection.empty && view!.endOfTextblock(dir)) {
+      console.log(dir)
+      const side = dir == 'left' || dir == 'up' ? -1 : 1
+      const $head = state.selection.$head
+      const nextPos = Selection.near(
+        state.doc.resolve(side > 0 ? $head.after() : $head.before()),
+        side,
+      )
+      if (nextPos.$head && nextPos.$head.parent.type.name == 'cmCodeBlock') {
+        if (dispatch) dispatch(state.tr.setSelection(nextPos))
+        return true
+      }
+    }
+    return false
+  }
+}
 
 export function defineCmCodeBlock() {
   return union(
@@ -91,6 +115,12 @@ export function defineCmCodeBlock() {
       name: 'cmCodeBlock',
       contentAs: 'div',
       component: CmCodeBlockView,
+    }),
+    defineKeymap({
+      ArrowLeft: arrowHandler('left'),
+      ArrowRight: arrowHandler('right'),
+      ArrowUp: arrowHandler('up'),
+      ArrowDown: arrowHandler('down'),
     }),
   )
 }

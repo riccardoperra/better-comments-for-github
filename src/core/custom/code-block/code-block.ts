@@ -25,6 +25,8 @@ import { defineCodeBlockCustomCommands } from './code-block-custom-commands'
 
 export function defineCodeBlock() {
   return union(
+    defineCmCodeBlock(),
+    defineCmCodeBlockPlugin(),
     defineCodeBlockMarkdown(),
     defineCodeBlockKeymap(),
     defineSolidNodeView({
@@ -32,8 +34,6 @@ export function defineCodeBlock() {
       contentAs: 'code',
       component: ShikiCodeBlockView,
     }),
-    defineCmCodeBlock(),
-    defineCmCodeBlockPlugin(),
     defineCodeBlockCustomCommands(),
   )
 }

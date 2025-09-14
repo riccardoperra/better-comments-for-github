@@ -35,17 +35,17 @@ import '../codemirror-view.css'
 import { EditorView as CodeMirror } from 'codemirror'
 import { Dynamic } from 'solid-js/web'
 import { defaultKeymap, indentWithTab } from '@codemirror/commands'
-
 import {
   createCodeMirror,
   createLazyCompartmentExtension,
 } from 'solid-codemirror'
-import { initTsAutocompleteWorker, typescriptPlugins } from './tsPlugins'
+import { GapCursor } from 'prosemirror-gapcursor'
 import { cmTheme } from './theme'
-import type { Accessor, Component, Setter } from 'solid-js'
+import { initTsAutocompleteWorker, typescriptPlugins } from './tsPlugins'
 import type { KeyBinding, ViewUpdate } from '@codemirror/view'
-import type { SolidNodeViewOptions, SolidNodeViewProps } from 'prosekit/solid'
+import type { Accessor, Component, Setter } from 'solid-js'
 import type { ProseMirrorNode } from 'prosemirror-transformer-markdown/prosemirror'
+import type { SolidNodeViewOptions, SolidNodeViewProps } from 'prosekit/solid'
 
 export const CodeMirrorContext = createContext<{
   cm: Accessor<CodeMirror | null>
@@ -97,12 +97,11 @@ export function defineCodeBlockCustomView(options: SolidNodeViewOptions) {
       }
     },
     stopEvent() {
-      return true
+      return false
     },
     ignoreMutation: () => true,
     update: (node) => {
       const cmView = cm()
-      console.log('cm view', cmView)
       if (!cmView) return false
       if (_node() && node.type != _node()!.type) return false
       setNode(node)
@@ -198,14 +197,16 @@ export function CodemirrorEditor(props: CodemirrorEditorProps) {
     let main = sel.main
     if (!main.empty) return false
     if (unit == 'line') main = codemirror.state.doc.lineAt(main.head) as any
-    if (dir < 0 ? main.from > 0 : main.to < codemirror.state.doc.length)
+    if (dir < 0 ? main.from > 0 : main.to < codemirror.state.doc.length) {
       return false
+    }
     const targetPos =
       context().getPos()! + (dir < 0 ? 0 : context().node.nodeSize)
-    const selection = Selection.near(
-      context().view.state.doc.resolve(targetPos),
-      dir,
-    )
+    const $from = context().view.state.doc.resolve(targetPos)
+    let selection = Selection.near($from, dir)
+    if ($from.parentOffset === 0 && $from.depth === 0) {
+      selection = new GapCursor($from)
+    }
     const tr = context().view.state.tr.setSelection(selection).scrollIntoView()
     context().view.dispatch(tr)
     context().view.focus()
