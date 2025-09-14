@@ -23,6 +23,11 @@ catalog:
   prosemirror-test-builder: ^1.1.1
   prosemirror-view: ^1.40.1
   remark-gfm: 4.0.1
+  remark-parse: ^11.0.0
+  remark-rehype: ^11.1.2
+  remark-stringify: ^11.0.0
+  unist-util-visit: ^5.0.0
+  unified: ^11.0.5
   solid-js: ^1.9.9
   statebuilder: ^0.8.1
   tsdown: ^0.14.2

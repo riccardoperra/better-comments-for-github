@@ -3,12 +3,11 @@ export default defineContentScript({
   runAt: 'document_idle',
   async main(ctx) {
     // Define the UI
-    const ui = createIframeUi(ctx, {
+    const cmWorker = createIframeUi(ctx, {
       page: '/iframe-worker.html',
       position: 'overlay',
       anchor: 'body',
       onMount: (wrapper, iframe) => {
-        // Add styles to the iframe like width
         iframe.id = 'codemirror-ata'
         iframe.style.display = 'none'
         iframe.addEventListener('load', () => {
@@ -21,7 +20,7 @@ export default defineContentScript({
         })
       },
     })
-    ui.mount()
+    cmWorker.mount()
 
     // Firefox does not support injecting content scripts via injectScript yet
     // Manifest V3?

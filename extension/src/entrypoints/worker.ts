@@ -36,7 +36,8 @@ export default defineUnlistedScript(() => {
         )
         const system = createSystem(fsMap)
         return createVirtualTypeScriptEnvironment(system, [], ts, {
-          lib: ['ES2022'],
+          lib: ['ESNext'],
+          strict: true,
         })
       })(),
       onFileUpdated(_env, _path, code) {
@@ -45,7 +46,7 @@ export default defineUnlistedScript(() => {
     })
 
     const ata = setupTypeAcquisition({
-      projectName: 'My ATA Project',
+      projectName: 'GitHub Better Comments',
       typescript: ts,
       logger: console,
       delegate: {
@@ -57,6 +58,6 @@ export default defineUnlistedScript(() => {
 
     Comlink.expose(worker)
   } catch (e) {
-    console.log('my worker error', e)
+    console.log('Error while registering worker', e)
   }
 })

@@ -20,11 +20,7 @@ import { defineCodeBlockCustomView } from './codemirror-editor'
 import CmCodeBlockView from './cm-code-block-view'
 import { codeMirrorLanguages } from './supported-languages'
 import type { CodeBlockAttrs } from 'prosekit/extensions/code-block'
-import type { Code, Nodes as MdastNodes, Text } from 'mdast'
-import type {
-  ProseMirrorNodeToMdastHandler,
-  ToProseMirrorNodeHandler,
-} from '@prosemirror-processor/unist/mdast'
+import type { Code, Text } from 'mdast'
 
 export function defineCmCodeBlock() {
   return union(
@@ -61,7 +57,7 @@ export function defineCmCodeBlock() {
           ['code', { class: language ? `language-${language}` : undefined }, 0],
         ]
       },
-      __toUnist: ((node, parent, context) => {
+      __toUnist: (node, parent, context) => {
         const children = context.handleAll(node)
         return {
           type: 'code',
@@ -71,8 +67,8 @@ export function defineCmCodeBlock() {
             .join(''),
           lang: node.attrs.language,
         }
-      }) satisfies ProseMirrorNodeToMdastHandler<MdastNodes, MdastNodes>,
-      __fromUnist: ((node, children, context) => {
+      },
+      __fromUnist: (node, children, context) => {
         const code = node as Code,
           schema = context.schema
         return pmNode(
@@ -80,7 +76,7 @@ export function defineCmCodeBlock() {
           code.value ? [schema.text(code.value)] : [],
           { language: code.lang },
         )
-      }) satisfies ToProseMirrorNodeHandler<MdastNodes>,
+      },
     }),
     defineCodeBlockCustomView({
       name: 'cmCodeBlock',

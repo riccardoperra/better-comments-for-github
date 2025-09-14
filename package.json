@@ -74,14 +74,14 @@
     "prosemirror-view": "catalog:",
     "rehype-stringify": "^10.0.1",
     "remark-gfm": "catalog:",
-    "remark-parse": "^11.0.0",
-    "remark-rehype": "^11.1.2",
-    "remark-stringify": "^11.0.0",
+    "remark-parse": "catalog:",
+    "remark-rehype": "catalog:",
+    "remark-stringify": "catalog:",
     "solid-codemirror": "^2.3.1",
     "solid-js": "catalog:",
     "statebuilder": "catalog:",
     "storybook-solidjs": "^1.0.0-beta.6",
-    "unified": "^11.0.5",
-    "unist-util-visit": "^5.0.0"
+    "unified": "catalog:",
+    "unist-util-visit": "catalog:"
   }
 }

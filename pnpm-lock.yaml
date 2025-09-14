@@ -57,6 +57,15 @@ catalogs:
     remark-gfm:
       specifier: 4.0.1
       version: 4.0.1
+    remark-parse:
+      specifier: ^11.0.0
+      version: 11.0.0
+    remark-rehype:
+      specifier: ^11.1.2
+      version: 11.1.2
+    remark-stringify:
+      specifier: ^11.0.0
+      version: 11.0.0
     solid-js:
       specifier: ^1.9.9
       version: 1.9.9
@@ -69,6 +78,12 @@ catalogs:
     typescript:
       specifier: ^5.9.2
       version: 5.9.2
+    unified:
+      specifier: ^11.0.5
+      version: 11.0.5
+    unist-util-visit:
+      specifier: ^5.0.0
+      version: 5.0.0
     vite:
       specifier: ^7.1.4
       version: 7.1.4
@@ -195,13 +210,13 @@ importers:
         specifier: 'catalog:'
         version: 4.0.1
       remark-parse:
-        specifier: ^11.0.0
+        specifier: 'catalog:'
         version: 11.0.0
       remark-rehype:
-        specifier: ^11.1.2
+        specifier: 'catalog:'
         version: 11.1.2
       remark-stringify:
-        specifier: ^11.0.0
+        specifier: 'catalog:'
         version: 11.0.0
       solid-codemirror:
         specifier: ^2.3.1
@@ -216,10 +231,10 @@ importers:
         specifier: ^1.0.0-beta.6
         version: 1.0.0-beta.6(solid-js@1.9.9)
       unified:
-        specifier: ^11.0.5
+        specifier: 'catalog:'
         version: 11.0.5
       unist-util-visit:
-        specifier: ^5.0.0
+        specifier: 'catalog:'
         version: 5.0.0
     devDependencies:
       '@changesets/cli':
@@ -456,22 +471,22 @@ importers:
         specifier: ^16.0.1
         version: 16.0.1
       remark-parse:
-        specifier: ^11.0.0
+        specifier: 'catalog:'
         version: 11.0.0
       remark-rehype:
-        specifier: ^11.1.2
+        specifier: 'catalog:'
         version: 11.1.2
       remark-stringify:
-        specifier: ^11.0.0
+        specifier: 'catalog:'
         version: 11.0.0
       unified:
-        specifier: ^11.0.5
+        specifier: 'catalog:'
         version: 11.0.5
       unist-util-is:
         specifier: ^6.0.0
         version: 6.0.0
       unist-util-visit:
-        specifier: ^5.0.0
+        specifier: 'catalog:'
         version: 5.0.0
       vfile:
         specifier: ^6.0.3
