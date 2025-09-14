@@ -15,7 +15,6 @@
  */
 
 import {
-  getLints,
   tsAutocomplete,
   tsFacet,
   tsGoto,
@@ -27,20 +26,11 @@ import {
 import { autocompletion } from '@codemirror/autocomplete'
 import * as Comlink from 'comlink'
 import { javascript } from '@codemirror/lang-javascript'
-import { EditorView } from 'codemirror'
 import {
   autocompleteRenderer,
   defaultTooltipRenderer,
 } from './autocompleteRenderer'
 import type { WorkerShape } from '@valtown/codemirror-ts/worker'
-
-export const ataChangePlugin = EditorView.updateListener.of((vu) => {
-  const facet = vu.view.state.facet(tsFacet)!
-  getLints({
-    path: facet.path,
-    env: facet.worker.getEnv(),
-  })
-})
 
 export const typescriptPlugins = (
   enableTypescript: boolean,

@@ -14,7 +14,15 @@
  * limitations under the License.
  */
 
-import { defineNodeSpec, union } from 'prosekit/core'
+import {
+  defineCommands,
+  defineNodeSpec,
+  insertNode,
+  setBlockType,
+  setNodeAttrs,
+  toggleNode,
+  union,
+} from 'prosekit/core'
 import { pmNode } from '@prosemirror-processor/unist'
 import { defineCodeBlockCustomView } from './codemirror-editor'
 import CmCodeBlockView from './cm-code-block-view'
@@ -24,6 +32,7 @@ import type { Code, Text } from 'mdast'
 
 export function defineCmCodeBlock() {
   return union(
+    defineCodeBlockCommands(),
     defineNodeSpec({
       name: 'cmCodeBlock',
       content: 'text*',
@@ -84,6 +93,23 @@ export function defineCmCodeBlock() {
       component: CmCodeBlockView,
     }),
   )
+}
+
+export function defineCodeBlockCommands() {
+  return defineCommands({
+    setCmCodeBlock: (attrs?: CodeBlockAttrs) => {
+      return setBlockType({ type: 'cmCodeBlock', attrs })
+    },
+    insertCmCodeBlock: (attrs?: CodeBlockAttrs) => {
+      return insertNode({ type: 'cmCodeBlock', attrs })
+    },
+    toggleCmCodeBlock: (attrs?: CodeBlockAttrs) => {
+      return toggleNode({ type: 'cmCodeBlock', attrs })
+    },
+    setCodeBlockAttrs: (attrs: CodeBlockAttrs) => {
+      return setNodeAttrs({ type: 'cmCodeBlock', attrs })
+    },
+  })
 }
 
 function extractLanguageFromElement(

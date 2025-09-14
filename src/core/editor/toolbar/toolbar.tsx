@@ -225,9 +225,16 @@ export function Toolbar() {
           editor().nodes.codeBlock.isActive() ||
           editor().nodes.cmCodeBlock.isActive()
         }
-        disabled={!editor().commands.toggleCodeBlock.canExec()}
+        disabled={
+          !editor().commands.toggleCodeBlock.canExec() ||
+          !editor().commands.toggleCmCodeBlock.canExec()
+        }
         onClick={() => {
-          editor().commands.toggleCodeBlock()
+          if (editor().nodes.codeBlock.isActive()) {
+            editor().commands.toggleCodeBlock()
+          } else {
+            editor().commands.toggleCmCodeBlock()
+          }
         }}
       >
         <EditorActionIcon actionId={'codeBlock'} size={16} />

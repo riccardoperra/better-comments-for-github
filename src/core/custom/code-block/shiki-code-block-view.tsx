@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-import { createMemo, createSignal } from 'solid-js'
+import { createMemo } from 'solid-js'
 import { useNodeViewContext } from '@prosemirror-adapter/solid'
 import { shikiBundledLanguagesInfo } from 'prosekit/extensions/code-block'
 
 import { NodeViewWrapper } from '../../editor/primitives/node-view'
-import { ConfigStore } from '../../../config.store'
 import styles from './code-block-view.module.css'
 import {
   CodeBlockClipboard,
@@ -30,7 +29,6 @@ import type { NodeViewContextProps } from '@prosemirror-adapter/solid'
 
 export default function ShikiCodeBlockView(props: NodeViewContextProps) {
   const context = useNodeViewContext()
-  const configStore = ConfigStore.provide()
   const attrLanguage = createMemo(() => context().node.attrs.language)
 
   const setLanguage = (language: string | null) => {
@@ -43,18 +41,6 @@ export default function ShikiCodeBlockView(props: NodeViewContextProps) {
   const currentValue = createMemo(() => {
     return options.find((info) => info.id === attrLanguage()) ?? null
   })
-
-  const [copied, setCopied] = createSignal(false)
-
-  const copyContent = () => {
-    const content = context().node.textContent
-    navigator.clipboard.writeText(content).then(() => {
-      setCopied(true)
-      setTimeout(() => {
-        setCopied(false)
-      }, 2500)
-    })
-  }
 
   return (
     <NodeViewWrapper>

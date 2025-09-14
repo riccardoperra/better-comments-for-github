@@ -77,7 +77,7 @@ export function CodeBlockLanguageSelector(props: {
               value={props.value?.id || ''}
             >
               <option value="">Plain Text</option>
-              <For each={shikiBundledLanguagesInfo}>
+              <For each={bundledLanguagesInfo}>
                 {(info) => <option value={info.id}>{info.name}</option>}
               </For>
             </select>
@@ -94,6 +94,19 @@ export function CodeBlockLanguageSelector(props: {
   )
 }
 
+const exclude = [
+  'angular-ts',
+  'ts-tags',
+  'angular-html',
+  'jsonl',
+  'json5',
+  'html-derivative',
+]
+
+const bundledLanguagesInfo = shikiBundledLanguagesInfo.filter(
+  (info) => !exclude.includes(info.id),
+)
+
 export function CustomCodeBlockLanguageSelector(props: {
   value: ShikiBundledLanguageInfo | null
   onValueChange: (value: string | null) => void
@@ -103,9 +116,9 @@ export function CustomCodeBlockLanguageSelector(props: {
   const filteredOptions = createMemo(() => {
     const termValue = term()
     if (!termValue) {
-      return shikiBundledLanguagesInfo
+      return bundledLanguagesInfo
     }
-    return shikiBundledLanguagesInfo.filter((option) =>
+    return bundledLanguagesInfo.filter((option) =>
       option.name.toLowerCase().includes(term().toLowerCase()),
     )
   })
