@@ -19,20 +19,19 @@ import { useNodeViewContext } from '@prosemirror-adapter/solid'
 import { shikiBundledLanguagesInfo } from 'prosekit/extensions/code-block'
 
 import { NodeViewWrapper } from '../../../editor/primitives/node-view'
-import { ConfigStore } from '../../../../config.store'
 import { ExtensionEditorStore } from '../../../../editor.store'
 import styles from '../code-block-view.module.css'
 import {
   CodeBlockClipboard,
   CodeBlockLanguageSelector,
 } from '../CodeBlockToolbar'
+
 import { CodemirrorEditor } from './codemirror-editor'
 import type { CodeBlockAttrs } from 'prosekit/extensions/code-block'
 import type { NodeViewContextProps } from '@prosemirror-adapter/solid'
 
 export default function CmCodeBlockView(props: NodeViewContextProps) {
   const context = useNodeViewContext()
-  const configStore = ConfigStore.provide()
   const editorStore = ExtensionEditorStore.provide()
   const attrLanguage = createMemo(() => context().node.attrs.language)
 
@@ -50,6 +49,7 @@ export default function CmCodeBlockView(props: NodeViewContextProps) {
 
   const [isActive, setIsActive] = createSignal<boolean>()
   const [ready, setReady] = createSignal<boolean>()
+  const [diagnostic, setDiagnostic] = createSignal<Array<unknown>>([])
 
   const setLanguage = (language: string | null) => {
     const attrs: CodeBlockAttrs = { language: language ?? '' }
@@ -82,18 +82,27 @@ export default function CmCodeBlockView(props: NodeViewContextProps) {
     <NodeViewWrapper>
       <div class={`highlight ${styles.CodeBlock}`}>
         <div contentEditable={false}>
-          <CodemirrorEditor workerInitializedChange={setReady} />
+          <CodemirrorEditor
+            onDiagnosticChange={setDiagnostic}
+            workerInitializedChange={setReady}
+          />
         </div>
 
-        <Show when={isActive()}>
-          <div class={styles.codeBlockActions} contenteditable={false}>
-            <CodeBlockLanguageSelector
-              value={currentValue()}
-              setLanguage={setLanguage}
-            />
-            <CodeBlockClipboard content={context().node.textContent} />
-          </div>
-        </Show>
+        <div class={styles.codeBlockActions} contenteditable={false}>
+          <Show when={diagnostic().length}>
+            <div class={'fgColor-muted text-small'}>
+              {diagnostic().length}{' '}
+              {diagnostic().length === 1 ? 'error ' : 'errors'}
+            </div>
+          </Show>
+
+          <CodeBlockClipboard content={context().node.textContent} />
+
+          <CodeBlockLanguageSelector
+            value={currentValue()}
+            setLanguage={setLanguage}
+          />
+        </div>
       </div>
     </NodeViewWrapper>
   )

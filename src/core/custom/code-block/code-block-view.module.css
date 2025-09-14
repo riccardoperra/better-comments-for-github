@@ -16,7 +16,7 @@
 
 .codeBlockActions {
   display: flex;
-  gap: var(--base-size-8);
+  gap: var(--base-size-4);
   justify-content: space-between;
   align-items: center;
   padding-inline: 0 var(--base-size-4);
@@ -36,10 +36,8 @@
     position: relative;
     user-select: none;
     overflow: visible;
-    padding: var(--base-size-8);
+    padding-inline: var(--base-size-2);
     padding-block: var(--base-size-6);
-
-    max-width: 150px;
 
     > * {
       display: inline-grid;

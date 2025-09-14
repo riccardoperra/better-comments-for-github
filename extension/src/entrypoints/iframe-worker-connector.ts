@@ -22,10 +22,8 @@ export default defineUnlistedScript(() => {
     (message) => {
       const url = message.data
       const worker = new Worker(url)
-      console.warn('Registering worker', worker)
-
+      console.debug('[GitHub Better Comments Extension] Init worker', worker)
       const wrappedWorker = Comlink.wrap(worker)
-
       Comlink.expose(wrappedWorker, Comlink.windowEndpoint(self.parent))
     },
     { once: true },

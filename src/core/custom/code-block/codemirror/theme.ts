@@ -22,12 +22,14 @@ export const cmTheme = [
   EditorView.theme({
     '&': {
       backgroundColor: 'transparent !important',
+      outline: 'none',
     },
     '.cm-line': {
       paddingInline: 0,
     },
     '.cm-content': {
       padding: 0,
+      outline: 'none',
     },
     '.cm-tooltip': {
       backgroundColor: 'var(--overlay-bgColor)',

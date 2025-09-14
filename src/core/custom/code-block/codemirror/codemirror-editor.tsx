@@ -21,9 +21,9 @@ import type {
 import { useNodeViewContext } from '@prosemirror-adapter/solid'
 import {
   createContext,
+  createEffect,
   createSignal,
   onCleanup,
-  onMount,
   useContext,
 } from 'solid-js'
 import { defineNodeViewComponent } from 'prosekit/core'
@@ -40,12 +40,12 @@ import {
   createCodeMirror,
   createLazyCompartmentExtension,
 } from 'solid-codemirror'
-import { cmTheme } from './theme'
 import { initTsAutocompleteWorker, typescriptPlugins } from './tsPlugins'
-import type { ProseMirrorNode } from 'prosemirror-transformer-markdown/prosemirror'
-import type { SolidNodeViewOptions, SolidNodeViewProps } from 'prosekit/solid'
-import type { KeyBinding, ViewUpdate } from '@codemirror/view'
+import { cmTheme } from './theme'
 import type { Accessor, Component, Setter } from 'solid-js'
+import type { KeyBinding, ViewUpdate } from '@codemirror/view'
+import type { SolidNodeViewOptions, SolidNodeViewProps } from 'prosekit/solid'
+import type { ProseMirrorNode } from 'prosemirror-transformer-markdown/prosemirror'
 
 export const CodeMirrorContext = createContext<{
   cm: Accessor<CodeMirror | null>
@@ -156,12 +156,16 @@ export function defineCodeBlockCustomView(options: SolidNodeViewOptions) {
 
 export interface CodemirrorEditorProps {
   workerInitializedChange?: (value: boolean) => void
+  onDiagnosticChange?: (data: Array<unknown>) => void
 }
 
 export function CodemirrorEditor(props: CodemirrorEditorProps) {
   const context = useNodeViewContext()
   const { updating, setCm, cm } = useContext(CodeMirrorContext)!
-  const { ref, createExtension, editorView } = createCodeMirror({})
+  const { ref, createExtension, editorView } = createCodeMirror({
+    value: context().node.textContent,
+  })
+  setCm(editorView())
 
   const forwardUpdate = (update: ViewUpdate) => {
     if (updating() || !cm()?.hasFocus) return
@@ -254,16 +258,23 @@ export function CodemirrorEditor(props: CodemirrorEditorProps) {
   createLazyCompartmentExtension(async () => {
     const { worker, path } = await initTsAutocompleteWorker()
     props.workerInitializedChange?.(true)
-    return typescriptPlugins(true, true, worker, path)
+    return [
+      typescriptPlugins(true, true, worker, path),
+      CodeMirror.updateListener.of(() => {
+        worker
+          .getLints({
+            path,
+          })
+          .then((lints) => props.onDiagnosticChange?.(lints))
+      }),
+    ]
   }, editorView)
 
-  onMount(() => {
-    setCm(editorView())
-    if (editorView()) {
-      editorView().focus()
-    }
-    onCleanup(() => setCm(null))
+  createEffect(() => {
+    const view = editorView()
+    setCm(view)
   })
+  onCleanup(() => setCm(null))
 
   return <pre ref={ref} />
 }
