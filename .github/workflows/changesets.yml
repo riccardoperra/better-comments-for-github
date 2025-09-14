@@ -1,0 +1,137 @@
+name: Release
+
+permissions:
+  contents: write
+  pull-requests: write
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@v4
+      - name: 📥 Setup
+        uses: ./.github/actions/setup-job
+      - name: 📥 Monorepo install
+        uses: ./.github/actions/pnpm-install
+
+  build-core:
+    name: build-core
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@v4
+      - name: 📥 Setup
+        uses: ./.github/actions/setup-job
+      - name: 📥 Monorepo install
+        uses: ./.github/actions/pnpm-install
+
+      - name: Build
+        run: |
+          pnpm build:core-libs
+
+      - name: Cache packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ./markdown-schema/dist
+            ./markdown-transformer/dist
+          key: packages-dist-${{ github.run_id }}-${{ github.run_number }}
+
+  test:
+    name: test
+    needs: [ install, build-core ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@v4
+      - name: 📥 Setup
+        uses: ./.github/actions/setup-job
+      - name: 📥 Monorepo install
+        uses: ./.github/actions/pnpm-install
+
+      - name: Restore dist
+        uses: actions/cache@v4
+        with:
+          path: |
+            ./markdown-schema/dist
+            ./markdown-transformer/dist
+          key: packages-dist-${{ github.run_id }}-${{ github.run_number }}
+
+      - name: Tests
+        run: |
+          pnpm --filter ./markdown-schema --filter ./ run test
+
+
+  changeset:
+    runs-on: ubuntu-latest
+    needs: [ "test" ]
+    outputs:
+      tag_exists: ${{ steps.check_tag.outputs.tag_exists }}
+      new_tag: ${{ steps.check_tag.outputs.new_tag }}
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+      - name: 📥 Setup
+        uses: ./.github/actions/setup-job
+      - name: 📥 Monorepo install
+        uses: ./.github/actions/pnpm-install
+
+      - name: Create Release Pull Request
+        id: changeset
+        uses: changesets/action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check tag
+        id: check_tag
+        if: steps.changeset.outputs.hasChangesets == 'false'
+        run: |
+          pnpm run ci:check-tag
+  
+
+  create-release:
+    runs-on: ubuntu-latest
+    needs: [ "test", "changeset" ]
+    if: needs.changeset.outputs.tag_exists == 'false'
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@v4
+      - name: 📥 Setup
+        uses: ./.github/actions/setup-job
+      - name: 📥 Monorepo install
+        uses: ./.github/actions/pnpm-install
+
+      - name: Restore dist
+        uses: actions/cache@v4
+        with:
+          path: |
+            ./markdown-schema/dist
+            ./markdown-transformer/dist
+          key: packages-dist-${{ github.run_id }}-${{ github.run_number }}
+
+      - name: Create zip
+        run: |
+          cd extension
+          pnpm zip
+          pnpm zip:firefox
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ needs.changeset.outputs.new_tag }}
+          tag_name: ${{ needs.changeset.outputs.new_tag }}
+          append_body: true
+          body: |
+            Please refer to [CHANGELOG.md](https://github.com/riccardoperra/better-comments-for-github/tree/${{ needs.changeset.outputs.new_tag }}/extension/CHANGELOG.md) for the full list of changes.
+          generate_release_notes: true
+          files: extension/dist/*.zip

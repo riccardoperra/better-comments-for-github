@@ -28,7 +28,6 @@ export function defineHardbreakMarkdown() {
       name: 'hardBreak',
       unistName: 'break',
       selectable: false,
-      // @ts-expect-error TODO: fix hast type
       __toUnist: fromProseMirrorNode('break'),
       __fromUnist: toProseMirrorNode('hardBreak'),
     }),

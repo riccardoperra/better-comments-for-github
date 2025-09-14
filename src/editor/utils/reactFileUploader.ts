@@ -20,9 +20,9 @@ import {
   getFiber,
   traverseFiber,
   waitForReactFiber,
-} from '../../core/react-hacks/fiber'
+} from '../../react-hacks/fiber'
 import { loadImagePreview } from './uploaderHandler'
-import type { Fiber } from '../../core/react-hacks/fiber'
+import type { Fiber } from '../../react-hacks/fiber'
 import type {
   GitHubFile,
   GitHubUploaderHandler,
@@ -92,9 +92,11 @@ export function createGitHubUploaderReactHandler(element: HTMLElement) {
   const [reactiveFiber, setFiber] = createSignal()
 
   if (!fiber) {
-    waitForReactFiber(element).then((fiber) => {
-      setFiber(fiber)
-    })
+    waitForReactFiber(element)
+      .then((fiber) => {
+        setFiber(fiber)
+      })
+      .catch(() => setFiber(null))
   } else {
     setFiber(fiber)
   }

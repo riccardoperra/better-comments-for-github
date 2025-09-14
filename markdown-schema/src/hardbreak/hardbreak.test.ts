@@ -27,6 +27,7 @@ import {
   getNodesBaseExtensions,
   sameMarkdown,
   sameNode,
+  testUnknownHandler,
 } from '../test-utils'
 import { defineHardbreakMarkdown } from './hardbreak'
 import { remarkHtmlHardbreak } from './remarkHtmlHardbreak'
@@ -45,7 +46,11 @@ test('markdown -> prosemirror (html tag)', () => {
     { transformers: [remarkHtmlHardbreak] },
   )
 
-  const result = convertUnistToProsemirror(unist, editor.schema)
+  const result = convertUnistToProsemirror(
+    unist,
+    editor.schema,
+    testUnknownHandler,
+  )
 
   const expected = doc(
     p('This is a text', hardbreak(), 'This is a text with hardbreak'),
@@ -61,7 +66,11 @@ test('markdown -> prosemirror (html tag)', () => {
     { transformers: [remarkHtmlHardbreak] },
   )
 
-  const result = convertUnistToProsemirror(unist, editor.schema)
+  const result = convertUnistToProsemirror(
+    unist,
+    editor.schema,
+    testUnknownHandler,
+  )
 
   const expected = doc(
     p('This is a text', hardbreak(), 'This is a text with hardbreak'),

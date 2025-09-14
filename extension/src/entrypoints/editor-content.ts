@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-import { queryComment } from '../../../src/dom/queryComment'
-
-import { mountEditor } from '../../../src/render'
+import { mountEditor } from '@better-comments-for-github/core/render'
 import {
   createGitHubEditorInstance,
   createGitHubPageInstance,
@@ -27,9 +25,8 @@ import {
 import { GitHubNativeTextareaHandler } from '../utils/gitHubNativeTextareaHandler'
 import { GitHubEditorInjector } from '../utils/injectEditor'
 import { GitHubReactTextareaHandler } from '../utils/gitHubReactTextareaHandler'
-import type { EditorType } from '../../../src/editor/editor'
-
-import './styles.css'
+import { githubQueryEditorParent } from '../utils/githubQueryEditorParent'
+import type { EditorType } from '@better-comments-for-github/core/editor/editor'
 
 export default defineUnlistedScript(() => {
   createRoot(() => {
@@ -37,7 +34,7 @@ export default defineUnlistedScript(() => {
     let rootDisposer: undefined | (() => void)
 
     createGitHubPageInstance({
-      onClickLink(this) {
+      onDestroy(this) {
         if (observerDisposer) {
           observerDisposer()
           observerDisposer = undefined
@@ -64,27 +61,29 @@ export default defineUnlistedScript(() => {
 
         createRoot((_rootDisposer) => {
           rootDisposer = _rootDisposer
-          ;[, , , observerDisposer] = queryComment({
-            onNodeRemoved: (element) => {
-              const instance = getGitHubEditorInstanceFromElement(element)
+          ;[, observerDisposer] = githubQueryEditorParent({
+            onNodeRemoved: (textarea) => {
+              const instance = getGitHubEditorInstanceFromElement(textarea)
               if (instance) {
-                removeGitHubEditorInstance(this, instance)
+                removeGitHubEditorInstance(this, textarea, instance)
               }
             },
-            onNodeAdded: (element) => {
+            onNodeAdded: (textarea, element) => {
               createRoot((dispose) => {
                 const editorInstance = createGitHubEditorInstance(
                   element,
+                  textarea,
                   dispose,
                 )
                 const editorInjector = new GitHubEditorInjector()
                 editorInstance.setInjector(editorInjector)
-                registerGitHubEditorInstance(this, editorInstance)
+                registerGitHubEditorInstance(this, textarea, editorInstance)
 
                 const {
                   textareaRef,
                   setTextareaRef,
                   showOldEditor,
+                  setShowOldEditor,
                   editorElement,
                   suggestionData,
                   setSuggestionData,
@@ -204,9 +203,12 @@ export default defineUnlistedScript(() => {
                     currentUsername,
                     suggestionData,
                     open: showOldEditor,
+                    openChange: setShowOldEditor,
                     uploadHandler: editorInjector.uploadHandler!,
                     textarea: textareaRef,
-                    initialValue: textareaRef()?.value ?? '',
+                    get initialValue() {
+                      return textareaRef()?.value ?? ''
+                    },
                     type,
                     repository,
                     owner: repositoryOwner,

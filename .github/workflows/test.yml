@@ -1,0 +1,65 @@
+on:
+  pull_request:
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@v4
+      - name: 📥 Setup
+        uses: ./.github/actions/setup-job
+      - name: 📥 Monorepo install
+        uses: ./.github/actions/pnpm-install
+
+  build:
+    name: build-core
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@v4
+      - name: 📥 Setup
+        uses: ./.github/actions/setup-job
+      - name: 📥 Monorepo install
+        uses: ./.github/actions/pnpm-install
+
+      - name: Build
+        run: |
+          pnpm build:core-libs
+
+      - name: Cache packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ./markdown-schema/dist
+            ./markdown-transformer/dist
+          key: packages-dist-${{ github.run_id }}-${{ github.run_number }}
+
+  test:
+    name: test
+    needs: [ install, build ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@v4
+      - name: 📥 Setup
+        uses: ./.github/actions/setup-job
+      - name: 📥 Monorepo install
+        uses: ./.github/actions/pnpm-install
+
+      - name: Restore dist
+        uses: actions/cache@v4
+        with:
+          path: |
+            ./markdown-schema/dist
+            ./markdown-transformer/dist
+          key: packages-dist-${{ github.run_id }}-${{ github.run_number }}
+
+      - name: Tests
+        run: |
+          pnpm --filter ./markdown-schema --filter ./ run test
+
+concurrency:
+  group: main-${{ github.head_ref }}
+  cancel-in-progress: true

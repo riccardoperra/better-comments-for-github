@@ -25,8 +25,8 @@ import {
 } from '../autocomplete/Autocomplete'
 
 import { githubAlertTypeMap } from '../../custom/githubAlert/config'
-import { EditorTextShortcut } from '../kbd/kbd'
-import { EditorActionIcon } from '../action-icon/ActionIcon'
+import { EditorTextShortcut } from '../../ui/kbd/kbd'
+import { EditorActionIcon } from '../../ui/action-icon/ActionIcon'
 import styles from './slash-menu.module.css'
 import type { JSX } from 'solid-js'
 import type { LucideProps } from 'lucide-solid'
@@ -172,15 +172,15 @@ const GroupedMenuItems = groupMenuItems()
 
 export default function SlashMenu() {
   const editor = useEditor<EditorExtension>()
+  const regex = /\/(|\S.*)$/iu
+
   return (
     <AutocompletePopover
-      regex={/(?:^|(?<=\s))\/(?!\/)[^/]*$/iu}
+      regex={regex}
       fitViewport={false}
       class={styles.slashMenu}
     >
       <AutocompleteList>
-        <AutocompleteEmpty>No results</AutocompleteEmpty>
-
         <div class={styles.slashMenuSectionGroup}>
           <For each={GroupedMenuItems}>
             {(group) => (
@@ -235,6 +235,8 @@ export default function SlashMenu() {
             )}
           </For>
         </div>
+
+        <AutocompleteEmpty>No results</AutocompleteEmpty>
       </AutocompleteList>
     </AutocompletePopover>
   )

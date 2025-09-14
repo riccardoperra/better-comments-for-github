@@ -24,7 +24,6 @@ import {
   union,
   withPriority,
 } from 'prosekit/core'
-import { defineDropCursor } from 'prosekit/extensions/drop-cursor'
 import { defineGapCursor } from 'prosekit/extensions/gap-cursor'
 import { defineModClickPrevention } from 'prosekit/extensions/mod-click-prevention'
 import { defineVirtualSelection } from 'prosekit/extensions/virtual-selection'
@@ -61,7 +60,7 @@ import { defineGitHubIssueReference } from '../custom/issue-reference/issue'
 import { defineImageExtension } from '../custom/image/extension'
 import { defineComment } from '../custom/comment/comment'
 import { defineDetails } from '../custom/details/details'
-import { defineExitable } from './exitable/exitable'
+import { defineExitable } from '../custom/exitable/exitable'
 import type { HeadingAttrs } from 'prosekit/extensions/heading'
 
 function defineCode() {
@@ -99,7 +98,6 @@ export function defineMarkdownExtension() {
     defineComment(),
     defineDetails(),
 
-    defineDropCursor(),
     defineGapCursor(),
     defineHorizontalRuleMarkdown(),
     defineVirtualSelection(),

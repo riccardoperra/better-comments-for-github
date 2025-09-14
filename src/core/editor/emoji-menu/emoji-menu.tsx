@@ -28,8 +28,8 @@ import {
   SearchableSelectPopoverContent,
   SearchableSelectProvider,
   SearchableSelectRoot,
-} from '../searchable-select/SearchableSelect'
-import { useSearchableSelectAutocompleteExtension } from '../searchable-select/searchable-select-autocomplete'
+} from '../../ui/searchable-select/SearchableSelect'
+import { useSearchableSelectAutocompleteExtension } from '../../ui/searchable-select/searchable-select-autocomplete'
 import styles from './emoji-menu.module.css'
 import type { EditorExtension } from '../extension'
 import type {
@@ -73,6 +73,7 @@ export default function EmojiMenu(props: { emojis: SuggestionData['emojis'] }) {
     if (_.length < 2) {
       emojis = emojis.slice(0, 50)
     }
+
     return emojis.filter((emoji) => {
       return emoji.name.toLowerCase().includes(_)
     })

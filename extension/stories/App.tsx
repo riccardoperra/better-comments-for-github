@@ -46,10 +46,10 @@ export function App(props: AppProps) {
             <div class={'EditorContent'}>
               <EditorRootContext.Provider
                 value={{
-                  data,
+                  data: () => data,
                   currentUsername: () => 'riccardoperra',
-                  owner: 'riccardoperra',
-                  repository: 'test-repository',
+                  owner: () => 'riccardoperra',
+                  repository: () => 'test-repository',
                   uploadHandler: mockUploader,
                   get initialValue() {
                     return textareaRef().value
@@ -62,12 +62,7 @@ export function App(props: AppProps) {
                   },
                 }}
               >
-                <Editor
-                  type={'native'}
-                  suggestions={data}
-                  textarea={textareaRef()}
-                  initialValue={textareaRef().value}
-                />
+                <Editor type={'native'} suggestions={data} />
               </EditorRootContext.Provider>
             </div>
           )}

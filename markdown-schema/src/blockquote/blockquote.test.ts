@@ -27,6 +27,7 @@ import {
   getNodesBaseExtensions,
   sameMarkdown,
   sameNode,
+  testUnknownHandler,
 } from '../test-utils'
 import { defineBlockquoteMarkdown } from './blockquote'
 
@@ -45,7 +46,11 @@ test('markdown -> prosemirror', () => {
 >
 > A line after a break`)
 
-  const result = convertUnistToProsemirror(unist, editor.schema)
+  const result = convertUnistToProsemirror(
+    unist,
+    editor.schema,
+    testUnknownHandler,
+  )
 
   const expected = doc(
     p('This is just a paragraph.'),
@@ -66,7 +71,11 @@ test('(markdown -> prosemirror) Nested ', () => {
 >> This is a nested blockquote.
 >> This is a nested blockquote second line`)
 
-  const result = convertUnistToProsemirror(unist, editor.schema)
+  const result = convertUnistToProsemirror(
+    unist,
+    editor.schema,
+    testUnknownHandler,
+  )
 
   const expected = doc(
     p('This is just a paragraph.'),

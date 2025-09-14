@@ -30,8 +30,6 @@ import {
   convertUnistToProsemirror,
 } from 'prosemirror-transformer-markdown/prosemirror'
 
-import 'prosemirror-example-setup/style/style.css'
-
 import './editor.css'
 
 import { unistMergeAdjacentList } from '@prosedoc/markdown-schema'
@@ -71,7 +69,8 @@ export const EditorRootContext = createContext<EditorRootContextProps>()
 function sanitizeMarkdownValue(value: string) {
   return (
     value
-      .replaceAll('\\', '')
+      // Remove all backslashes -> safe?
+      // .replaceAll('\\', '')
       // Handle Alerts:  > [!NOTE]
       .replaceAll('> \\[!', '> [!')
       // Handle github links: https:\//github.com

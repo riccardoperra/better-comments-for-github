@@ -25,9 +25,9 @@ import {
   getFiber,
   traverseFiber,
   waitForReactFiber,
-} from '../../core/react-hacks/fiber'
+} from '../../react-hacks/fiber'
 import type { Accessor, JSXElement } from 'solid-js'
-import type { Fiber } from '../../core/react-hacks/fiber'
+import type { Fiber } from '../../react-hacks/fiber'
 
 export interface MentionSuggestion {
   avatarUrl: string
@@ -86,9 +86,11 @@ export function createSuggestionData(element: HTMLElement) {
     })
   }
   if (!fiber) {
-    waitForReactFiber(element).then((fiber) => {
-      register(fiber)
-    })
+    waitForReactFiber(element)
+      .then((fiber) => {
+        register(fiber)
+      })
+      .catch(() => {})
   } else {
     register(fiber)
   }
@@ -124,12 +126,34 @@ function makeSuggestionData(fiber: Fiber): Accessor<SuggestionData> {
     notifier()
 
     return {
-      mentions: fiber.memoizedProps.mentionSuggestions,
-      emojis: fiber.memoizedProps.emojiSuggestions,
-      savedReplies: fiber.memoizedProps.savedReplies,
-      references: fiber.memoizedProps.referenceSuggestions,
+      mentions: getSafeSuggestionValueValue(
+        fiber.memoizedProps.mentionSuggestions,
+        [],
+      ),
+      emojis: getSafeSuggestionValueValue(
+        fiber.memoizedProps.emojiSuggestions,
+        [],
+      ),
+      savedReplies: getSafeSuggestionValueValue(
+        fiber.memoizedProps.savedReplies,
+        [],
+      ),
+      references: getSafeSuggestionValueValue(
+        fiber.memoizedProps.referenceSuggestions,
+        [],
+      ),
     } as SuggestionData
   }
 
   return createMemo(getDataFromFiber)
+}
+
+function getSafeSuggestionValueValue<T>(value: unknown, fallback: T): T {
+  if (value === 'loading') {
+    return fallback
+  }
+  if (typeof value === typeof fallback) {
+    return value as T
+  }
+  return fallback
 }

@@ -24,7 +24,7 @@ import {
   HoverCardArrow,
   HoverCardContent,
   HoverCardTrigger,
-} from '../../../editor/hover-card/HoverCard'
+} from '../../../ui/hover-card/HoverCard'
 import { getLinkFromIssueReferenceAttrs } from '../issue-reference-utils'
 import {
   getIssueHoverCardContent,

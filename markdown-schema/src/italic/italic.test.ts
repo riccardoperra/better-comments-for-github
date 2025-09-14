@@ -26,6 +26,7 @@ import {
   getMarksBaseExtensions,
   sameMarkdown,
   sameNode,
+  testUnknownHandler,
 } from '../test-utils'
 import { defineItalicMarkdown } from './italic'
 
@@ -40,7 +41,11 @@ test('markdown -> prosemirror', () => {
   const editor = getEditorInstance(extension)
   const unist = markdownToUnist(`Just a test content *with italicized text*`)
 
-  const result = convertUnistToProsemirror(unist, editor.schema)
+  const result = convertUnistToProsemirror(
+    unist,
+    editor.schema,
+    testUnknownHandler,
+  )
 
   sameNode(result, doc(p('Just a test content ', em('with italicized text'))))
 })

@@ -26,6 +26,7 @@ import {
   getMarksBaseExtensions,
   sameMarkdown,
   sameNode,
+  testUnknownHandler,
 } from '../test-utils'
 import { defineLinkMarkdown } from './link'
 
@@ -42,7 +43,11 @@ test('(markdown -> prosemirror) Link with url', () => {
     `Just a [link](https://example.com) into content`,
   )
 
-  const result = convertUnistToProsemirror(unist, editor.schema)
+  const result = convertUnistToProsemirror(
+    unist,
+    editor.schema,
+    testUnknownHandler,
+  )
 
   sameNode(
     result,
@@ -62,7 +67,11 @@ test('(markdown -> prosemirror) Link with title', () => {
     `Just a [link](https://example.com "This is a title") into content`,
   )
 
-  const result = convertUnistToProsemirror(unist, editor.schema)
+  const result = convertUnistToProsemirror(
+    unist,
+    editor.schema,
+    testUnknownHandler,
+  )
 
   sameNode(
     result,
@@ -82,7 +91,11 @@ test('(markdown -> prosemirror) Link with defined content', () => {
     `This is an example link: [https://example.com]`,
   )
 
-  const result = convertUnistToProsemirror(unist, editor.schema)
+  const result = convertUnistToProsemirror(
+    unist,
+    editor.schema,
+    testUnknownHandler,
+  )
 
   sameNode(
     result,

@@ -21,10 +21,10 @@ import {
   fetchMentionableUsers,
   getUserAvatarId,
   tryGetReferences,
-} from '../../../src/github/data'
-import { GitHubUploaderNativeHandler } from '../../../src/core/custom/image/github-file-uploader'
-import type { AttachmentHandlerElement } from '../../../src/core/custom/image/github-file-uploader'
-import type { SuggestionData } from '../../../src/editor/utils/loadSuggestionData'
+} from '@better-comments-for-github/core/github/data'
+import { GitHubUploaderNativeHandler } from '@better-comments-for-github/core/core/custom/image/github-file-uploader'
+import type { AttachmentHandlerElement } from '@better-comments-for-github/core/core/custom/image/github-file-uploader'
+import type { SuggestionData } from '@better-comments-for-github/core/editor/utils/loadSuggestionData'
 
 export class GitHubNativeTextareaHandler {
   readonly classes: { [key: string]: Array<string> } = {}
@@ -147,19 +147,44 @@ export class GitHubNativeTextareaHandler {
       }
     }
 
+    // PR Comments - Review Button
+    const form = this.root.closest('form#pull_requests_submit_review')
+    if (form) {
+      // Mobile and desktop have different footers
+      const footers = form.querySelectorAll('.Overlay-footer')
+      if (footers.length) {
+        return () => {
+          const switchRoot = document.createElement('div')
+          switchRoot.style.display = 'inline'
+          this.instance.switchButton.render(switchRoot, {
+            size: 'medium',
+            variant: 'secondary',
+          })
+          footers.forEach((footer) => {
+            footer.appendChild(switchRoot)
+          })
+        }
+      }
+    }
+
     // This case will match in the PR comment edit
     const tabContainer = this.findTabContainer(textarea)
     if (tabContainer && tabContainer.classList.contains('CommentBox')) {
       const nextSibling = tabContainer.nextElementSibling
-      // Hope will match
-      if (nextSibling && nextSibling.tagName === 'DIV') {
-        const switchRoot = document.createElement('div')
-        switchRoot.style.display = 'inline'
-        nextSibling.prepend(switchRoot)
-        this.instance.switchButton.render(switchRoot, {
-          size: 'medium',
-          variant: 'secondary',
-        })
+      if (nextSibling) {
+        return () => {
+          const nextSibling = tabContainer.nextElementSibling
+          // Hope will match
+          if (nextSibling && nextSibling.tagName === 'DIV') {
+            const switchRoot = document.createElement('div')
+            switchRoot.style.display = 'inline'
+            nextSibling.prepend(switchRoot)
+            this.instance.switchButton.render(switchRoot, {
+              size: 'medium',
+              variant: 'secondary',
+            })
+          }
+        }
       }
     }
 

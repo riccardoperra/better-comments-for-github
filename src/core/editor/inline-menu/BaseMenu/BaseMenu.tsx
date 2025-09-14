@@ -17,7 +17,7 @@
 import { Show } from 'solid-js'
 import { useEditor } from 'prosekit/solid'
 import { ToolbarAction as Button } from '../../toolbar/toolbar'
-import { EditorActionIcon } from '../../action-icon/ActionIcon'
+import { EditorActionIcon } from '../../../ui/action-icon/ActionIcon'
 import type { EditorExtension } from '../../extension'
 
 export interface BaseMenuProps {

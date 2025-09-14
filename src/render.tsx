@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-import { mergeProps, render } from 'solid-js/web'
+import { ErrorBoundary, mergeProps, render } from 'solid-js/web'
 import { StateProvider } from 'statebuilder'
-import { Show, createSignal } from 'solid-js'
+import { Show, onCleanup, onMount } from 'solid-js'
 import { clsx } from 'clsx'
-import { ConfettiExplosion } from 'solid-confetti-explosion'
 import { Editor, EditorRootContext } from './editor/editor'
+import { OcticonCaution } from './core/custom/githubAlert/icons'
+import { ConfigStore } from './config.store'
 import type { EditorType } from './editor/editor'
 import type { Accessor } from 'solid-js'
 import type { GitHubUploaderHandler } from './core/custom/image/github-file-uploader'
@@ -27,6 +28,7 @@ import type { SuggestionData } from './editor/utils/loadSuggestionData'
 
 export interface RenderEditorProps {
   open: Accessor<boolean>
+  openChange: (open: boolean) => void
   currentUsername: Accessor<string | null>
   suggestionData: Accessor<SuggestionData>
   initialValue: string
@@ -46,46 +48,74 @@ export function SwitchButton(props: {
   const mergedProps = mergeProps({ size: 'small', variant: 'invisible' }, props)
 
   const label = () =>
-    props.open ? 'Back to default editor' : 'Improve Editor 🤯'
-
-  const [confetti, setConfetti] = createSignal(false)
+    props.open ? 'Back to default editor' : 'Switch to a better editor'
 
   return (
-    <div style={{ position: 'relative' }}>
-      <Show when={confetti()}>
-        <div
-          style={{
-            position: 'absolute',
-            left: '50%',
-            transform: 'translateX(-50%)',
-          }}
-        >
-          <ConfettiExplosion particlesShape={'mix'} count={2} />
-        </div>
-      </Show>
-      <button
-        type={'button'}
-        class={clsx('Button mr-2', {
-          'Button--small': mergedProps.size === 'small',
-          'Button--medium': mergedProps.size === 'medium',
-          'Button--secondary': mergedProps.variant === 'secondary',
-          'Button--invisible': mergedProps.variant === 'invisible',
-        })}
-        onClick={() => {
-          mergedProps.onOpenChange(!mergedProps.open)
-          if (mergedProps.open) {
-            setConfetti(true)
-          } else {
-            setConfetti(false)
-          }
-        }}
+    <button
+      type={'button'}
+      class={clsx('Button mr-2', {
+        'Button--small': mergedProps.size === 'small',
+        'Button--medium': mergedProps.size === 'medium',
+        'Button--secondary': mergedProps.variant === 'secondary',
+        'Button--invisible': mergedProps.variant === 'invisible',
+      })}
+      ref={(el) => {
+        onCleanup(() => {
+          console.log('cleanup button el')
+        })
+      }}
+      // NOTE: For some reason delegated events it doesn't work in some pages
+      // (https://github.com/riccardoperra/better-comments-for-github/issues/39)
+      // so for now we will use native event
+      on:click={() => mergedProps.onOpenChange(!mergedProps.open)}
+    >
+      <span
+        class={clsx({ 'fgColor-muted': mergedProps.variant === 'invisible' })}
       >
-        <span
-          class={clsx({ 'fgColor-muted': mergedProps.variant === 'invisible' })}
-        >
-          {label()}
-        </span>
-      </button>
+        {label()}
+      </span>
+    </button>
+  )
+}
+
+export interface EditorErrorBoundaryProps {
+  error?: any
+  reload: () => void
+  close: () => void
+}
+
+export function EditorErrorBoundary(props: EditorErrorBoundaryProps) {
+  const configStore = ConfigStore.provide()
+
+  const issueUrl = () => configStore.get.newIssueUrl
+
+  onMount(() => {
+    if (props.error) {
+      console.error(props.error)
+    }
+  })
+
+  return (
+    <div class={'Banner Banner--error'}>
+      <div class={'Banner-visual'}>
+        <OcticonCaution />
+      </div>
+
+      <div class={'Banner-message'}>
+        <p class={'Banner-title'}>
+          Something went wrong while rendering the editor. Please try again. If
+          the problem persist, please{' '}
+          <a href={issueUrl()} target={'_blank'} class={'Link--inTextBlock'}>
+            open an issue
+          </a>
+          .
+        </p>
+        <br />
+        <p>{props.error.toString()}</p>
+        <button class={'Button Button--danger mt-2'} onClick={props.reload}>
+          Try reload
+        </button>
+      </div>
     </div>
   )
 }
@@ -95,37 +125,50 @@ export function mountEditor(root: HTMLElement, props: RenderEditorProps) {
     return (
       <StateProvider>
         <Show when={props.open()}>
-          <div
-            data-github-better-comment-wrapper=""
-            on:keydown={(event) => {
-              event.stopPropagation()
-            }}
+          <ErrorBoundary
+            fallback={(err, reload) => (
+              <EditorErrorBoundary
+                error={err}
+                reload={reload}
+                close={() => props.openChange(false)}
+              />
+            )}
           >
-            <EditorRootContext.Provider
-              value={{
-                currentUsername: props.currentUsername,
-                data: props.suggestionData,
-                uploadHandler: props.uploadHandler,
-                get initialValue() {
-                  return props.initialValue
-                },
-                get textarea() {
-                  return props.textarea()
-                },
-                get type() {
-                  return props.type
-                },
-                get repository() {
-                  return props.repository
-                },
-                get owner() {
-                  return props.owner
-                },
+            <div
+              data-github-better-comment-wrapper=""
+              on:keydown={(event) => {
+                event.stopPropagation()
               }}
             >
-              <Editor type={props.type} suggestions={props.suggestionData()} />
-            </EditorRootContext.Provider>
-          </div>
+              <EditorRootContext.Provider
+                value={{
+                  currentUsername: props.currentUsername,
+                  data: props.suggestionData,
+                  uploadHandler: props.uploadHandler,
+                  get initialValue() {
+                    return props.initialValue
+                  },
+                  get textarea() {
+                    return props.textarea()!
+                  },
+                  get type() {
+                    return props.type
+                  },
+                  get repository() {
+                    return props.repository
+                  },
+                  get owner() {
+                    return props.owner
+                  },
+                }}
+              >
+                <Editor
+                  type={props.type}
+                  suggestions={props.suggestionData()}
+                />
+              </EditorRootContext.Provider>
+            </div>
+          </ErrorBoundary>
         </Show>
       </StateProvider>
     )

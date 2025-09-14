@@ -28,7 +28,7 @@ import {
 import { markdownToUnist } from '@prosemirror-processor/markdown'
 import { remarkGitHubAlert } from '../../core/custom/githubAlert/remarkGitHubAlert'
 import { remarkParseLinkToGitHubIssueReference } from '../../core/custom/issue-reference/remarkGitHubIssueReference'
-import { remarkGitHubUserReferences } from './remarkGitHubUserReferences'
+import { remarkGitHubUserReferences } from '../../core/custom/user-mention/remarkGitHubUserReferences'
 
 export function unistNodeFromMarkdown(
   content: string,

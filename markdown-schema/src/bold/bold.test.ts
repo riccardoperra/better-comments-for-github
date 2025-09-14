@@ -26,7 +26,12 @@ import { markdownToUnist } from '@prosemirror-processor/markdown'
 import { defineDocMarkdown } from '../doc/doc'
 import { defineTextMarkdown } from '../text/text'
 import { defineParagraphMarkdown } from '../paragraph/paragraph'
-import { getEditorInstance, sameMarkdown, sameNode } from '../test-utils'
+import {
+  getEditorInstance,
+  sameMarkdown,
+  sameNode,
+  testUnknownHandler,
+} from '../test-utils'
 import { defineBoldMarkdown } from './bold'
 
 const extension = union(
@@ -45,7 +50,11 @@ test('markdown -> prosemirror', () => {
   const editor = getEditorInstance(extension)
   const unist = markdownToUnist(`Just a test content **with bold text**`)
 
-  const result = convertUnistToProsemirror(unist, editor.schema)
+  const result = convertUnistToProsemirror(
+    unist,
+    editor.schema,
+    testUnknownHandler,
+  )
 
   sameNode(result, doc(p('Just a test content ', strong('with bold text'))))
 })

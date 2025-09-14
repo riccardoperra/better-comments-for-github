@@ -15,9 +15,9 @@
  */
 
 import { effect } from 'solid-js/web'
-import { createSuggestionData } from '../../../src/editor/utils/loadSuggestionData'
-import { createGitHubUploaderReactHandler } from '../../../src/editor/utils/reactFileUploader'
-import type { SuggestionData } from '../../../src/editor/utils/loadSuggestionData'
+import { createSuggestionData } from '@better-comments-for-github/core/editor/utils/loadSuggestionData'
+import { createGitHubUploaderReactHandler } from '@better-comments-for-github/core/editor/utils/reactFileUploader'
+import type { SuggestionData } from '@better-comments-for-github/core/editor/utils/loadSuggestionData'
 
 export class GitHubReactTextareaHandler {
   readonly classes: { [key: string]: Array<string> } = {}
@@ -36,6 +36,10 @@ export class GitHubReactTextareaHandler {
   }
 
   findModuleContainer() {
+    if (this.root.matches('[class*="MarkdownEditor-module__container"]')) {
+      return this.root
+    }
+
     return this.root.querySelector(
       '[class*="MarkdownEditor-module__container"]',
     )
@@ -64,9 +68,7 @@ export class GitHubReactTextareaHandler {
   }
 
   getMountFooterFn(): (node: HTMLElement) => void {
-    const footerModule = this.root.querySelector(
-      'footer[class*="Footer-module"]',
-    )
+    const footerModule = this.root.querySelector('[class*="Footer-module"]')
     if (footerModule) {
       return () => {
         const actionsWrapper = footerModule.firstElementChild

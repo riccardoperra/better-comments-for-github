@@ -20,7 +20,7 @@ import { defineSolidNodeView } from 'prosekit/solid'
 import { toProseMirrorNode } from '@prosemirror-processor/unist/mdast'
 import { UserMentionView } from './UserMentionView/UserMentionView'
 import type { MentionAttrs } from 'prosekit/extensions/mention'
-import type { GitHubMention } from '../../../editor/utils/remarkGitHubUserReferences'
+import type { GitHubMention } from './remarkGitHubUserReferences'
 
 export function defineMentionMarkdown() {
   return union(
