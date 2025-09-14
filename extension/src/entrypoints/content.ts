@@ -21,8 +21,6 @@ export default defineContentScript({
         })
       },
     })
-
-    // Show UI to user
     ui.mount()
 
     // Firefox does not support injecting content scripts via injectScript yet

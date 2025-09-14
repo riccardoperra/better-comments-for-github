@@ -55,7 +55,7 @@ catalogs:
       specifier: ^1.40.1
       version: 1.40.1
     remark-gfm:
-      specifier: ^4.0.1
+      specifier: 4.0.1
       version: 4.0.1
     solid-js:
       specifier: ^1.9.9
@@ -188,6 +188,12 @@ importers:
       prosemirror-view:
         specifier: 'catalog:'
         version: 1.40.1
+      rehype-stringify:
+        specifier: ^10.0.1
+        version: 10.0.1
+      remark-gfm:
+        specifier: 'catalog:'
+        version: 4.0.1
       remark-parse:
         specifier: ^11.0.0
         version: 11.0.0
@@ -197,6 +203,9 @@ importers:
       remark-stringify:
         specifier: ^11.0.0
         version: 11.0.0
+      solid-codemirror:
+        specifier: ^2.3.1
+        version: 2.3.1(@codemirror/state@6.5.2)(@codemirror/view@6.38.2)(solid-js@1.9.9)
       solid-js:
         specifier: 'catalog:'
         version: 1.9.9
@@ -6988,6 +6997,14 @@ packages:
 
   smob@1.5.0:
     resolution: {integrity: sha512-g6T+p7QO8npa+/hNx9ohv1E5pVCmWrVCUzUXJyLdMmftX6ER0oiWY/w9knEonLpnOp6b6FenKnMfR8gqwWdwig==}
+
+  solid-codemirror@2.3.1:
+    resolution: {integrity: sha512-9J5k8Vl9IG7Z7Gc4i0lfackWOmm1g6Obbk7OQHvw2A7WqcP/Ax7i/kfDDVlofjVKPE/9MZSsP94PvroabpJoAw==}
+    engines: {node: '>=14'}
+    peerDependencies:
+      '@codemirror/state': ^6.2.0
+      '@codemirror/view': ^6.12.0
+      solid-js: ^1.7.0
 
   solid-js@1.9.7:
     resolution: {integrity: sha512-/saTKi8iWEM233n5OSi1YHCCuh66ZIQ7aK2hsToPe4tqGm7qAejU1SwNuTPivbWAYq7SjuHVVYxxuZQNRbICiw==}
@@ -15920,6 +15937,13 @@ snapshots:
       is-fullwidth-code-point: 5.0.0
 
   smob@1.5.0: {}
+
+  solid-codemirror@2.3.1(@codemirror/state@6.5.2)(@codemirror/view@6.38.2)(solid-js@1.9.9):
+    dependencies:
+      '@changesets/cli': 2.29.4
+      '@codemirror/state': 6.5.2
+      '@codemirror/view': 6.38.2
+      solid-js: 1.9.9
 
   solid-js@1.9.7:
     dependencies:

@@ -221,9 +221,14 @@ export function Toolbar() {
             />
           </>
         }
-        isPressed={editor().nodes.codeBlock.isActive()}
+        isPressed={
+          editor().nodes.codeBlock.isActive() ||
+          editor().nodes.cmCodeBlock.isActive()
+        }
         disabled={!editor().commands.toggleCodeBlock.canExec()}
-        onClick={() => editor().commands.toggleCodeBlock()}
+        onClick={() => {
+          editor().commands.toggleCodeBlock()
+        }}
       >
         <EditorActionIcon actionId={'codeBlock'} size={16} />
       </ToolbarAction>
