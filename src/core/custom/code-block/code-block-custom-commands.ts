@@ -28,11 +28,9 @@ export const selectCodeBlock: Command = (state, dispatch) => {
     const end = $head.end()
     const isSelectingAll = from === start && to === end
     if (isSelectingAll) {
-      console.log('is selecting all')
       return false
     }
     if (from >= start && to <= end) {
-      console.log('set selection inner')
       if (dispatch) {
         const tr = state.tr.setSelection(
           TextSelection.create(state.doc, start, end),

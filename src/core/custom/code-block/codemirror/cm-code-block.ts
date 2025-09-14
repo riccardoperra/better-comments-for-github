@@ -38,7 +38,6 @@ function arrowHandler(
 ): Command {
   return (state, dispatch, view) => {
     if (state.selection.empty && view!.endOfTextblock(dir)) {
-      console.log(dir)
       const side = dir == 'left' || dir == 'up' ? -1 : 1
       const $head = state.selection.$head
       const nextPos = Selection.near(
