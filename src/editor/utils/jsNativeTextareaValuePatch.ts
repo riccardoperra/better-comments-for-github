@@ -14,18 +14,48 @@
  * limitations under the License.
  */
 
-const patchProperty = Symbol('ghBetterCommentsNativeValuePatched')
+const patchProperty = Symbol('ghBetterCommentsNativeValuePatch')
+
+interface JsNativeTextAreaPatch {
+  originalDescriptor: PropertyDescriptor
+  unmount: () => void
+}
+
+export function setNativeTextareaValue(
+  textarea: HTMLTextAreaElement,
+  value: string,
+) {
+  const patch = getPatch(textarea)
+  if (!patch) {
+    textarea.value = value
+  } else {
+    const currentDescriptor = Object.getOwnPropertyDescriptor(
+      textarea,
+      'value',
+    )!
+    Object.defineProperty(textarea, 'value', patch.originalDescriptor)
+    textarea.value = value
+    Object.defineProperty(textarea, 'value', currentDescriptor)
+  }
+}
+
+function getPatch(textarea: HTMLTextAreaElement): JsNativeTextAreaPatch | null {
+  return Reflect.get(textarea, patchProperty)
+}
+
+function setPatch(
+  textarea: HTMLTextAreaElement,
+  patch: JsNativeTextAreaPatch,
+): void {
+  Reflect.set(textarea, patchProperty, patch)
+}
 
 export function patchJsNativeTextareaValue(
   textarea: HTMLTextAreaElement,
 ): () => void {
-  if (Reflect.has(textarea, patchProperty)) {
-    return () => {
-      // Should enter here only if unmount has not been called (so, never?)
-      const descriptor = Reflect.get(textarea, patchProperty)
-      Reflect.deleteProperty(textarea, patchProperty)
-      Object.defineProperty(textarea, 'value', descriptor)
-    }
+  const patch = getPatch(textarea)
+  if (patch) {
+    return patch.unmount
   }
 
   const descriptor = Object.getOwnPropertyDescriptor(
@@ -42,8 +72,16 @@ export function patchJsNativeTextareaValue(
   const setter = descriptor.set
   const getter = descriptor.get
 
-  Reflect.set(textarea, patchProperty, descriptor)
+  const unmount = () => {
+    Reflect.deleteProperty(textarea, patchProperty)
+    Object.defineProperty(textarea, 'value', descriptor)
+  }
 
+  Reflect.set(textarea, patchProperty, descriptor)
+  setPatch(textarea, {
+    unmount,
+    originalDescriptor: descriptor,
+  })
   Object.defineProperty(textarea, 'value', {
     set(newValue) {
       setter.call(this, newValue)
