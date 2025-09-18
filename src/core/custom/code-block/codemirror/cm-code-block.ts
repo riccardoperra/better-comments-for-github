@@ -55,7 +55,7 @@ function arrowHandler(
 
 export function defineCmCodeBlock() {
   return union(
-    defineCodeBlockCommands(),
+    defineCmCodeBlockCommands(),
     defineNodeSpec({
       name: 'cmCodeBlock',
       content: 'text*',
@@ -124,7 +124,7 @@ export function defineCmCodeBlock() {
   )
 }
 
-export function defineCodeBlockCommands() {
+export function defineCmCodeBlockCommands() {
   return defineCommands({
     setCmCodeBlock: (attrs?: CodeBlockAttrs) => {
       return setBlockType({ type: 'cmCodeBlock', attrs })

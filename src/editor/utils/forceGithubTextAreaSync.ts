@@ -15,7 +15,6 @@
  */
 
 import { getFiberProps } from '../../react-hacks/fiber'
-import { setNativeTextareaValue } from './jsNativeTextareaValuePatch'
 
 // This is a trick that automatically encode characters and sanitize the `value`
 const fakeTextarea = document.createElement('textarea')
@@ -49,8 +48,7 @@ export function forceGithubTextAreaSync(
   } else {
     const changeEvent = new Event('change', { bubbles: true })
     Object.assign(changeEvent, { fromEditor: true })
-
-    setNativeTextareaValue(textarea, sanitizedValue)
+    textarea.value = sanitizedValue
     textarea.dispatchEvent(changeEvent)
   }
 }

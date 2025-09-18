@@ -21,22 +21,15 @@ interface JsNativeTextAreaPatch {
   unmount: () => void
 }
 
+let enableEvent = false
+
 export function setNativeTextareaValue(
   textarea: HTMLTextAreaElement,
   value: string,
 ) {
-  const patch = getPatch(textarea)
-  if (!patch) {
-    textarea.value = value
-  } else {
-    const currentDescriptor = Object.getOwnPropertyDescriptor(
-      textarea,
-      'value',
-    )!
-    Object.defineProperty(textarea, 'value', patch.originalDescriptor)
-    textarea.value = value
-    Object.defineProperty(textarea, 'value', currentDescriptor)
-  }
+  enableEvent = false
+  textarea.value = value
+  enableEvent = true
 }
 
 function getPatch(textarea: HTMLTextAreaElement): JsNativeTextAreaPatch | null {
@@ -85,11 +78,14 @@ export function patchJsNativeTextareaValue(
   Object.defineProperty(textarea, 'value', {
     set(newValue) {
       setter.call(this, newValue)
-      this.dispatchEvent(
-        new CustomEvent('gh-better-comments-textarea-set-value', {
-          detail: newValue,
-        }),
-      )
+      if (enableEvent) {
+        console.log('run stter')
+        this.dispatchEvent(
+          new CustomEvent('gh-better-comments-textarea-set-value', {
+            detail: newValue,
+          }),
+        )
+      }
     },
     get() {
       return getter.call(this)

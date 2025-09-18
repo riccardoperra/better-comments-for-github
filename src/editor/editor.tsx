@@ -116,21 +116,25 @@ export function Editor(props: EditorProps) {
     })
     observer.observe(context.textarea)
 
-    const unpatchSetValueEvent = patchJsNativeTextareaValue(context.textarea)
-    context.textarea.addEventListener(
-      'gh-better-comments-textarea-set-value',
-      (e) => {
-        const pmNode = textAreaValueToPmNode(e.detail, context, editor.schema)
-        editor.setContent(pmNode)
-      },
-      { signal: abortController.signal },
-    )
+    if (props.type === 'native') {
+      const unpatchSetValueEvent = patchJsNativeTextareaValue(context.textarea)
+      context.textarea.addEventListener(
+        'gh-better-comments-textarea-set-value',
+        (e) => {
+          const pmNode = textAreaValueToPmNode(e.detail, context, editor.schema)
+          editor.setContent(pmNode)
+        },
+        { signal: abortController.signal },
+      )
+      onCleanup(() => {
+        unpatchSetValueEvent()
+      })
+    }
 
     onCleanup(() => {
       abortController.abort('I hope a new reference of textarea')
       editor.setContent('')
       observer.disconnect()
-      unpatchSetValueEvent()
     })
 
     context.textarea.addEventListener(

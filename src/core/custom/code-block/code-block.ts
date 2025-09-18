@@ -16,19 +16,17 @@
 
 import { union } from 'prosekit/core'
 import { defineCodeBlockMarkdown } from '@prosedoc/markdown-schema'
-import { defineCodeBlockKeymap } from 'prosekit/extensions/code-block'
 import { defineSolidNodeView } from 'prosekit/solid'
 import ShikiCodeBlockView from './shiki-code-block-view'
+import { defineCodeBlockCustomCommands } from './code-block-custom-commands'
 import { defineCmCodeBlockPlugin } from './codemirror/cm-code-block-plugin'
 import { defineCmCodeBlock } from './codemirror/cm-code-block'
-import { defineCodeBlockCustomCommands } from './code-block-custom-commands'
 
 export function defineCodeBlock() {
   return union(
     defineCmCodeBlock(),
     defineCmCodeBlockPlugin(),
     defineCodeBlockMarkdown(),
-    defineCodeBlockKeymap(),
     defineSolidNodeView({
       name: 'codeBlock',
       contentAs: 'code',
