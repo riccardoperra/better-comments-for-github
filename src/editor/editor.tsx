@@ -43,9 +43,11 @@ import { setEditorContent } from './utils/setContent'
 import { forceGithubTextAreaSync } from './utils/forceGithubTextAreaSync'
 import { DebugNode } from './DebugNode'
 import { unistNodeFromMarkdown } from './utils/unistNodeFromMarkdown'
-import type { SuggestionData } from './utils/loadSuggestionData'
-import type { GitHubUploaderHandler } from '../core/custom/image/github-file-uploader'
+import { patchJsNativeTextareaValue } from './utils/jsNativeTextareaValuePatch'
 import type { Root } from 'mdast'
+import type { GitHubUploaderHandler } from '../core/custom/image/github-file-uploader'
+import type { SuggestionData } from './utils/loadSuggestionData'
+import type { Schema } from 'prosemirror-model'
 
 export interface EditorProps {
   suggestions: SuggestionData
@@ -78,6 +80,22 @@ function sanitizeMarkdownValue(value: string) {
   )
 }
 
+function textAreaValueToPmNode(
+  value: string,
+  context: EditorRootContextProps,
+  schema: Schema,
+) {
+  if (value === '') {
+    return schema.nodes.doc.createAndFill()!
+  }
+
+  const unistNode = unistNodeFromMarkdown(value, {
+    owner: context.owner() ?? '',
+    repository: context.repository() ?? '',
+  })
+  return convertUnistToProsemirror(unistNode, schema, unknownNodeHandler(value))
+}
+
 export function Editor(props: EditorProps) {
   const context = useContext(EditorRootContext)!
   const configStore = ConfigStore.provide()
@@ -98,25 +116,31 @@ export function Editor(props: EditorProps) {
     })
     observer.observe(context.textarea)
 
+    const unpatchSetValueEvent = patchJsNativeTextareaValue(context.textarea)
+    context.textarea.addEventListener(
+      'gh-better-comments-textarea-set-value',
+      (e) => {
+        const pmNode = textAreaValueToPmNode(e.detail, context, editor.schema)
+        editor.setContent(pmNode)
+      },
+      { signal: abortController.signal },
+    )
+
     onCleanup(() => {
       abortController.abort('I hope a new reference of textarea')
       editor.setContent('')
       observer.disconnect()
+      unpatchSetValueEvent()
     })
 
     context.textarea.addEventListener(
       'input',
       (event) => {
         if (!(event as { fromEditor?: boolean }).fromEditor) {
-          const value = context.textarea.value
-          const unistNode = unistNodeFromMarkdown(value, {
-            owner: context.owner() ?? '',
-            repository: context.repository() ?? '',
-          })
-          const pmNode = convertUnistToProsemirror(
-            unistNode,
+          const pmNode = textAreaValueToPmNode(
+            context.textarea.value,
+            context,
             editor.schema,
-            unknownNodeHandler(value),
           )
           editor.setContent(pmNode)
         }
@@ -124,10 +148,13 @@ export function Editor(props: EditorProps) {
       { signal: abortController.signal },
     )
 
-    // When textarea is not connected anymore, we
-    context.textarea.addEventListener('manual-reset', () => {
-      editor.setContent('')
-    })
+    context.textarea.addEventListener(
+      'manual-reset',
+      () => {
+        editor.setContent('')
+      },
+      { signal: abortController.signal },
+    )
 
     // Old text area change event (e.g. PR)
     context.textarea.addEventListener(
@@ -135,15 +162,10 @@ export function Editor(props: EditorProps) {
       (event) => {
         if ((event as any)['fromEditor']) return
         if (event.isTrusted) return false
-        const value = context.textarea.value
-        const unistNode = unistNodeFromMarkdown(value, {
-          owner: context.owner() ?? '',
-          repository: context.repository() ?? '',
-        })
-        const pmNode = convertUnistToProsemirror(
-          unistNode,
+        const pmNode = textAreaValueToPmNode(
+          context.textarea.value,
+          context,
           editor.schema,
-          unknownNodeHandler(value),
         )
         editor.setContent(pmNode)
       },

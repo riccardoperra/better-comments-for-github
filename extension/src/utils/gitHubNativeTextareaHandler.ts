@@ -172,10 +172,10 @@ export class GitHubNativeTextareaHandler {
     if (tabContainer && tabContainer.classList.contains('CommentBox')) {
       const nextSibling = tabContainer.nextElementSibling
       if (nextSibling) {
-        return () => {
-          const nextSibling = tabContainer.nextElementSibling
-          // Hope will match
-          if (nextSibling && nextSibling.tagName === 'DIV') {
+        const nextSibling = tabContainer.nextElementSibling
+        // Hope will match
+        if (nextSibling && nextSibling.tagName === 'DIV') {
+          return () => {
             const switchRoot = document.createElement('div')
             switchRoot.style.display = 'inline'
             nextSibling.prepend(switchRoot)
@@ -184,6 +184,21 @@ export class GitHubNativeTextareaHandler {
               variant: 'secondary',
             })
           }
+        }
+
+        // This should work in the New Release Page. Anyway, if no container is found,
+        // a new row will be added;
+        return () => {
+          const row = document.createElement('div')
+          row.classList.add('mt-2')
+          const switchRoot = document.createElement('div')
+          switchRoot.style.display = 'inline'
+          row.prepend(switchRoot)
+          this.instance.switchButton.render(switchRoot, {
+            size: 'medium',
+            variant: 'secondary',
+          })
+          tabContainer.insertAdjacentElement('afterend', row)
         }
       }
     }
