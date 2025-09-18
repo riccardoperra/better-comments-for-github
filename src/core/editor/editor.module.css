@@ -30,7 +30,6 @@
     border-color: var(--borderColor-accent-emphasis);
   }
 
-  isolation: isolate;
   padding: var(--base-size-4);
 
   /*border-bottom-left-radius: 0;*/

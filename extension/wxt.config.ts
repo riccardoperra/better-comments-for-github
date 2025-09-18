@@ -28,6 +28,7 @@ export default defineConfig({
   },
 
   modules: ['@wxt-dev/module-solid'],
+
   manifest: {
     name: 'Better comments for GitHub',
     description:
@@ -37,7 +38,7 @@ export default defineConfig({
     },
     web_accessible_resources: [
       {
-        resources: ['editor-content.js'],
+        resources: ['editor-content.js', 'worker.js', 'iframe-worker.html'],
         matches: ['*://github.com/*'],
       },
     ],

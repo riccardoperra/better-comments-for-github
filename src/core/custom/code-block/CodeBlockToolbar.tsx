@@ -14,14 +14,11 @@
  * limitations under the License.
  */
 
+import { shikiBundledLanguagesInfo } from 'prosekit/extensions/code-block'
 import { For, Show, createMemo, createSignal } from 'solid-js'
 import { LucideCheck, LucideCopy } from 'lucide-solid'
-import { useNodeViewContext } from '@prosemirror-adapter/solid'
-import { shikiBundledLanguagesInfo } from 'prosekit/extensions/code-block'
 import {
   SearchControl,
-  SearchableSelectContent,
-  SearchableSelectInput,
   SearchableSelectItem,
   SearchableSelectItemLabel,
   SearchableSelectPopover,
@@ -31,46 +28,17 @@ import {
   SearchableSelectTrigger,
 } from '../../ui/searchable-select/SearchableSelect'
 import { SearchableSelectValue } from '../../ui/searchable-select/SearchableSelectControl'
-import { NodeViewWrapper } from '../../editor/primitives/node-view'
+import { SearchableSelectInput } from '../../ui/searchable-select/SearchableSelectInput'
+import { SearchableSelectContent } from '../../ui/searchable-select/SearchableSelectContent'
 import { ConfigStore } from '../../../config.store'
 import styles from './code-block-view.module.css'
-import type {
-  CodeBlockAttrs,
-  ShikiBundledLanguageInfo,
-} from 'prosekit/extensions/code-block'
-import type { NodeViewContextProps } from '@prosemirror-adapter/solid'
+import type { ShikiBundledLanguageInfo } from 'prosekit/extensions/code-block'
 
-export default function CodeBlockView(props: NodeViewContextProps) {
-  const context = useNodeViewContext()
-  const configStore = ConfigStore.provide()
-  const attrLanguage = createMemo(() => context().node.attrs.language)
-  const guid = createMemo(() => context().node.attrs.guid)
-  const language = () => {
-    const lang = attrLanguage()
-    switch (lang) {
-      case 'js':
-        return 'javascript'
-      case 'ts':
-        return 'typescript'
-      default:
-        return lang
-    }
-  }
-
-  const setLanguage = (language: string | null) => {
-    const attrs: CodeBlockAttrs = { language: language ?? '' }
-    props.setAttrs(attrs)
-  }
-
-  const options = shikiBundledLanguagesInfo
-
-  const currentValue = createMemo(() => {
-    return options.find((info) => info.id === attrLanguage()) ?? null
-  })
-
+export function CodeBlockClipboard(props: { content: string }) {
   const [copied, setCopied] = createSignal(false)
+
   const copyContent = () => {
-    const content = context().node.textContent
+    const content = props.content
     navigator.clipboard.writeText(content).then(() => {
       setCopied(true)
       setTimeout(() => {
@@ -80,52 +48,66 @@ export default function CodeBlockView(props: NodeViewContextProps) {
   }
 
   return (
-    <NodeViewWrapper>
-      <div class={`highlight ${styles.CodeBlock}`}>
-        <div class={styles.actions} contenteditable={false}>
-          <div class={styles.LanguageSelector}>
-            <Show
-              fallback={
-                <>
-                  <select
-                    class={styles.Select}
-                    onChange={(event) => setLanguage(event.target.value)}
-                    value={currentValue()?.id || ''}
-                  >
-                    <option value="">Plain Text</option>
-                    <For each={shikiBundledLanguagesInfo}>
-                      {(info) => <option value={info.id}>{info.name}</option>}
-                    </For>
-                  </select>
-                </>
-              }
-              when={!configStore.get.nativeSelectForLanguageSelector}
-            >
-              <CodeBlockLanguageSelector
-                value={currentValue()}
-                onValueChange={setLanguage}
-              />
-            </Show>
-          </div>
-          <button
-            type={'button'}
-            class={'Button Button--small Button--iconOnly Button--invisible'}
-            onClick={copyContent}
-          >
-            <Show fallback={<LucideCheck size={13} />} when={!copied()}>
-              <LucideCopy size={13} />
-            </Show>
-          </button>
-        </div>
-        <pre ref={props.contentRef} data-language={language()}></pre>
-      </div>
-    </NodeViewWrapper>
+    <button
+      type={'button'}
+      class={'Button Button--small Button--iconOnly Button--invisible'}
+      onClick={copyContent}
+    >
+      <Show fallback={<LucideCheck size={13} />} when={!copied()}>
+        <LucideCopy size={13} />
+      </Show>
+    </button>
   )
 }
 
-const cacheMap = new WeakMap()
-
 export function CodeBlockLanguageSelector(props: {
+  value: ShikiBundledLanguageInfo | null
+  setLanguage: (value: string | null) => void
+}) {
+  const configStore = ConfigStore.provide()
+
+  return (
+    <div class={styles.LanguageSelector}>
+      <Show
+        fallback={
+          <>
+            <select
+              class={styles.Select}
+              onChange={(event) => props.setLanguage(event.target.value)}
+              value={props.value?.id || ''}
+            >
+              <option value="">Plain Text</option>
+              <For each={bundledLanguagesInfo}>
+                {(info) => <option value={info.id}>{info.name}</option>}
+              </For>
+            </select>
+          </>
+        }
+        when={!configStore.get.nativeSelectForLanguageSelector}
+      >
+        <CustomCodeBlockLanguageSelector
+          value={props.value}
+          onValueChange={props.setLanguage}
+        />
+      </Show>
+    </div>
+  )
+}
+
+const exclude = [
+  'angular-ts',
+  'ts-tags',
+  'angular-html',
+  'jsonl',
+  'json5',
+  'html-derivative',
+]
+
+const bundledLanguagesInfo = shikiBundledLanguagesInfo.filter(
+  (info) => !exclude.includes(info.id),
+)
+
+export function CustomCodeBlockLanguageSelector(props: {
   value: ShikiBundledLanguageInfo | null
   onValueChange: (value: string | null) => void
 }) {
@@ -134,9 +116,9 @@ export function CodeBlockLanguageSelector(props: {
   const filteredOptions = createMemo(() => {
     const termValue = term()
     if (!termValue) {
-      return shikiBundledLanguagesInfo
+      return bundledLanguagesInfo
     }
-    return shikiBundledLanguagesInfo.filter((option) =>
+    return bundledLanguagesInfo.filter((option) =>
       option.name.toLowerCase().includes(term().toLowerCase()),
     )
   })

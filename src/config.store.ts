@@ -19,6 +19,7 @@ import { defineStore } from 'statebuilder'
 export interface ConfigState {
   showDebug: false | 'md' | 'node'
   nativeSelectForLanguageSelector: boolean
+  useCodeMirrorForTypescriptCode: boolean
   newIssueUrl: string
 }
 
@@ -27,6 +28,7 @@ const defaultDebugMode: ConfigState['showDebug'] = false
 export const ConfigStore = defineStore<ConfigState>(() => ({
   showDebug: import.meta.env.MODE === 'development' ? defaultDebugMode : false,
   nativeSelectForLanguageSelector: false,
+  useCodeMirrorForTypescriptCode: true,
   newIssueUrl:
     'https://github.com/riccardoperra/leave-better-comments-for-github/issues/new',
 }))

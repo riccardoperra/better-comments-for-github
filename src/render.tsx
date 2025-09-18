@@ -16,7 +16,7 @@
 
 import { ErrorBoundary, mergeProps, render } from 'solid-js/web'
 import { StateProvider } from 'statebuilder'
-import { Show, onCleanup, onMount } from 'solid-js'
+import { Show, onMount } from 'solid-js'
 import { clsx } from 'clsx'
 import { Editor, EditorRootContext } from './editor/editor'
 import { OcticonCaution } from './core/custom/githubAlert/icons'
@@ -59,11 +59,6 @@ export function SwitchButton(props: {
         'Button--secondary': mergedProps.variant === 'secondary',
         'Button--invisible': mergedProps.variant === 'invisible',
       })}
-      ref={(el) => {
-        onCleanup(() => {
-          console.log('cleanup button el')
-        })
-      }}
       // NOTE: For some reason delegated events it doesn't work in some pages
       // (https://github.com/riccardoperra/better-comments-for-github/issues/39)
       // so for now we will use native event

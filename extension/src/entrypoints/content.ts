@@ -1,7 +1,27 @@
 export default defineContentScript({
   matches: ['*://github.com/*'],
-  runAt: 'document_start',
-  async main() {
+  runAt: 'document_idle',
+  async main(ctx) {
+    // Define the UI
+    const cmWorker = createIframeUi(ctx, {
+      page: '/iframe-worker.html',
+      position: 'overlay',
+      anchor: 'body',
+      onMount: (wrapper, iframe) => {
+        iframe.id = 'codemirror-ata'
+        iframe.style.display = 'none'
+        iframe.addEventListener('load', () => {
+          if (iframe.contentWindow) {
+            iframe.contentWindow.postMessage(
+              browser.runtime.getURL('/worker.js'),
+              '*',
+            )
+          }
+        })
+      },
+    })
+    cmWorker.mount()
+
     // Firefox does not support injecting content scripts via injectScript yet
     // Manifest V3?
     if (import.meta.env.FIREFOX) {

@@ -1,0 +1,59 @@
+/*
+ * Copyright 2025 Riccardo Perra
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+.quick-info-punctuation {
+  color: #ccc;
+}
+
+.quick-info-functionName {
+  color: #d2a8ff;
+}
+
+.quick-info-keyword {
+  color: #ff7b72;
+}
+
+.quick-info-parameterName {
+  color: #79c0ff;
+}
+
+.quick-info-aliasName {
+  color: #d2a8ff;
+}
+
+.cm-twoslash {
+  color: gray;
+  background-color: #eee;
+  padding: 0 0.25em;
+}
+
+.CodeMirror {
+  height: auto;
+}
+.CodeMirror pre {
+  white-space: pre !important;
+}
+
+.cm-autocomplete-description {
+  margin-top: var(--base-size-16);
+  padding-top: var(--base-size-12);
+  border-top: 1px solid var(--borderColor-default);
+  color: var(--fgColor-muted);
+}
+
+.cm-autocomplete-display-parts {
+  white-space: pre;
+}

@@ -43,12 +43,12 @@
     "remark": "^15.0.1",
     "remark-gfm": "catalog:",
     "remark-html": "^16.0.1",
-    "remark-parse": "^11.0.0",
-    "remark-rehype": "^11.1.2",
-    "remark-stringify": "^11.0.0",
-    "unified": "^11.0.5",
+    "remark-parse": "catalog:",
+    "remark-rehype": "catalog:",
+    "remark-stringify": "catalog:",
+    "unified": "catalog:",
     "unist-util-is": "^6.0.0",
-    "unist-util-visit": "^5.0.0",
+    "unist-util-visit": "catalog:",
     "vfile": "^6.0.3"
   },
   "devDependencies": {

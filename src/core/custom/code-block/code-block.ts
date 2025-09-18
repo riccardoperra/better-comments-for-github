@@ -14,66 +14,26 @@
  * limitations under the License.
  */
 
-import { defineKeymap, union } from 'prosekit/core'
+import { union } from 'prosekit/core'
+import { defineCodeBlockMarkdown } from '@prosedoc/markdown-schema'
 import { defineCodeBlockKeymap } from 'prosekit/extensions/code-block'
 import { defineSolidNodeView } from 'prosekit/solid'
-import { defineCodeBlockMarkdown } from '@prosedoc/markdown-schema'
-import { TextSelection } from 'prosemirror-state'
-import CodeBlockView from './code-block-view'
-
-const TAB_CHAR = '\u00A0\u00A0'
+import ShikiCodeBlockView from './shiki-code-block-view'
+import { defineCmCodeBlockPlugin } from './codemirror/cm-code-block-plugin'
+import { defineCmCodeBlock } from './codemirror/cm-code-block'
+import { defineCodeBlockCustomCommands } from './code-block-custom-commands'
 
 export function defineCodeBlock() {
   return union(
+    defineCmCodeBlock(),
+    defineCmCodeBlockPlugin(),
     defineCodeBlockMarkdown(),
+    defineCodeBlockKeymap(),
     defineSolidNodeView({
       name: 'codeBlock',
-      contentAs: 'div',
-      component: CodeBlockView,
+      contentAs: 'code',
+      component: ShikiCodeBlockView,
     }),
-    defineCodeBlockKeymap(),
-    defineKeymap({
-      'Mod-a': (state, dispatch) => {
-        const { $head, from, to } = state.selection
-        const parent = $head.parent
-        if (parent.isTextblock && parent.type.spec.code) {
-          const start = $head.start($head.depth)
-          const end = $head.end()
-          const isSelectingAll = from === start && to === end
-          if (isSelectingAll) {
-            return false
-          }
-          if (from >= start && to <= end) {
-            if (dispatch) {
-              const tr = state.tr.setSelection(
-                TextSelection.create(state.doc, start, end),
-              )
-              dispatch(tr)
-            }
-            return true
-          }
-
-          return false
-        }
-
-        return false
-      },
-      Tab: (state, dispatch) => {
-        if (!state.selection.empty) {
-          return false
-        }
-        const { $head } = state.selection
-        const parent = $head.parent
-        if (parent.isTextblock && parent.type.spec.code) {
-          if (dispatch) {
-            const tr = state.tr
-            tr.insertText(TAB_CHAR)
-            dispatch(tr)
-          }
-          return true
-        }
-        return false
-      },
-    }),
+    defineCodeBlockCustomCommands(),
   )
 }
