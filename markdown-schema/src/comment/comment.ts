@@ -32,6 +32,7 @@ export function defineCommentMarkdown() {
       group: 'inline',
       code: true,
       name: 'comment',
+      exitable: true,
       unistName: 'comment',
       __toUnist: (pmNode, parent, context) => {
         const children = context.handleAll(pmNode) as Array<Text | Break>

@@ -27,8 +27,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@prosemirror-processor/markdown": "^0.0.1-alpha.3",
-    "@prosemirror-processor/unist": "^0.0.1-alpha.6",
+    "@prosemirror-processor/markdown": "0.0.1-alpha.4",
+    "@prosemirror-processor/unist": "0.0.1-alpha.7",
     "@types/mdast": "catalog:",
     "@types/unist": "catalog:",
     "hastscript": "^9.0.1",

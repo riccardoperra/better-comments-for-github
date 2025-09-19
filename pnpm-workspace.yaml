@@ -6,32 +6,32 @@ packages:
   - ./landing
 
 catalog:
-  '@prosemirror-processor/markdown': ^0.0.1-alpha.4
-  '@prosemirror-processor/unist': ^0.0.1-alpha.7
+  '@prosemirror-processor/markdown': 0.0.1-alpha.4
+  '@prosemirror-processor/unist': 0.0.1-alpha.7
   '@tanstack/config': ^0.20.1
   '@types/mdast': ^4.0.4
-  '@types/node': ^24.3.1
+  '@types/node': ^24.5.2
   '@types/unist': ^3.0.3
   '@vitest/coverage-v8': ^3.2.4
   '@vitest/ui': ^3.2.4
   prettier: ^3.6.2
-  prosekit: ^0.15.4
+  prosekit: ^0.15.5
   prosemirror-commands: ^1.7.1
   prosemirror-inputrules: 1.5.0
   prosemirror-model: ^1.25.3
   prosemirror-state: ^1.4.3
   prosemirror-test-builder: ^1.1.1
-  prosemirror-view: ^1.40.1
+  prosemirror-view: ^1.41.1
   remark-gfm: 4.0.1
   remark-parse: ^11.0.0
   remark-rehype: ^11.1.2
   remark-stringify: ^11.0.0
-  unist-util-visit: ^5.0.0
-  unified: ^11.0.5
   solid-js: ^1.9.9
   statebuilder: ^0.8.1
-  tsdown: ^0.14.2
+  tsdown: ^0.15.2
   typescript: ^5.9.2
-  vite: ^7.1.4
-  vite-plugin-solid: ^2.11.1
+  unified: ^11.0.5
+  unist-util-visit: ^5.0.0
+  vite: ^7.1.6
+  vite-plugin-solid: ^2.11.8
   vitest: ^3.2.4

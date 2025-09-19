@@ -110,6 +110,7 @@ export function defineMarkdownExtension() {
 export function defineExtension() {
   return union(
     defineMarkdownExtension(),
+    defineCodeBlock(),
     defineNodeSpec({
       name: 'doc',
       content: '(block|githubAlert)+',
@@ -130,7 +131,6 @@ export function defineExtension() {
         return `Write something, or press '/' for commands...`
       },
     }),
-    defineCodeBlock(),
     defineGitHubAlert(),
     defineImageExtension(),
     defineSolidNodeView({

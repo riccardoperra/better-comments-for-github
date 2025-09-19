@@ -51,14 +51,13 @@ const tryExitNode = (
 ): Command => {
   return (state, dispatch, view) => {
     const tr = state.tr
-    const currentPos = state.selection.$from
     const parentNode = currentPos.parent
 
     if (!parentNode.isInline || !nodes.includes(parentNode.type.name)) {
       return false
     }
 
-    if (currentPos.end(currentPos.depth - 1) - 1 >= currentPos.pos) {
+    if (currentPos.end(currentPos.depth - 1) - 1 > currentPos.pos) {
       return false
     }
 

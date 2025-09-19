@@ -29,7 +29,8 @@ export function defineCodeBlock() {
     defineCodeBlockMarkdown(),
     defineSolidNodeView({
       name: 'codeBlock',
-      contentAs: 'code',
+      // TODO: why code not working?
+      as: 'div',
       component: ShikiCodeBlockView,
     }),
     defineCodeBlockCustomCommands(),

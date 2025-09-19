@@ -16,31 +16,16 @@
 
 import { defineNodeSpec, union } from 'prosekit/core'
 import {
-  defineCodeBlockCommands,
-  defineCodeBlockEnterRule,
-  defineCodeBlockInputRule,
-  defineCodeBlockKeymap,
+  defineCodeBlock,
   defineCodeBlockShiki,
-  defineCodeBlockSpec,
 } from 'prosekit/extensions/code-block'
 import { pmNode } from '@prosemirror-processor/unist'
 import type {
   ProseMirrorNodeToMdastHandler,
   ToProseMirrorNodeHandler,
 } from '@prosemirror-processor/unist/mdast'
-import type { CodeBlockExtension } from 'prosekit/extensions/code-block'
 
 import type { Code, Nodes as MdastNodes, Text } from 'mdast'
-
-function defineCodeBlock(): CodeBlockExtension {
-  return union(
-    defineCodeBlockSpec(),
-    defineCodeBlockInputRule(),
-    defineCodeBlockEnterRule(),
-    defineCodeBlockKeymap(),
-    defineCodeBlockCommands(),
-  )
-}
 
 export function defineCodeBlockMarkdown() {
   return union(
