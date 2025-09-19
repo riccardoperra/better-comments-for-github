@@ -124,6 +124,7 @@ function makeSuggestionData(fiber: Fiber): Accessor<SuggestionData> {
 
   const getDataFromFiber = () => {
     notifier()
+    fiber = getEditorFiber(fiber)
 
     return {
       mentions: getSafeSuggestionValueValue(

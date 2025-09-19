@@ -94,6 +94,12 @@ export class GitHubReactTextareaHandler {
       onSuggestionDataChange: (data: SuggestionData) => void
     },
   ) {
+    const textarea = this.findTextarea()
+    if (textarea) {
+      // This will trigger component mount in some case and will run fetches for suggestions.
+      // CommentBox.tsx -> useMarkdownSuggestions
+      textarea.focus()
+    }
     const suggestionDataResult = createSuggestionData(element)
     createEffect(() => {
       callbacks.onSuggestionDataChange(suggestionDataResult.suggestionData())

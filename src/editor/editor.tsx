@@ -114,7 +114,11 @@ export function Editor(props: EditorProps) {
         observer.disconnect()
       }
     })
+
     observer.observe(context.textarea)
+
+    // TODO: should we always enable auto-focus?
+    editor.focus()
 
     if (props.type === 'native') {
       const unpatchSetValueEvent = patchJsNativeTextareaValue(context.textarea)
