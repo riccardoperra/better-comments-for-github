@@ -15,6 +15,7 @@
  */
 
 import { mountEditor } from '@better-comments-for-github/core/render'
+import { log } from '@better-comments-for-github/core/editor/utils/logger'
 import {
   createGitHubEditorInstance,
   createGitHubPageInstance,
@@ -76,6 +77,16 @@ export default defineUnlistedScript(() => {
                   textarea,
                   dispose,
                 )
+
+                log(
+                  `Create editor instance`,
+                  {
+                    editorInstance,
+                    textarea,
+                  },
+                  { id: editorInstance.id },
+                )
+
                 const editorInjector = new GitHubEditorInjector()
                 editorInstance.setInjector(editorInjector)
                 registerGitHubEditorInstance(this, textarea, editorInstance)
@@ -103,6 +114,10 @@ export default defineUnlistedScript(() => {
                 // Old comment component of GitHub, This is still present in pull requests
                 const jsCommentField = nativeTextareaHandler.findTextarea()
                 if (jsCommentField) {
+                  log(`GitHub textarea is native/rails`, {
+                    id: editorInstance.id,
+                  })
+
                   type = 'native'
                   setTextareaRef(jsCommentField)
 
@@ -147,6 +162,7 @@ export default defineUnlistedScript(() => {
                     nativeTextareaHandler.getMountEditorFn()
                 } else {
                   type = 'react'
+                  log(`${editorInstance.id} - GitHub textarea is react-based`)
 
                   reactTextareaHandler.loadSuggestionDataAsync(element, {
                     onSuggestionDataChange: (data) => setSuggestionData(data),
@@ -174,6 +190,7 @@ export default defineUnlistedScript(() => {
                 // TODO: potential perforamnce issue
                 const observer = new MutationObserver((entry) => {
                   const ref = textareaRef()
+
                   if (!ref || !ref.isConnected) {
                     // This is needed to trigger a re-execution of the
                     // effect that will check if the textarea is still connected
@@ -201,6 +218,7 @@ export default defineUnlistedScript(() => {
 
                 editorElement.setDisposer(
                   mountEditor(root, {
+                    id: editorInstance.id,
                     currentUsername,
                     suggestionData,
                     open: showOldEditor,

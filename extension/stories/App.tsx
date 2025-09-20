@@ -50,13 +50,12 @@ export function App(props: AppProps) {
                   currentUsername: () => 'riccardoperra',
                   owner: () => 'riccardoperra',
                   repository: () => 'test-repository',
+                  hovercardSubjectTag: () => '1',
                   uploadHandler: mockUploader,
                   get initialValue() {
                     return textareaRef().value
                   },
-                  get textarea() {
-                    return textareaRef()
-                  },
+                  textarea: textareaRef,
                   get type() {
                     return 'native' as const
                   },
