@@ -118,24 +118,8 @@ export async function getImagePreviewUrl(
   })
 }
 
-export function getIssueHoverCardUrl(path: string, subjectTag: string) {
-  return `${path}/hovercard?subject=issue:${subjectTag}&current_path=${window.location.pathname}`
-}
-
-export function getPullHoverCardUrl(path: string, subjectTag: string) {
-  return `${path}/hovercard?pull_request:${subjectTag}&current_path=${window.location.pathname}`
-}
-
-export function getDiscsussionCardUrl(path: string, subjectTag: string) {
-  return `${path}/hovercard?subject=issue:${subjectTag}&current_path=${window.location.pathname}`
-}
-
-export function getUserHoverCardUrl(username: string, subjectTag: string) {
-  return `https://github.com/users/${username}/hovercard?subject=pull_request:${subjectTag}&current_path=${window.location.pathname}`
-}
-
-export function getUserHoverCardContent(path: string, subjectTag: string) {
-  const url = getUserHoverCardUrl(path, subjectTag)
+export function getUserHoverCardContent(username: string, subjectTag: string) {
+  const url = `https://github.com/users/${username}/hovercard?subject=pull_request:${subjectTag}&current_path=${window.location.pathname}`
   return fetch(url, {
     headers: {
       'X-Requested-With': 'XMLHttpRequest',
@@ -147,7 +131,7 @@ export function getPullRequestHoverCardContent(
   path: string,
   subjectTag: string,
 ) {
-  const url = getPullHoverCardUrl(path, subjectTag)
+  const url = `${path}/hovercard?pull_request:${subjectTag}&current_path=${window.location.pathname}`
   return fetch(url, {
     headers: {
       'X-Requested-With': 'XMLHttpRequest',
@@ -159,7 +143,7 @@ export function getDiscussionHoverCardContent(
   path: string,
   subjectTag: string,
 ) {
-  const url = getDiscsussionCardUrl(path, subjectTag)
+  const url = `${path}/hovercard?subject=issue:${subjectTag}&current_path=${window.location.pathname}`
   return fetch(url, {
     headers: {
       'X-Requested-With': 'XMLHttpRequest',
@@ -168,7 +152,7 @@ export function getDiscussionHoverCardContent(
 }
 
 export function getIssueHoverCardContent(path: string, subjectTag: string) {
-  const url = getIssueHoverCardUrl(path, subjectTag)
+  const url = `${path}/hovercard?subject=issue:${subjectTag}&current_path=${window.location.pathname}`
   return fetch(url, {
     headers: {
       'X-Requested-With': 'XMLHttpRequest',
