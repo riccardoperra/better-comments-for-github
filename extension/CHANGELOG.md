@@ -1,5 +1,12 @@
 # @better-comments-for-github/extension
 
+## 0.0.7
+
+### Patch Changes
+
+- 3de0d31: Add support for CodeMirror editor with ATA while using typescript
+- e7fec31: Add support for Release page
+
 ## 0.0.6
 
 ### Patch Changes
