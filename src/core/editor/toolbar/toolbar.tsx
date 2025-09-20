@@ -19,6 +19,7 @@ import LucideCog from 'lucide-solid/icons/cog'
 import { For, createMemo } from 'solid-js'
 import { Dynamic } from 'solid-js/web'
 import LucideChevronDown from 'lucide-solid/icons/chevron-down'
+import LucideMessageCircleQuestionMark from 'lucide-solid/icons/message-circle-question-mark'
 import {
   Popover,
   PopoverContent,
@@ -41,8 +42,8 @@ import { EditorTextShortcut } from '../../ui/kbd/kbd'
 import { EditorActionIcon } from '../../ui/action-icon/ActionIcon'
 import { EditorActionConfig } from '../../../actions'
 import styles from './toolbar.module.css'
-import type { GithubAlertType } from '../../custom/githubAlert/config'
 import type { FlowProps, JSX } from 'solid-js'
+import type { GithubAlertType } from '../../custom/githubAlert/config'
 import type { NodeAction } from 'prosekit/core'
 import type { EditorExtension } from '../extension'
 
@@ -322,6 +323,19 @@ export function Toolbar() {
       </DropdownMenu>
 
       <div class={'ml-auto d-flex'}>
+        <Tooltip>
+          <TooltipTrigger
+            as={'a'}
+            target={'_blank'}
+            href={
+              'https://github.com/riccardoperra/better-comments-for-github/issues'
+            }
+            class={styles.ToolbarAction}
+          >
+            <LucideMessageCircleQuestionMark size={16} />
+          </TooltipTrigger>
+          <TooltipContent>Issues & Feedback</TooltipContent>
+        </Tooltip>
         <Popover placement={'bottom-end'}>
           <PopoverTrigger class={styles.ToolbarAction}>
             <LucideCog size={16} />

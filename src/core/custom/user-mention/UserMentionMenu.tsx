@@ -60,9 +60,11 @@ export function UserMentionMenu(props: UserMentionMenuProps) {
       .slice(0, 100)
   })
 
+  const regex = /@\w*$/
+
   return (
     <AutocompletePopover
-      regex={/@\w*$/}
+      regex={regex}
       fitViewport={false}
       transform={true}
       onQueryChange={setQuery}

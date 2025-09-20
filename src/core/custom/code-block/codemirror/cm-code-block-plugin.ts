@@ -28,32 +28,36 @@ export function defineCmCodeBlockPlugin() {
         let tr = newState.tr
         let modified = false
 
-        for (const transaction of transactions) {
-          if (!transaction.docChanged) {
-            continue
-          }
-          for (const step of transaction.steps) {
-            const map = step.getMap()
-            map.forEach((oldStart, oldEnd, newStart, newEnd) => {
-              newState.doc.nodesBetween(newStart, newEnd, (node, pos) => {
-                if (
-                  node.type.name === 'codeBlock' &&
-                  codeMirrorLanguages.includes(node.attrs.language)
-                ) {
-                  modified = true
-                  const cmCodeBlock = newState.schema.nodes.cmCodeBlock
-                  tr = replaceWith(tr, pos, node, cmCodeBlock)
-                } else if (
-                  node.type.name === 'cmCodeBlock' &&
-                  !codeMirrorLanguages.includes(node.attrs.language)
-                ) {
-                  modified = true
-                  const codeBlock = newState.schema.nodes.codeBlock
-                  tr = replaceWith(tr, pos, node, codeBlock)
-                }
+        try {
+          for (const transaction of transactions) {
+            if (!transaction.docChanged) {
+              continue
+            }
+            for (const step of transaction.steps) {
+              const map = step.getMap()
+              map.forEach((oldStart, oldEnd, newStart, newEnd) => {
+                newState.doc.nodesBetween(newStart, newEnd, (node, pos) => {
+                  if (
+                    node.type.name === 'codeBlock' &&
+                    codeMirrorLanguages.includes(node.attrs.language)
+                  ) {
+                    modified = true
+                    const cmCodeBlock = newState.schema.nodes.cmCodeBlock
+                    tr = replaceWith(tr, pos, node, cmCodeBlock)
+                  } else if (
+                    node.type.name === 'cmCodeBlock' &&
+                    !codeMirrorLanguages.includes(node.attrs.language)
+                  ) {
+                    modified = true
+                    const codeBlock = newState.schema.nodes.codeBlock
+                    tr = replaceWith(tr, pos, node, codeBlock)
+                  }
+                })
               })
-            })
+            }
           }
+        } catch (e) {
+          return null
         }
         return modified ? tr : null
       },

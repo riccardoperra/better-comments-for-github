@@ -17,6 +17,7 @@
 import { useEditor } from 'prosekit/solid'
 
 import { For, Show } from 'solid-js'
+import { canUseRegexLookbehind } from 'prosekit/core'
 import {
   AutocompleteEmpty,
   AutocompleteItem,
@@ -28,12 +29,11 @@ import { githubAlertTypeMap } from '../../custom/githubAlert/config'
 import { EditorTextShortcut } from '../../ui/kbd/kbd'
 import { EditorActionIcon } from '../../ui/action-icon/ActionIcon'
 import styles from './slash-menu.module.css'
+import type { Editor } from 'prosekit/core'
 import type { JSX } from 'solid-js'
 import type { LucideProps } from 'lucide-solid'
 
 import type { EditorExtension } from '../extension'
-
-import type { Editor } from 'prosekit/core'
 
 export interface SlashMenuItem {
   label: string
@@ -172,7 +172,9 @@ const GroupedMenuItems = groupMenuItems()
 
 export default function SlashMenu() {
   const editor = useEditor<EditorExtension>()
-  const regex = /\/(|\S.*)$/iu
+
+  // Match inputs like "/", "/table", "/heading 1" etc. Do not match "/ heading".
+  const regex = canUseRegexLookbehind() ? /(?<!\S)\/(|\S.*)$/u : /\/(|\S.*)$/u
 
   return (
     <AutocompletePopover

@@ -55,6 +55,10 @@ Install (or update) manually:
     - In **firefox**, go to `about:debugging#/runtime/this-firefox`, then click on "Load Temporary Add-on" and select the
       firefox zip file.
 
+## List of all supported features
+
+[List of all supported features discussion](https://github.com/riccardoperra/better-comments-for-github/discussions/50)
+
 ## Project structure
 
 The project structure is organized in a monorepo using pnpm workspaces. The structure is still WIP and doesn't 
@@ -95,8 +99,6 @@ Some of my core own libraries:
 - Install the dependencies via `pnpm install`
 - Build core libs via `pnpm build:core-libs` (or build them individually)
 - Run the extension via `pnpm run dev:extension`
-
-## Features mapping
 
 > [!CAUTION]
 >
