@@ -1,5 +1,11 @@
 # @better-comments-for-github/extension
 
+## 0.0.10
+
+### Patch Changes
+
+- 29f3305: Improvements for CodeMirror node arrow navigation
+
 ## 0.0.9
 
 ### Patch Changes
