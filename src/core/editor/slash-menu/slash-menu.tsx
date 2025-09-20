@@ -217,7 +217,6 @@ export default function SlashMenu() {
                     {(item) => (
                       <Show when={item.canExec(editor())}>
                         <AutocompleteItem
-                          key={item.actionId!}
                           class={styles.slashMenuItem}
                           value={item.label}
                           onSelect={() => {
