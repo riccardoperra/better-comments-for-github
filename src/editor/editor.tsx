@@ -138,7 +138,8 @@ export function Editor(props: EditorProps) {
         { signal: abortController.signal },
       )
 
-      // This is needed mostly for native textarea in discussion
+      // This is needed for the native textarea in discussion. I don't know why
+      // the change event is not always triggered consistently.
       const associatedForm = textarea.closest('form')
       if (associatedForm) {
         associatedForm.addEventListener('reset', (event) => {
