@@ -79,7 +79,7 @@ export function UserMentionView(props: NodeViewContextProps) {
           <>
             <HoverCardTrigger
               href={link()}
-              target={'_blank '}
+              target={'_blank'}
               // Inherit style from user mention
               class={clsx(styles.trigger, 'user-mention')}
               data-is-current-user={
