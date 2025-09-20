@@ -6,12 +6,5 @@
     "paths": {
       "@better-comments-for-github/core/*": ["../src/*"]
     }
-  },
-  "include": [
-    ".storybook/**/*.ts",
-    ".storybook/**/*.tsx",
-    "stories/**/*.ts",
-    "stories/**/*.tsx",
-    "stories/types/*.d.ts"
-  ]
+  }
 }
