@@ -100,7 +100,7 @@ jobs:
 
   zip-chrome:
     runs-on: ubuntu-latest
-    needs: [ "test" ]
+    needs: [ "test", "changeset" ]
     steps:
       - name: Checkout PR
         uses: actions/checkout@v4
@@ -132,7 +132,7 @@ jobs:
 
   zip-firefox:
     runs-on: ubuntu-latest
-    needs: [ "test" ]
+    needs: [ "test", "changeset" ]
     steps:
       - name: Checkout PR
         uses: actions/checkout@v4
@@ -174,23 +174,17 @@ jobs:
       - name: 📥 Monorepo install
         uses: ./.github/actions/pnpm-install
 
-      - name: Restore dist
-        uses: actions/cache@v4
-        with:
-          path: |
-            ./markdown-schema/dist
-            ./markdown-transformer/dist
-          key: packages-dist-${{ github.run_id }}-${{ github.run_number }}
-
       - name: Download Zip Chrome
         uses: actions/download-artifact@v5
         with:
           name: zip-chrome
+          path: ${{ GITHUB_WORKSPACE }}/zips
 
       - name: Download Zip Firefox
         uses: actions/download-artifact@v5
         with:
           name: zip-firefox
+          path: ${{ GITHUB_WORKSPACE }}/zips
 
       - name: Create release
         uses: softprops/action-gh-release@v2
@@ -201,4 +195,4 @@ jobs:
           body: |
             Please refer to [CHANGELOG.md](https://github.com/riccardoperra/better-comments-for-github/tree/${{ needs.changeset.outputs.new_tag }}/extension/CHANGELOG.md) for the full list of changes.
           generate_release_notes: true
-          files: extension/dist/**/*.zip
+          files: zips/***.zip
