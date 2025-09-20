@@ -1,5 +1,11 @@
 # @better-comments-for-github/extension
 
+## 0.0.9
+
+### Patch Changes
+
+- 2875669: Slash menu add animations and filtering improvements
+
 ## 0.0.8
 
 ### Patch Changes
