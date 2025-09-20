@@ -48,6 +48,7 @@ export default defineUnlistedScript(() => {
       onReady(this) {
         const currentUsername = this.currentUsername
         const parsedUrl = this.parsedUrl
+        const hovercardSubjectTag = this.hovercardSubjectTag
         const repository = () => parsedUrl()?.repository ?? null
         const repositoryOwner = () => parsedUrl()?.repositoryOwner ?? null
         if (observerDisposer) {
@@ -209,6 +210,7 @@ export default defineUnlistedScript(() => {
                     get initialValue() {
                       return textareaRef()?.value ?? ''
                     },
+                    hovercardSubjectTag: hovercardSubjectTag,
                     type,
                     repository,
                     owner: repositoryOwner,

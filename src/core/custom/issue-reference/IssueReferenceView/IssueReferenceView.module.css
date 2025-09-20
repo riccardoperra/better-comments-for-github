@@ -41,6 +41,12 @@
   }
 }
 
+.icon {
+  :global(&.octicon-comment-discussion) {
+    color: white;
+  }
+}
+
 .loader {
   animation: spin-animation 1s infinite;
 }

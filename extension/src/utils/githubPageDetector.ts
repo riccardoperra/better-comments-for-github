@@ -22,6 +22,7 @@ import type { SuggestionData } from '../../../src/editor/utils/loadSuggestionDat
 
 export interface GithubPageInstanceResult {
   readonly currentUsername: Accessor<string | null>
+  readonly hovercardSubjectTag: Accessor<string | null>
   readonly parsedUrl: Accessor<GitHubUrlParsedResult | null>
   readonly addInstance: (instance: GitHubEditorInstance) => void
   readonly removeInstance: (instance: GitHubEditorInstance) => void
@@ -201,10 +202,14 @@ export function createGitHubPageInstance(
   )
   const [parsedUrl, setParsedUrlResult] =
     createSignal<GitHubUrlParsedResult | null>(null)
+  const [hovercardSubjectTag, setHovercardSubjectTag] = createSignal<
+    string | null
+  >(null)
 
   const result: GithubPageInstanceResult = {
     currentUsername,
     parsedUrl,
+    hovercardSubjectTag,
     addInstance: (item) => instances.push(item),
     removeInstance: (item) => (instances = instances.filter((i) => i !== item)),
     removeAllInstances() {
@@ -227,10 +232,19 @@ export function createGitHubPageInstance(
     setParsedUrlResult(result)
   }
 
+  function loadHovercardSubjectTag() {
+    const content = document
+      .querySelector<HTMLMetaElement>('meta[name="hovercard-subject-tag"]')
+      ?.content.replace('issue:', '')
+      .replace('pull_request', '')
+    setHovercardSubjectTag(content ?? null)
+  }
+
   // Will fire after the first page load, and immediately after turbo:visit
   document.addEventListener('turbo:load', (event) => {
     loadUsername()
     loadParsedUrl()
+    loadHovercardSubjectTag()
     options.onReady?.call(result, event)
   })
 

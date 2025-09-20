@@ -53,7 +53,10 @@ export function UserMentionView(props: NodeViewContextProps) {
     if (cacheStorage.get.issueReferencesHtml[linkValue]) {
       return cacheStorage.get.issueReferencesHtml[linkValue]
     }
-    return getUserHoverCardContent(username)
+    return getUserHoverCardContent(
+      username,
+      editorContext.hovercardSubjectTag()!,
+    )
       .then((res) => {
         cacheStorage.set('issueReferencesHtml', linkValue, res)
         return res

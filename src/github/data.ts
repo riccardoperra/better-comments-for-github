@@ -118,36 +118,8 @@ export async function getImagePreviewUrl(
   })
 }
 
-export function getIssueHoverCardUrl(path: string) {
-  // TODO: global store?
-  const subjectTag = document
-    .querySelector<HTMLMetaElement>('meta[name="hovercard-subject-tag"]')
-    ?.content.replace('issue:', '')
-    .replace('pull_request', '')
-  return `${path}/hovercard?subject=issue:${subjectTag}&current_path=${window.location.pathname}`
-}
-
-export function getPullHoverCardUrl(path: string) {
-  // TODO: global store?
-  const subjectTag = document
-    .querySelector<HTMLMetaElement>('meta[name="hovercard-subject-tag"]')
-    ?.content.replace('issue:', '')
-    .replace('pull_request', '')
-  return `${path}/hovercard?pull_request:${subjectTag}&current_path=${window.location.pathname}`
-}
-
-export function getUserHoverCardUrl(username: string) {
-  // TODO: global store?
-  const subjectTag = document
-    .querySelector<HTMLMetaElement>('meta[name="hovercard-subject-tag"]')
-    ?.content.replace('issue:', '')
-    .replace('pull_request', '')
-
-  return `https://github.com/users/${username}/hovercard?subject=pull_request:${subjectTag}&current_path=${window.location.pathname}`
-}
-
-export function getUserHoverCardContent(path: string) {
-  const url = getUserHoverCardUrl(path)
+export function getUserHoverCardContent(username: string, subjectTag: string) {
+  const url = `https://github.com/users/${username}/hovercard?subject=pull_request:${subjectTag}&current_path=${window.location.pathname}`
   return fetch(url, {
     headers: {
       'X-Requested-With': 'XMLHttpRequest',
@@ -155,8 +127,11 @@ export function getUserHoverCardContent(path: string) {
   }).then((res) => res.text())
 }
 
-export function getPullRequestHoverCardContent(path: string) {
-  const url = getPullHoverCardUrl(path)
+export function getPullRequestHoverCardContent(
+  path: string,
+  subjectTag: string,
+) {
+  const url = `${path}/hovercard?pull_request:${subjectTag}&current_path=${window.location.pathname}`
   return fetch(url, {
     headers: {
       'X-Requested-With': 'XMLHttpRequest',
@@ -164,8 +139,20 @@ export function getPullRequestHoverCardContent(path: string) {
   }).then((res) => res.text())
 }
 
-export function getIssueHoverCardContent(path: string) {
-  const url = getIssueHoverCardUrl(path)
+export function getDiscussionHoverCardContent(
+  path: string,
+  subjectTag: string,
+) {
+  const url = `${path}/hovercard?subject=issue:${subjectTag}&current_path=${window.location.pathname}`
+  return fetch(url, {
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+    },
+  }).then((res) => res.text())
+}
+
+export function getIssueHoverCardContent(path: string, subjectTag: string) {
+  const url = `${path}/hovercard?subject=issue:${subjectTag}&current_path=${window.location.pathname}`
   return fetch(url, {
     headers: {
       'X-Requested-With': 'XMLHttpRequest',

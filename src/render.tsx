@@ -37,6 +37,7 @@ export interface RenderEditorProps {
   type: EditorType
   owner: Accessor<string | null>
   repository: Accessor<string | null>
+  hovercardSubjectTag: Accessor<string | null>
 }
 
 export function SwitchButton(props: {
@@ -140,6 +141,9 @@ export function mountEditor(root: HTMLElement, props: RenderEditorProps) {
                   currentUsername: props.currentUsername,
                   data: props.suggestionData,
                   uploadHandler: props.uploadHandler,
+                  get hovercardSubjectTag() {
+                    return props.hovercardSubjectTag
+                  },
                   get initialValue() {
                     return props.initialValue
                   },
