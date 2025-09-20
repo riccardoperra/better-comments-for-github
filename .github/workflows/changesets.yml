@@ -174,17 +174,12 @@ jobs:
       - name: 📥 Monorepo install
         uses: ./.github/actions/pnpm-install
 
-      - name: Download Zip Chrome
+      - name: Download Artifacts
         uses: actions/download-artifact@v5
         with:
-          name: zip-chrome
-          path: ${{ GITHUB_WORKSPACE }}/zips
-
-      - name: Download Zip Firefox
-        uses: actions/download-artifact@v5
-        with:
-          name: zip-firefox
-          path: ${{ GITHUB_WORKSPACE }}/zips
+          path: ./zips
+          pattern: zip-*
+          merge-multiple: true
 
       - name: Create release
         uses: softprops/action-gh-release@v2
