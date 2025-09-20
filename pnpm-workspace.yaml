@@ -3,7 +3,6 @@ packages:
   - ./markdown-schema
   - ./markdown-transformer
   - ./extension
-  - ./landing
 
 catalog:
   '@prosemirror-processor/markdown': 0.0.1-alpha.4
