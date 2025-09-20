@@ -1,5 +1,5 @@
 import './styles.scss'
-import { Preview } from 'storybook-solidjs'
+import type { Preview } from 'storybook-solidjs-vite'
 
 export const decorators = [
   (Story: () => any) => {
@@ -15,13 +15,18 @@ export const decorators = [
 ]
 
 const preview: Preview = {
+  tags: ['autodocs'],
   parameters: {
-    decorators,
+    // automatically create action args for all props that start with "on"
+    actions: { argTypesRegex: '^on.*' },
     controls: {
       matchers: {
         color: /(background|color)$/i,
-        date: /Date$/i,
+        date: /Date$/,
       },
+    },
+    docs: {
+      codePanel: true,
     },
   },
 }
