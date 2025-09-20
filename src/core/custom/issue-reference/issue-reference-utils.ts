@@ -16,9 +16,27 @@
 
 import type { GitHubIssueReferenceAttrs } from './issue'
 
+const typeToLinkMapping = {
+  pull: 'pull',
+  issue: 'issues',
+  discussion: 'discussions',
+} as const
+
+const linkToTypeMapping = {
+  pull: 'pull',
+  issues: 'issue',
+  discussions: 'discussion',
+} as const satisfies Record<string, string>
+
 export function getLinkFromIssueReferenceAttrs(
   attrs: Omit<GitHubIssueReferenceAttrs, 'href'>,
 ) {
-  const type: 'issues' | 'pull' = attrs.type === 'pull' ? 'pull' : 'issues'
-  return `https://github.com/${attrs.owner}/${attrs.repository}/${type}/${attrs.issue}`
+  const linkType = typeToLinkMapping[attrs.type] || 'issues'
+  return `https://github.com/${attrs.owner}/${attrs.repository}/${linkType}/${attrs.issue}`
+}
+
+export function getIssueReferenceTypeAttrFromLink(
+  type: (string & {}) | 'pull' | 'issues' | 'discussions',
+) {
+  return (linkToTypeMapping as any)[type] || 'issue'
 }

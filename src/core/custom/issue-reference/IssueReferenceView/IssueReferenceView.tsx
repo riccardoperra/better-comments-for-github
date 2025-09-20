@@ -27,6 +27,7 @@ import {
 } from '../../../ui/hover-card/HoverCard'
 import { getLinkFromIssueReferenceAttrs } from '../issue-reference-utils'
 import {
+  getDiscussionHoverCardContent,
   getIssueHoverCardContent,
   getPullRequestHoverCardContent,
 } from '../../../../github/data'
@@ -49,7 +50,9 @@ export function IssueReferenceView(props: NodeViewContextProps) {
     const fetchCall =
       attrs().type === 'pull'
         ? getPullRequestHoverCardContent
-        : getIssueHoverCardContent
+        : attrs().type === 'discussion'
+          ? getDiscussionHoverCardContent
+          : getIssueHoverCardContent
 
     return fetchCall(link)
       .then((res) => {
@@ -71,13 +74,18 @@ export function IssueReferenceView(props: NodeViewContextProps) {
   const issueIcon = createMemo(() => {
     const content = serializedHoverContent()
     if (!content) return null
-    return content.querySelector('svg.octicon')
+    const element = content.querySelector<SVGElement>('svg.octicon')
+    element && element.classList.add(styles.icon)
+    return element
   })
 
   const issueTitle = createMemo(() => {
     const content = serializedHoverContent()
     if (!content) return null
-    return content.querySelector('.markdown-title')?.textContent
+    return (
+      content.querySelector('.markdown-title')?.textContent ||
+      content.querySelector('.dashboard-break-word')?.textContent
+    )
   })
 
   const label = createMemo(() => {

@@ -57,6 +57,10 @@ Install (or update) manually:
 
 ## List of all supported features
 
+> [!CAUTION]
+>
+> Work in progress
+
 [List of all supported features discussion](https://github.com/riccardoperra/better-comments-for-github/discussions/50)
 
 ## Project structure
@@ -99,57 +103,5 @@ Some of my core own libraries:
 - Install the dependencies via `pnpm install`
 - Build core libs via `pnpm build:core-libs` (or build them individually)
 - Run the extension via `pnpm run dev:extension`
-
-> [!CAUTION]
->
-> Work in progress
-
-### Basic formatting syntax
-
-| Feature                             | Status | Notes                                |
-|-------------------------------------|--------|--------------------------------------|
-| Headings                            | ✅      |                                      |
-| Bold                                | ✅      |                                      |
-| Italic                              | ✅      |                                      |
-| Strikethrough                       | ✅      |                                      |
-| Bold and nested italic              | ✅      |                                      |
-| Subscript                           | ✅      |                                      |
-| Superscript                         | ✅      |                                      |
-| Underline                           | ✅      |                                      |
-| Quoting text                        | ✅      |                                      |
-| Quoting code                        | ✅      |                                      |
-| Color models                        | ❌️     |                                      |
-| Links                               | ✅      |                                      |
-| Autolink for valid url              | ✅️     |                                      |
-| Section links                       | ❌️     | I don't think this will be supported |
-| Relative links                      | ❌️     |                                      |
-| Custom anchors                      | ❌️     |                                      |
-| Line breaks                         | ✅️     |                                      |
-| Images                              | ✅️     |                                      |
-| Lists                               | ✅️     |                                      |
-| Nested lists                        | ✅️     |                                      |
-| Task lists                          | ✅️     |                                      |
-| Mentioning                          | ✅️     |                                      |
-| References issues and pull requests | ⚠️     | Still some issues or missing, WIP    |
-| Referencing external resources      | ❌️     |                                      |
-| Uploading assets                    | ✅️     |                                      |
-| Emoji                               | ✅      | Custom emoji currently not supported |
-| Paragraphs                          | ✅️     |                                      |
-| Footnotes                           | ❌️     |                                      |
-| Alerts                              | ✅️     |                                      |
-| Hiding content with comments        | ✅️     |                                      |
-
-### Advanced formatting
-
-| Feature                 | Status | Notes |
-|-------------------------|--------|-------|
-| Table                   | ✅️     |       |
-| Collapsed section       | ✅️     |       |
-| Code blocks             | ✅️     |       |
-| Diagrams                | ❌️     |       |
-| Auto linked references  | ⚠️     |       |
-| Attach files            | ✅️     |       |
-| Permanent links to code | ❌️     |       |
-| Saved replies           | ❌️     |       |
 
 

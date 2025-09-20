@@ -28,14 +28,17 @@ import {
 } from './remarkGitHubIssueReference'
 import { IssueReferenceView } from './IssueReferenceView/IssueReferenceView'
 import { defineIssueReferencePasteRule } from './issue-reference-paste-rule'
-import { getLinkFromIssueReferenceAttrs } from './issue-reference-utils'
+import {
+  getIssueReferenceTypeAttrFromLink,
+  getLinkFromIssueReferenceAttrs,
+} from './issue-reference-utils'
 import type { GitHubIssueReference } from './remarkGitHubIssueReference'
 
 export interface GitHubIssueReferenceAttrs {
   issue: number | string
   repository: string
   owner: string
-  type: 'pull' | 'issue'
+  type: 'pull' | 'issue' | 'discussion'
   href: string
 }
 
@@ -69,8 +72,8 @@ export function defineIssueReferenceSpec() {
         owner: attrs.owner,
         repository: attrs.repository,
         href: attrs.href,
-        isPullRequest: attrs.type === 'pull',
-      } as GitHubIssueReference
+        referenceType: attrs.type,
+      } satisfies GitHubIssueReference
     },
     __fromUnist: toProseMirrorNode<GitHubIssueReference>(
       'gh-issue-reference',
@@ -79,7 +82,7 @@ export function defineIssueReferenceSpec() {
           issue: node.issue,
           owner: node.owner,
           repository: node.repository,
-          type: node.isPullRequest ? 'pull' : 'issue',
+          type: node.referenceType,
           href: node.href,
         } satisfies GitHubIssueReferenceAttrs
       },
@@ -100,7 +103,7 @@ export function defineIssueReferenceSpec() {
             repository,
             issue: Number(issue),
             href,
-            type: match.type === 'pull' ? 'pull' : 'issue',
+            type: getIssueReferenceTypeAttrFromLink(match.type),
           }
         },
       },

@@ -136,6 +136,15 @@ export function getPullHoverCardUrl(path: string) {
   return `${path}/hovercard?pull_request:${subjectTag}&current_path=${window.location.pathname}`
 }
 
+export function getDiscsussionCardUrl(path: string) {
+  // TODO: global store?
+  const subjectTag = document
+    .querySelector<HTMLMetaElement>('meta[name="hovercard-subject-tag"]')
+    ?.content.replace('issue:', '')
+    .replace('pull_request', '')
+  return `${path}/hovercard?subject=issue:${subjectTag}&current_path=${window.location.pathname}`
+}
+
 export function getUserHoverCardUrl(username: string) {
   // TODO: global store?
   const subjectTag = document
@@ -157,6 +166,15 @@ export function getUserHoverCardContent(path: string) {
 
 export function getPullRequestHoverCardContent(path: string) {
   const url = getPullHoverCardUrl(path)
+  return fetch(url, {
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+    },
+  }).then((res) => res.text())
+}
+
+export function getDiscussionHoverCardContent(path: string) {
+  const url = getDiscsussionCardUrl(path)
   return fetch(url, {
     headers: {
       'X-Requested-With': 'XMLHttpRequest',

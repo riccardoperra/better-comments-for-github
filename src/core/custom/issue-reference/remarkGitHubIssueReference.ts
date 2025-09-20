@@ -16,12 +16,15 @@
 
 import { visit } from 'unist-util-visit'
 import { findAndReplace } from 'mdast-util-find-and-replace'
-import { getLinkFromIssueReferenceAttrs } from './issue-reference-utils'
+import {
+  getIssueReferenceTypeAttrFromLink,
+  getLinkFromIssueReferenceAttrs,
+} from './issue-reference-utils'
 import type { ReplaceFunction } from 'mdast-util-find-and-replace'
 import type { Node, Parent, Root, Text } from 'mdast'
 
 export const githubIssueRegex =
-  /(?:https?:\/\/)?github\.com\/([^/]+)\/([^/]+)\/(issues|pull)\/(\d+)/i
+  /(?:https?:\/\/)?github\.com\/([^/]+)\/([^/]+)\/(issues|pull|discussions)\/(\d+)/i
 
 export const githubIssueReferenceType = 'githubIssueReference'
 
@@ -43,9 +46,9 @@ export interface GitHubIssueReference extends Node {
    */
   repository: string
   /**
-   * Whether the issue is a pull request
+   * The reference type.
    */
-  isPullRequest: boolean
+  referenceType: 'issue' | 'pull' | 'discussion'
   /**
    * Original href
    */
@@ -73,7 +76,7 @@ export function matchGitHubIssueLinkReference(text: string) {
   return {
     owner,
     repository,
-    type: type === 'pull' ? 'pull' : 'issue',
+    type: getIssueReferenceTypeAttrFromLink(type),
     issue,
     href: text,
   } as const
@@ -117,7 +120,7 @@ export function remarkParseLinkToGitHubIssueReference(options: {
             issue: Number(issue),
             owner,
             repository,
-            isPullRequest: match.type === 'pull',
+            referenceType: match.type,
             href,
           } satisfies GitHubIssueReference
         }
@@ -133,7 +136,7 @@ export function remarkGitHubIssueReferenceSupport() {
         type: 'text',
         value: getLinkFromIssueReferenceAttrs({
           issue: _issue.issue,
-          type: _issue.isPullRequest ? 'pull' : 'issue',
+          type: _issue.referenceType,
           owner: _issue.owner,
           repository: _issue.repository,
         }),

@@ -30,6 +30,16 @@ export interface UserMentionMenuProps {
   issues: SuggestionData['references']
 }
 
+function getIssueTypeByIconHtml(iconHtml: string) {
+  if (iconHtml.includes('pull-request')) {
+    return 'pull'
+  }
+  if (iconHtml.includes('comment-discussion')) {
+    return 'discussion'
+  }
+  return 'issue'
+}
+
 export function IssueReferenceMenu(props: UserMentionMenuProps) {
   const [query, setQuery] = createSignal('')
   const editor = useEditor<EditorExtension>()
@@ -37,7 +47,7 @@ export function IssueReferenceMenu(props: UserMentionMenuProps) {
   const handleIssueReferenceInsert = (
     ref: SuggestionData['references'][number],
   ) => {
-    const isPullRequest = ref.iconHtml.includes('pull-request')
+    const type = getIssueTypeByIconHtml(ref.iconHtml)
     const [, owner, repository] = window.location.pathname.split('/')
     if (owner && repository) {
       queueMicrotask(() => {
@@ -45,7 +55,7 @@ export function IssueReferenceMenu(props: UserMentionMenuProps) {
           owner,
           repository,
           issue: ref.id,
-          type: isPullRequest ? 'pull' : 'issue',
+          type: type,
         })
       })
     }
