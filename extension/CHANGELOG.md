@@ -1,5 +1,11 @@
 # @better-comments-for-github/extension
 
+## 0.0.11
+
+### Patch Changes
+
+- b176734: Minor fix
+
 ## 0.0.10
 
 ### Patch Changes
