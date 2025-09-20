@@ -204,9 +204,9 @@ export function CodemirrorEditor(props: CodemirrorEditorProps) {
       context().getPos()! + (dir < 0 ? 0 : context().node.nodeSize)
     const $from = context().view.state.doc.resolve(targetPos)
     let selection = Selection.near($from, dir)
-    if ($from.parentOffset === 0 && $from.depth === 0) {
+    if ($from.parentOffset === 0 && $from.depth === 0)
       selection = new GapCursor($from)
-    }
+    if ($from.nodeAfter === null) selection = new GapCursor($from)
     const tr = context().view.state.tr.setSelection(selection).scrollIntoView()
     context().view.dispatch(tr)
     context().view.focus()

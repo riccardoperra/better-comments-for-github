@@ -19,13 +19,15 @@ import {
   defineKeymap,
   defineNodeSpec,
   insertNode,
+  isAtBlockStart,
+  removeNode,
   setBlockType,
   setNodeAttrs,
   toggleNode,
   union,
 } from 'prosekit/core'
 import { pmNode } from '@prosemirror-processor/unist'
-import { Selection } from 'prosemirror-state'
+import { NodeSelection, Selection } from 'prosemirror-state'
 import { defineCodeBlockCustomView } from './codemirror-editor'
 import CmCodeBlockView from './cm-code-block-view'
 import { codeMirrorLanguages } from './supported-languages'
@@ -116,11 +118,47 @@ export function defineCmCodeBlock() {
       component: CmCodeBlockView,
     }),
     defineKeymap({
-      ArrowLeft: arrowHandler('left'),
-      ArrowRight: arrowHandler('right'),
-      ArrowUp: arrowHandler('up'),
-      ArrowDown: arrowHandler('down'),
+      Backspace: (state, dispatch, view) => {
+        if (state.selection instanceof NodeSelection) {
+          if (state.selection.node.type.name === 'cmCodeBlock') {
+            if (view && dispatch) {
+              const tr = state.tr.deleteRange(
+                state.selection.from,
+                state.selection.to,
+              )
+              dispatch(tr)
+            }
+            return true
+          }
+        }
+        const $pos = isAtBlockStart(state, view)
+        if ($pos) {
+          const currentNode = $pos.node()
+          if (
+            currentNode.type.name === 'cmCodeBlock' &&
+            currentNode.content.size === 0
+          ) {
+            if (dispatch) {
+              const removed = removeNode({
+                pos: state.selection.from,
+                type: 'cmCodeBlock',
+              })(state, dispatch, view)
+              if (removed) {
+                view?.focus()
+              }
+            }
+            return true
+          }
+        }
+        return false
+      },
     }),
+    // defineKeymap({
+    //   ArrowLeft: arrowHandler('left'),
+    //   ArrowRight: arrowHandler('right'),
+    //   ArrowUp: arrowHandler('up'),
+    //   ArrowDown: arrowHandler('down'),
+    // }),
   )
 }
 
