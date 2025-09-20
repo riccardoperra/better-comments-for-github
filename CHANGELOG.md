@@ -1,5 +1,12 @@
 # @better-comments-for-github/core
 
+## 0.0.4
+
+### Patch Changes
+
+- b7d3a53: Add support for discussion reference
+- 73213f8: Add issue&feedback button, fix slash menu regex
+
 ## 0.0.3
 
 ### Patch Changes

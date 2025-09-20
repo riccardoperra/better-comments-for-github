@@ -1,5 +1,11 @@
 # @better-comments-for-github/extension
 
+## 0.0.8
+
+### Patch Changes
+
+- b7d3a53: Add support for discussion reference
+
 ## 0.0.7
 
 ### Patch Changes
