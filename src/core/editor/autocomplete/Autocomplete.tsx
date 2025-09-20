@@ -36,6 +36,7 @@ export const AutocompletePopover: ParentComponent<
   return (
     <CoreAutocompletePopopover
       {...props}
+      hide={true}
       class={clsx(props.class, styles.autocompleteMenu)}
     />
   )

@@ -20,7 +20,7 @@ import { EditorActionConfig } from '../../../actions'
 import type { LucideProps } from 'lucide-solid'
 
 export interface EditorActionIconProps {
-  actionId: string & keyof typeof EditorActionConfig
+  actionId: (string & {}) & keyof typeof EditorActionConfig
 }
 
 export function EditorActionIcon(props: EditorActionIconProps & LucideProps) {

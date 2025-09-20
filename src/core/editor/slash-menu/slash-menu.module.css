@@ -1,7 +1,11 @@
 .slashMenu {
-  --autocomplete-menu-max-width: 250px;
+  --autocomplete-menu-max-width: 260px;
   --autocomplete-menu-max-height: 300px;
   --autocomplete-menuitem-gap: 12px;
+}
+
+.emptySlashMenu {
+  display: none;
 }
 
 .slashMenuSection {
@@ -34,6 +38,20 @@
   font-weight: 600;
   padding-block: var(--base-size-6);
   padding-inline: var(--base-size-12);
+}
+
+.slashMenuItem {
+  opacity: 0;
+  animation: slashMenuItemShow forwards 0.1s ease-in-out;
+}
+
+@keyframes slashMenuItemShow {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .slashMenuItemShortcut {

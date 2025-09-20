@@ -65,6 +65,7 @@
     "lucide-solid": "^0.544.0",
     "mdast-util-find-and-replace": "^3.0.2",
     "mdast-util-to-markdown": "^2.1.2",
+    "motion": "^12.23.16",
     "prosekit": "catalog:",
     "prosemirror-commands": "catalog:",
     "prosemirror-gapcursor": "^1.3.2",

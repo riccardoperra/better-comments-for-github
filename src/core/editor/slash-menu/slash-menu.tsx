@@ -16,10 +16,10 @@
 
 import { useEditor } from 'prosekit/solid'
 
-import { For, Show } from 'solid-js'
+import { For, Index, Show, createMemo, createSignal } from 'solid-js'
 import { canUseRegexLookbehind } from 'prosekit/core'
+import clsx from 'clsx'
 import {
-  AutocompleteEmpty,
   AutocompleteItem,
   AutocompleteList,
   AutocompletePopover,
@@ -29,6 +29,7 @@ import { githubAlertTypeMap } from '../../custom/githubAlert/config'
 import { EditorTextShortcut } from '../../ui/kbd/kbd'
 import { EditorActionIcon } from '../../ui/action-icon/ActionIcon'
 import styles from './slash-menu.module.css'
+import { DynamicSizedContainer } from './DynamicSIzedContainer'
 import type { Editor } from 'prosekit/core'
 import type { JSX } from 'solid-js'
 import type { LucideProps } from 'lucide-solid'
@@ -76,12 +77,6 @@ const SlashMenuItems: Array<SlashMenuItem> = [
       label: 'Numbered',
       kind: 'ordered',
     },
-    // {
-    //   label: 'Toggle',
-    //   kind: 'toggle',
-    //   shortcut: '>>',
-    //   icon: LucideListCollapse,
-    // },
   ].map(
     (listType) =>
       ({
@@ -172,73 +167,103 @@ const GroupedMenuItems = groupMenuItems()
 
 export default function SlashMenu() {
   const editor = useEditor<EditorExtension>()
-
+  const [query, setQuery] = createSignal('')
   // Match inputs like "/", "/table", "/heading 1" etc. Do not match "/ heading".
   const regex = canUseRegexLookbehind() ? /(?<!\S)\/(|\S.*)$/u : /\/(|\S.*)$/u
+
+  const filteredMenuItems = createMemo(() => {
+    const currentQuery = query()
+    const updatedGroupedMenuItems: typeof GroupedMenuItems = []
+    for (const group of GroupedMenuItems) {
+      const items: Array<SlashMenuItem> = []
+      for (const item of group.children) {
+        if (item.label.toLowerCase().includes(currentQuery)) {
+          items.push(item)
+        }
+      }
+      if (items.length > 0) {
+        updatedGroupedMenuItems.push({
+          section: group.section,
+          children: items,
+        })
+      }
+    }
+    return updatedGroupedMenuItems
+  })
 
   return (
     <AutocompletePopover
       regex={regex}
       fitViewport={false}
-      class={styles.slashMenu}
+      placement={'bottom-start'}
+      strategy={'fixed'}
+      class={clsx(styles.slashMenu, {
+        [styles.emptySlashMenu]: filteredMenuItems().length === 0,
+      })}
+      onQueryChange={setQuery}
+      autoUpdate={true}
     >
       <AutocompleteList>
-        <div class={styles.slashMenuSectionGroup}>
-          <For each={GroupedMenuItems}>
-            {(group) => (
-              <div class={styles.slashMenuSection}>
-                <h5 class={styles.slashMenuSectionTitle}>
-                  {group.section.title}
-                </h5>
+        <DynamicSizedContainer>
+          <div class={styles.slashMenuSectionGroup}>
+            <Index each={filteredMenuItems()}>
+              {(group) => (
+                <div class={styles.slashMenuSection}>
+                  <h5 class={styles.slashMenuSectionTitle}>
+                    {group().section.title}
+                  </h5>
 
-                <For each={group.children}>
-                  {(item) => (
-                    <Show when={item.canExec(editor())}>
-                      <AutocompleteItem
-                        class={styles.slashMenuItem}
-                        value={item.label}
-                        onSelect={() => {
-                          item.command(editor())
-                        }}
-                      >
-                        <Show
-                          fallback={
-                            <>
-                              <Show when={item.icon}>
-                                {(icon) => {
-                                  const Icon = icon()
-                                  return <Icon size={17} strokeWidth={2} />
-                                }}
-                              </Show>
-                            </>
-                          }
-                          when={item.actionId}
+                  <For each={group().children}>
+                    {(item) => (
+                      <Show when={item.canExec(editor())}>
+                        <AutocompleteItem
+                          key={item.actionId!}
+                          class={styles.slashMenuItem}
+                          value={item.label}
+                          onSelect={() => {
+                            item.command(editor())
+                          }}
                         >
-                          {(actionId) => (
-                            <EditorActionIcon actionId={actionId()} size={17} />
-                          )}
-                        </Show>
+                          <Show
+                            fallback={
+                              <>
+                                <Show when={item.icon}>
+                                  {(icon) => {
+                                    const Icon = icon()
+                                    return <Icon size={17} strokeWidth={2} />
+                                  }}
+                                </Show>
+                              </>
+                            }
+                            when={item.actionId}
+                          >
+                            {(actionId) => (
+                              <EditorActionIcon
+                                actionId={actionId()}
+                                size={17}
+                              />
+                            )}
+                          </Show>
 
-                        {item.label}
+                          {item.label}
 
-                        <Show when={item.actionId}>
-                          <span class={styles.slashMenuItemShortcut}>
-                            <EditorTextShortcut
-                              element={item.actionId!}
-                              type={'inputRule'}
-                            />
-                          </span>
-                        </Show>
-                      </AutocompleteItem>
-                    </Show>
-                  )}
-                </For>
-              </div>
-            )}
-          </For>
-        </div>
-
-        <AutocompleteEmpty>No results</AutocompleteEmpty>
+                          <Show when={item.actionId}>
+                            <span class={styles.slashMenuItemShortcut}>
+                              <EditorTextShortcut
+                                element={item.actionId!}
+                                type={'inputRule'}
+                              />
+                            </span>
+                          </Show>
+                        </AutocompleteItem>
+                      </Show>
+                    )}
+                  </For>
+                </div>
+              )}
+            </Index>
+          </div>
+        </DynamicSizedContainer>
       </AutocompleteList>
     </AutocompletePopover>
   )
