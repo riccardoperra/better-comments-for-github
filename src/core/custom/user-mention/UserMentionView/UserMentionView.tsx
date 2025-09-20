@@ -53,7 +53,10 @@ export function UserMentionView(props: NodeViewContextProps) {
     if (cacheStorage.get.issueReferencesHtml[linkValue]) {
       return cacheStorage.get.issueReferencesHtml[linkValue]
     }
-    return getUserHoverCardContent(username)
+    return getUserHoverCardContent(
+      username,
+      editorContext.hovercardSubjectTag()!,
+    )
       .then((res) => {
         cacheStorage.set('issueReferencesHtml', linkValue, res)
         return res
@@ -76,7 +79,7 @@ export function UserMentionView(props: NodeViewContextProps) {
           <>
             <HoverCardTrigger
               href={link()}
-              target={'_blank'}
+              target={'_blank '}
               // Inherit style from user mention
               class={clsx(styles.trigger, 'user-mention')}
               data-is-current-user={

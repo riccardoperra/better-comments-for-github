@@ -15,7 +15,14 @@
  */
 
 import { useNodeViewContext } from '@prosemirror-adapter/solid'
-import { Match, Show, Switch, createMemo, createResource } from 'solid-js'
+import {
+  Match,
+  Show,
+  Switch,
+  createMemo,
+  createResource,
+  useContext,
+} from 'solid-js'
 
 import LucideLoaderCircle from 'lucide-solid/icons/loader-circle'
 import { CacheStore } from '../../../../cache.store'
@@ -31,12 +38,14 @@ import {
   getIssueHoverCardContent,
   getPullRequestHoverCardContent,
 } from '../../../../github/data'
+import { EditorRootContext } from '../../../../editor/editor'
 import styles from './IssueReferenceView.module.css'
 import type { GitHubIssueReferenceAttrs } from '../issue'
 import type { NodeViewContextProps } from '@prosemirror-adapter/solid'
 
 export function IssueReferenceView(props: NodeViewContextProps) {
   const cacheStorage = CacheStore.provide()
+  const editorContext = useContext(EditorRootContext)!
   const context = useNodeViewContext()
   const attrs = () => context().node.attrs as GitHubIssueReferenceAttrs
 
@@ -54,7 +63,7 @@ export function IssueReferenceView(props: NodeViewContextProps) {
           ? getDiscussionHoverCardContent
           : getIssueHoverCardContent
 
-    return fetchCall(link)
+    return fetchCall(link, editorContext.hovercardSubjectTag()!)
       .then((res) => {
         cacheStorage.set('issueReferencesHtml', link, res)
         return res
