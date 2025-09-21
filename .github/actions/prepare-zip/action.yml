@@ -1,0 +1,46 @@
+name: 'Prepare zip'
+description: 'Prepare zip files and upload artifacts'
+
+inputs:
+  command:
+    description: "Command to run to prepare zip file"
+    required: true
+  artifactName:
+    description: "Name of the artifact"
+    required: true
+  zipPath:
+    description: "Path to zip file"
+    required: true
+
+runs:
+  using: 'composite'
+
+  steps:
+    - name: Checkout PR
+      uses: actions/checkout@v4
+    - name: 📥 Setup
+      uses: ./.github/actions/setup-job
+    - name: 📥 Monorepo install
+      uses: ./.github/actions/pnpm-install
+
+    - name: Restore dist
+      uses: actions/cache@v4
+      with:
+        path: |
+          ./markdown-schema/dist
+          ./markdown-transformer/dist
+        key: packages-dist-${{ github.run_id }}-${{ github.run_number }}
+
+    - name: Create zip
+      shell: bash
+      run: |
+        cd extension
+        ${{ inputs.command }}
+
+    - name: Upload zip
+      uses: actions/upload-artifact@v4
+      with:
+        name: zip-chrome
+        if-no-files-found: 'error'
+        path: ${{ inputs.zipPath }}
+        retention-days: 1
