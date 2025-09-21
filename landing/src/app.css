@@ -94,8 +94,8 @@ body {
 .glow {
   z-index: -1;
   position: absolute;
-  top: 10%;
-  left: 35%;
+  top: 35%;
+  left: 40%;
   width: 60%;
   padding: 30% 0;
   transform: translate(0, -70%) rotate(65deg);
@@ -105,20 +105,27 @@ body {
     #5049c2 40%,
     rgba(58, 55, 255, 0) 50%
   );
-  filter: blur(50px);
+  mix-blend-mode: color-dodge;
+  filter: blur(150px);
+  opacity: 0;
+  animation: glowIn 3000ms cubic-bezier(0.76, 0, 0.24, 1) forwards;
 }
 
 .particles {
   position: absolute;
   z-index: -1;
-  left: 30%;
-  width: 30%;
-  transform: translate(0%, -50%);
+  left: 50%;
+  width: 50%;
+  top: 25%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  animation: particlesIn 5s cubic-bezier(0.34, 1, 0.64, 1) forwards 0.75s;
+  transform-origin: center;
 }
 
 @media screen and (max-width: 549px) {
   .glow {
-    left: 20%;
+    left: 40%;
     width: 60%;
     padding: 60% 0;
     background: radial-gradient(
@@ -130,10 +137,10 @@ body {
   }
 
   .particles {
-    width: 70%;
-    left: 0;
+    width: 100%;
   }
 }
+
 .hero {
   position: relative;
   display: flex;
@@ -143,6 +150,10 @@ body {
   justify-content: center;
   width: 100%;
   margin-top: 2rem;
+
+  img {
+    animation: titleIn 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
 
   .title {
     display: flex;
@@ -157,7 +168,9 @@ body {
     font-size: 3rem;
     color: white;
     margin-top: 1.5rem;
+    opacity: 0;
     margin-bottom: 0.875rem;
+    animation: titleIn 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
 
   p {
@@ -166,6 +179,9 @@ body {
     font-style: italic;
     font-size: 1.4rem;
     line-height: 1.2;
+    opacity: 0;
+    animation: titleIn 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation-delay: 150ms;
   }
 
   @media screen and (max-width: 549px) {
@@ -206,6 +222,9 @@ body {
   gap: 12px;
   justify-content: center;
   margin-top: 2rem;
+  opacity: 0;
+  animation: titleIn 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: 150ms;
 
   @media screen and (max-width: 549px) {
     flex-direction: column;
@@ -253,5 +272,58 @@ body {
   a {
     color: var(--link-color);
     font-weight: 500;
+  }
+
+  @media screen and (min-width: 549px) {
+    position: absolute;
+    bottom: 3rem;
+    width: 100%;
+  }
+}
+
+@keyframes titleIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-50%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes glowIn {
+  0% {
+    opacity: 0;
+    transform: translate(-30%, -100%) rotate(30deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0, -50%) rotate(65deg);
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes particlesIn {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.2);
+  }
+
+  75% {
+    opacity: 0.8;
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
   }
 }
