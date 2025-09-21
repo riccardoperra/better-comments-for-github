@@ -1,5 +1,11 @@
 # @better-comments-for-github/extension
 
+## 0.0.13
+
+### Patch Changes
+
+- 7d5d4b8: Improve parsing for references that contain a comment id
+
 ## 0.0.12
 
 ### Patch Changes
