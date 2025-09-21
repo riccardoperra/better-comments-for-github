@@ -130,8 +130,12 @@ export function getUserHoverCardContent(username: string, subjectTag: string) {
 export function getPullRequestHoverCardContent(
   path: string,
   subjectTag: string,
+  commentId: string | null,
 ) {
-  const url = `${path}/hovercard?pull_request:${subjectTag}&current_path=${window.location.pathname}`
+  const url = new URL(`${path}/hovercard`)
+  if (commentId) url.searchParams.append('comment_id', commentId)
+  url.searchParams.append('pull_request', `${subjectTag}`)
+  url.searchParams.append('current_path', window.location.pathname)
   return fetch(url, {
     headers: {
       'X-Requested-With': 'XMLHttpRequest',
@@ -142,8 +146,12 @@ export function getPullRequestHoverCardContent(
 export function getDiscussionHoverCardContent(
   path: string,
   subjectTag: string,
+  commentId: string | null,
 ) {
-  const url = `${path}/hovercard?subject=issue:${subjectTag}&current_path=${window.location.pathname}`
+  const url = new URL(`${path}/hovercard`)
+  if (commentId) url.searchParams.append('comment_id', commentId)
+  url.searchParams.append('current_path', window.location.pathname)
+  url.searchParams.append('subject', `discussion:${subjectTag}`)
   return fetch(url, {
     headers: {
       'X-Requested-With': 'XMLHttpRequest',
@@ -151,8 +159,15 @@ export function getDiscussionHoverCardContent(
   }).then((res) => res.text())
 }
 
-export function getIssueHoverCardContent(path: string, subjectTag: string) {
-  const url = `${path}/hovercard?subject=issue:${subjectTag}&current_path=${window.location.pathname}`
+export function getIssueHoverCardContent(
+  path: string,
+  subjectTag: string,
+  commentId: string | null,
+) {
+  const url = new URL(`${path}/hovercard`)
+  if (commentId) url.searchParams.append('comment_id', commentId)
+  url.searchParams.append('subject', `issue:${subjectTag}`)
+  url.searchParams.append('current_path', window.location.pathname)
   return fetch(url, {
     headers: {
       'X-Requested-With': 'XMLHttpRequest',

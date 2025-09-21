@@ -40,6 +40,7 @@ export interface GitHubIssueReferenceAttrs {
   owner: string
   type: 'pull' | 'issue' | 'discussion'
   href: string
+  commentId?: string
 }
 
 /**
@@ -57,6 +58,9 @@ export function defineIssueReferenceSpec() {
       owner: {},
       type: {},
       href: {},
+      commentId: {
+        default: undefined,
+      },
     },
     inline: true,
     leafText: (node) => {
@@ -73,6 +77,7 @@ export function defineIssueReferenceSpec() {
         repository: attrs.repository,
         href: attrs.href,
         referenceType: attrs.type,
+        commentId: attrs.commentId,
       } satisfies GitHubIssueReference
     },
     __fromUnist: toProseMirrorNode<GitHubIssueReference>(
@@ -84,6 +89,7 @@ export function defineIssueReferenceSpec() {
           repository: node.repository,
           type: node.referenceType,
           href: node.href,
+          commentId: node.commentId,
         } satisfies GitHubIssueReferenceAttrs
       },
     ) as any,

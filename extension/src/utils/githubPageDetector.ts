@@ -240,6 +240,7 @@ export function createGitHubPageInstance(
       .querySelector<HTMLMetaElement>('meta[name="hovercard-subject-tag"]')
       ?.content.replace('issue:', '')
       .replace('pull_request', '')
+      .replace('discussion:', '')
     setHovercardSubjectTag(content ?? null)
   }
 
