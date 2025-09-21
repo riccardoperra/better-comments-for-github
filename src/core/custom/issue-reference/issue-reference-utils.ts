@@ -30,9 +30,19 @@ const linkToTypeMapping = {
 
 export function getLinkFromIssueReferenceAttrs(
   attrs: Omit<GitHubIssueReferenceAttrs, 'href'>,
+  baseForHovercard: boolean = false,
 ) {
   const linkType = typeToLinkMapping[attrs.type] || 'issues'
-  return `https://github.com/${attrs.owner}/${attrs.repository}/${linkType}/${attrs.issue}`
+  let link = `https://github.com/${attrs.owner}/${attrs.repository}/${linkType}/${attrs.issue}`
+  if (baseForHovercard) {
+    return link
+  }
+  if (attrs.commentId) {
+    const prefix =
+      linkType === 'discussions' ? 'discussioncomment' : 'issuecomment'
+    link += `#${prefix}-${attrs.commentId}`
+  }
+  return link
 }
 
 export function getIssueReferenceTypeAttrFromLink(

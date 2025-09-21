@@ -24,7 +24,7 @@ import type { ReplaceFunction } from 'mdast-util-find-and-replace'
 import type { Node, Parent, Root, Text } from 'mdast'
 
 export const githubIssueRegex =
-  /(?:https?:\/\/)?github\.com\/([^/]+)\/([^/]+)\/(issues|pull|discussions)\/(\d+)/i
+  /(?:https?:\/\/)?github\.com\/(?<owner>[^/]+)\/(?<repo>[^/]+)\/(?<type>issues|pull|discussions)\/(?<number>\d+)(?:#(?:issuecomment|discussioncomment)-(?<commentId>\d+))?/i
 
 export const githubIssueReferenceType = 'githubIssueReference'
 
@@ -53,6 +53,10 @@ export interface GitHubIssueReference extends Node {
    * Original href
    */
   href: string
+  /**
+   * Link to the comment reply if present.
+   */
+  commentId?: string
 }
 
 declare module 'mdast' {
@@ -79,6 +83,7 @@ export function matchGitHubIssueLinkReference(text: string) {
     type: getIssueReferenceTypeAttrFromLink(type),
     issue,
     href: text,
+    commentId: match.groups?.commentId || null,
   } as const
 }
 
@@ -113,15 +118,20 @@ export function remarkParseLinkToGitHubIssueReference(options: {
       const href = link.url
       const match = matchGitHubIssueLinkReference(href)
       if (match) {
-        const { owner, repository, issue } = match
+        const titleAsUrl = link.children.some(
+          (child) => child.type === 'text' && child.value === link.url,
+        )
+        if (!titleAsUrl) return
+        const { owner, repository, issue, commentId, type } = match
         if (typeof index === 'number' && parent) {
           parent.children[index] = {
             type: githubIssueReferenceType,
             issue: Number(issue),
             owner,
             repository,
-            referenceType: match.type,
+            referenceType: type,
             href,
+            commentId: commentId || undefined,
           } satisfies GitHubIssueReference
         }
       }
@@ -139,6 +149,7 @@ export function remarkGitHubIssueReferenceSupport() {
           type: _issue.referenceType,
           owner: _issue.owner,
           repository: _issue.repository,
+          commentId: _issue.commentId,
         }),
       }
       if (typeof index === 'number' && parent) {

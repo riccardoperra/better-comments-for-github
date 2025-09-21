@@ -49,7 +49,7 @@ export function IssueReferenceView(props: NodeViewContextProps) {
   const context = useNodeViewContext()
   const attrs = () => context().node.attrs as GitHubIssueReferenceAttrs
 
-  const link = createMemo(() => getLinkFromIssueReferenceAttrs(attrs()))
+  const link = createMemo(() => getLinkFromIssueReferenceAttrs(attrs(), true))
 
   const [hoverContent] = createResource(link, (link) => {
     if (cacheStorage.get.issueReferencesHtml[link]) {
@@ -63,7 +63,11 @@ export function IssueReferenceView(props: NodeViewContextProps) {
           ? getDiscussionHoverCardContent
           : getIssueHoverCardContent
 
-    return fetchCall(link, editorContext.hovercardSubjectTag()!)
+    return fetchCall(
+      link,
+      editorContext.hovercardSubjectTag()!,
+      attrs().commentId || null,
+    )
       .then((res) => {
         cacheStorage.set('issueReferencesHtml', link, res)
         return res
@@ -90,11 +94,16 @@ export function IssueReferenceView(props: NodeViewContextProps) {
 
   const issueTitle = createMemo(() => {
     const content = serializedHoverContent()
+    const commentId = attrs().commentId
     if (!content) return null
-    return (
+    const title =
       content.querySelector('.markdown-title')?.textContent ||
-      content.querySelector('.dashboard-break-word')?.textContent
-    )
+      content.querySelector('.dashboard-break-word')?.textContent ||
+      String(attrs().issue)
+    if (commentId) {
+      return `#${attrs().issue} (comment)`
+    }
+    return title
   })
 
   const label = createMemo(() => {
