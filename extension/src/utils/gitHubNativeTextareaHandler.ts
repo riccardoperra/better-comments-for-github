@@ -23,6 +23,7 @@ import {
   tryGetReferences,
 } from '@better-comments-for-github/core/github/data'
 import { GitHubUploaderNativeHandler } from '@better-comments-for-github/core/core/custom/image/github-file-uploader'
+import { log } from '@better-comments-for-github/core/editor/utils/logger'
 import type { AttachmentHandlerElement } from '@better-comments-for-github/core/core/custom/image/github-file-uploader'
 import type { SuggestionData } from '@better-comments-for-github/core/editor/utils/loadSuggestionData'
 
@@ -91,11 +92,11 @@ export class GitHubNativeTextareaHandler {
     // If we are in a new comment form, we can directly inject
     // the footer into the bottom action bar
     if (newCommentForm) {
-      return () => {
-        const commentFooter = newCommentForm.querySelector(
-          '#partial-new-comment-form-actions',
-        )
-        if (commentFooter) {
+      const commentFooter = newCommentForm.querySelector(
+        '#partial-new-comment-form-actions',
+      )
+      if (commentFooter) {
+        return () => {
           const actionsWrapper = commentFooter.firstElementChild
           if (actionsWrapper) {
             const switchRoot = document.createElement('div')
@@ -205,9 +206,9 @@ export class GitHubNativeTextareaHandler {
 
     return () => {
       // Just a noop
-      console.warn(
-        '[github-better-comments] No mount point found for the switch button',
-      )
+      log('No mount point found for the switch button', {
+        id: this.instance.id,
+      })
     }
   }
 
@@ -269,8 +270,8 @@ export class GitHubNativeTextareaHandler {
         effect(() => {
           const show = this.instance.showOldEditor()
           show
-            ? tabContainer.style.setProperty('display', 'none')
-            : tabContainer.style.removeProperty('display')
+            ? tabContainer.classList.add('sr-only')
+            : tabContainer.classList.remove('sr-only')
         })
         node.classList.add(...this.classList)
         node.style.width = 'auto'

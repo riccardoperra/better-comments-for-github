@@ -27,6 +27,7 @@ import type { GitHubUploaderHandler } from './core/custom/image/github-file-uplo
 import type { SuggestionData } from './editor/utils/loadSuggestionData'
 
 export interface RenderEditorProps {
+  id: string
   open: Accessor<boolean>
   openChange: (open: boolean) => void
   currentUsername: Accessor<string | null>
@@ -138,6 +139,7 @@ export function mountEditor(root: HTMLElement, props: RenderEditorProps) {
             >
               <EditorRootContext.Provider
                 value={{
+                  id: props.id,
                   currentUsername: props.currentUsername,
                   data: props.suggestionData,
                   uploadHandler: props.uploadHandler,
@@ -147,9 +149,7 @@ export function mountEditor(root: HTMLElement, props: RenderEditorProps) {
                   get initialValue() {
                     return props.initialValue
                   },
-                  get textarea() {
-                    return props.textarea()!
-                  },
+                  textarea: () => props.textarea()!,
                   get type() {
                     return props.type
                   },

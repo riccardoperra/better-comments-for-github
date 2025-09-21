@@ -44,10 +44,11 @@ import { forceGithubTextAreaSync } from './utils/forceGithubTextAreaSync'
 import { DebugNode } from './DebugNode'
 import { unistNodeFromMarkdown } from './utils/unistNodeFromMarkdown'
 import { patchJsNativeTextareaValue } from './utils/jsNativeTextareaValuePatch'
-import type { Root } from 'mdast'
-import type { GitHubUploaderHandler } from '../core/custom/image/github-file-uploader'
-import type { SuggestionData } from './utils/loadSuggestionData'
+import { log } from './utils/logger'
 import type { Schema } from 'prosemirror-model'
+import type { SuggestionData } from './utils/loadSuggestionData'
+import type { GitHubUploaderHandler } from '../core/custom/image/github-file-uploader'
+import type { Root } from 'mdast'
 
 export interface EditorProps {
   suggestions: SuggestionData
@@ -56,8 +57,9 @@ export interface EditorProps {
 
 export type EditorType = 'native' | 'react'
 export type EditorRootContextProps = {
+  id: string
   data: Accessor<SuggestionData>
-  textarea: HTMLTextAreaElement
+  textarea: Accessor<HTMLTextAreaElement>
   initialValue: string
   uploadHandler: GitHubUploaderHandler
   type: EditorType
@@ -109,21 +111,25 @@ export function Editor(props: EditorProps) {
 
   createEffect(() => {
     const abortController = new AbortController()
+    const textarea = context.textarea()
 
-    const observer = new ResizeObserver(([{ target }], observer) => {
-      if (!target.isConnected) {
-        observer.disconnect()
-      }
+    const observer = new MutationObserver((entries) => {
+      console.log('mutation observer of entries', entries)
     })
 
-    observer.observe(context.textarea)
+    observer.observe(textarea, {
+      attributes: true,
+      subtree: true,
+      childList: true,
+      characterData: true,
+    })
 
     // TODO: should we always enable auto-focus?
     editor.focus()
 
     if (props.type === 'native') {
-      const unpatchSetValueEvent = patchJsNativeTextareaValue(context.textarea)
-      context.textarea.addEventListener(
+      const unpatchSetValueEvent = patchJsNativeTextareaValue(textarea)
+      textarea.addEventListener(
         'gh-better-comments-textarea-set-value',
         (e) => {
           const pmNode = textAreaValueToPmNode(e.detail, context, editor.schema)
@@ -131,23 +137,35 @@ export function Editor(props: EditorProps) {
         },
         { signal: abortController.signal },
       )
+
+      // This is needed for the native textarea in discussion. I don't know why
+      // the change event is not always triggered consistently.
+      const associatedForm = textarea.closest('form')
+      if (associatedForm) {
+        associatedForm.addEventListener('reset', (event) => {
+          log('Reset form event', { event }, { id: context.id })
+          editor.setContent('')
+        })
+      }
+
       onCleanup(() => {
         unpatchSetValueEvent()
       })
     }
 
     onCleanup(() => {
+      log('Destroy editor', { id: context.id })
       abortController.abort('I hope a new reference of textarea')
       editor.setContent('')
       observer.disconnect()
     })
 
-    context.textarea.addEventListener(
+    textarea.addEventListener(
       'input',
       (event) => {
         if (!(event as { fromEditor?: boolean }).fromEditor) {
           const pmNode = textAreaValueToPmNode(
-            context.textarea.value,
+            textarea.value,
             context,
             editor.schema,
           )
@@ -157,22 +175,14 @@ export function Editor(props: EditorProps) {
       { signal: abortController.signal },
     )
 
-    context.textarea.addEventListener(
-      'manual-reset',
-      () => {
-        editor.setContent('')
-      },
-      { signal: abortController.signal },
-    )
-
     // Old text area change event (e.g. PR)
-    context.textarea.addEventListener(
+    textarea.addEventListener(
       'change',
       (event) => {
         if ((event as any)['fromEditor']) return
         if (event.isTrusted) return false
         const pmNode = textAreaValueToPmNode(
-          context.textarea.value,
+          textarea.value,
           context,
           editor.schema,
         )
@@ -217,7 +227,7 @@ export function Editor(props: EditorProps) {
       setTimeout(() => {
         const markdown = toMarkdown()
         editorStore.set('markdown', markdown)
-        forceGithubTextAreaSync(context.textarea, markdown, {
+        forceGithubTextAreaSync(context.textarea(), markdown, {
           behavior: props.type,
         })
       }, 150)

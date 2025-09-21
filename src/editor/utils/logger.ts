@@ -14,6 +14,21 @@
  * limitations under the License.
  */
 
-.injectedEditorContent {
-  width: 100%;
+export const logEnabled = import.meta.env.DEV
+
+export const log = (...args: Array<any>) => {
+  if (logEnabled) {
+    const lastArg = args[args.length - 1]
+    let id: string | undefined = ''
+    if (typeof lastArg === 'object' && 'id' in lastArg) {
+      id = lastArg.id
+      args.length = args.length - 1
+    }
+
+    console.debug(
+      `%cgithub-better-comments${id ? `:${id}` : ''}`,
+      'background-color: #0089d9; color: white; border-radius: 4px; padding: 2px 4px;',
+      ...args,
+    )
+  }
 }

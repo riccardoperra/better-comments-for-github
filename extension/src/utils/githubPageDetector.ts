@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import { createComponent } from 'solid-js'
+import { createComponent, createUniqueId } from 'solid-js'
+import { log } from '@better-comments-for-github/core/editor/utils/logger'
 import { SwitchButton } from '../../../src/render'
 import type { Accessor, ComponentProps, Setter } from 'solid-js'
 import type { GitHubUrlParsedResult } from './githubUrlParser'
@@ -36,6 +37,7 @@ export interface GitHubPageInstanceOptions {
 }
 
 export interface GitHubEditorInstance {
+  id: string
   rootElement: HTMLElement
   suggestionData: Accessor<SuggestionData>
   setInjector: (injector: GitHubEditorInjector) => void
@@ -159,6 +161,7 @@ export function createGitHubEditorInstance(
   }
 
   return {
+    id: createUniqueId(),
     unmount,
     rootElement: el,
     showOldEditor,
@@ -240,11 +243,21 @@ export function createGitHubPageInstance(
     setHovercardSubjectTag(content ?? null)
   }
 
+  document.addEventListener('turbo:visit', console.log)
+
   // Will fire after the first page load, and immediately after turbo:visit
   document.addEventListener('turbo:load', (event) => {
     loadUsername()
     loadParsedUrl()
     loadHovercardSubjectTag()
+
+    log('Load page', {
+      event,
+      username: currentUsername(),
+      url: parsedUrl,
+      hovercardSubjectTag: hovercardSubjectTag(),
+    })
+
     options.onReady?.call(result, event)
   })
 
