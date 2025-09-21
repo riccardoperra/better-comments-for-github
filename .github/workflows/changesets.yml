@@ -123,6 +123,7 @@ jobs:
           pnpm zip
 
       - name: Upload zip
+        if: needs.changeset.outputs.tag_exists == 'false'
         uses: actions/upload-artifact@v4
         with:
           name: zip-chrome
@@ -155,12 +156,12 @@ jobs:
           pnpm zip:firefox
 
       - name: Upload zip
+        if: needs.changeset.outputs.tag_exists == 'false'
         uses: actions/upload-artifact@v4
         with:
           name: zip-firefox
           if-no-files-found: 'error'
           path: extension/dist/*.zip
-
 
   create-release:
     runs-on: ubuntu-latest
