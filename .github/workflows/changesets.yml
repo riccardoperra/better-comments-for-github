@@ -73,13 +73,13 @@ jobs:
     needs: [ "build-core" ]
     steps:
       - name: Checkout PR
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: 📥 Setup
         uses: ./.github/actions/setup-job
       - name: 📥 Monorepo install
         uses: ./.github/actions/pnpm-install
       - name: Prepare zip
-        uses: ./.github/actions/prepare-zip/action.yml
+        uses: ./.github/actions/prepare-zip
         with:
           command: 'pnpm zip'
           zipPath: extension/dist/*.zip
@@ -90,7 +90,7 @@ jobs:
     needs: [ "build-core" ]
     steps:
       - name: Checkout PR
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: 📥 Setup
         uses: ./.github/actions/setup-job
       - name: 📥 Monorepo install
