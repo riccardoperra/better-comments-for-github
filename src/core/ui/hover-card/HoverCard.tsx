@@ -36,6 +36,7 @@ const HoverCard: Component<HoverCardPrimitive.HoverCardRootProps> = (props) => {
       closeDelay={0}
       openDelay={100}
       gutter={4}
+      hideWhenDetached={true}
       {...props}
     />
   )

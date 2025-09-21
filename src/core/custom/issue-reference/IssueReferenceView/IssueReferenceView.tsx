@@ -101,7 +101,7 @@ export function IssueReferenceView(props: NodeViewContextProps) {
       content.querySelector('.dashboard-break-word')?.textContent ||
       String(attrs().issue)
     if (commentId) {
-      return `${title} (comment)`
+      return `#${attrs().issue} (comment)`
     }
     return title
   })
