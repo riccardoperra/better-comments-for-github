@@ -75,28 +75,24 @@ respect yet the best practices (root folder is a package itself too), but it wil
 - **extension**: the browser extension package, responsible to load the editor in the GitHub pages.
 - **src**: the core of the editor
 
-## Stack
+## Tech stack
 
-Built with the following `core` technologies:
+This extension has been made using [WXT Extension Framework](https://github.com/wxt-dev/wxt).
 
-- [WXT Extension Framework](https://github.com/wxt-dev/wxt)
+To mimic the GitHub native styling, GitHub Primer CSS variables and classes from
+official [GitHub website](github.com) have been used.
 
-#### Editor
-
+Some libraries to mention:
 - [ProseMirror](https://prosemirror.net/)
 - [prosekit](https://github.com/prosekit/prosekit)
 - [unified](https://github.com/unifiedjs/unified)
-
-Some of my core own libraries:
-
-- [statebuilder](https://github.com/riccardoperra/statebuilder)
-- [prosemirror-processor](https://github.com/riccardoperra/prosemirror-processor)
-
-#### UI
-
 - [SolidJS](https://github.com/solidjs/solid)
 - [Kobalte](https://kobalte.dev)
-- GitHub Primer CSS variables
+
+Some of my core own libraries:
+- [statebuilder](https://github.com/riccardoperra/statebuilder)
+- [prosemirror-processor](https://github.com/riccardoperra/prosemirror-processor)
+- [solid-codemirror](https://github.com/riccardoperra/solid-codemirror)
 
 ## Running the project
 
