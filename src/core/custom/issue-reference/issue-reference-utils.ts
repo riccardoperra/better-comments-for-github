@@ -32,13 +32,7 @@ export function getLinkFromIssueReferenceAttrs(
   attrs: Omit<GitHubIssueReferenceAttrs, 'href'>,
 ) {
   const linkType = typeToLinkMapping[attrs.type] || 'issues'
-  const link = `https://github.com/${attrs.owner}/${attrs.repository}/${linkType}/${attrs.issue}`
-  // if (attrs.commentId) {
-  //   const prefix =
-  //     linkType === 'discussions' ? 'discussioncomment' : 'issuecomment'
-  //   link += `#${prefix}-${attrs.commentId}`
-  // }
-  return link
+  return `https://github.com/${attrs.owner}/${attrs.repository}/${linkType}/${attrs.issue}`
 }
 
 export function getIssueReferenceTypeAttrFromLink(

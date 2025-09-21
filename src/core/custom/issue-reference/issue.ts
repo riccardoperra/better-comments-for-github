@@ -103,13 +103,14 @@ export function defineIssueReferenceSpec() {
           if (!match) {
             return false
           }
-          const { issue, repository, owner } = match
+          const { issue, repository, owner, commentId, type } = match
           return {
             owner,
             repository,
             issue: Number(issue),
             href,
-            type: getIssueReferenceTypeAttrFromLink(match.type),
+            type: getIssueReferenceTypeAttrFromLink(type),
+            commentId: commentId || undefined,
           }
         },
       },
