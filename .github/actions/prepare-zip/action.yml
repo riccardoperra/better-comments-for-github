@@ -16,13 +16,6 @@ runs:
   using: 'composite'
 
   steps:
-    - name: Checkout PR
-      uses: actions/checkout@v4
-    - name: 📥 Setup
-      uses: ./.github/actions/setup-job
-    - name: 📥 Monorepo install
-      uses: ./.github/actions/pnpm-install
-
     - name: Restore dist
       uses: actions/cache@v4
       with:
