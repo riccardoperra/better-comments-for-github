@@ -1,5 +1,11 @@
 # @better-comments-for-github/core
 
+## 0.0.8
+
+### Patch Changes
+
+- 29b475d: Reply is not resetted on discussion page after submit
+
 ## 0.0.7
 
 ### Patch Changes
