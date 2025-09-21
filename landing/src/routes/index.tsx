@@ -81,11 +81,23 @@ export default function Home() {
       <Title>Better Comments for GitHub</Title>
 
       <div class={'glow'}></div>
-      <img src={'/particles.png'} alt={''} class={'particles'} />
+      <img
+        src={'/particles.png'}
+        aria-hidden={'true'}
+        fetchpriority={'high'}
+        alt={''}
+        class={'particles'}
+      />
 
       <div class={'hero'}>
         <div class={'title'}>
-          <img alt={'logo'} src={'/logo.png'} height={125} width={125} />
+          <img
+            alt={'logo'}
+            fetchpriority={'high'}
+            src={'/logo.png'}
+            height={125}
+            width={125}
+          />
           <h1>Better Comments for GitHub</h1>
         </div>
 
