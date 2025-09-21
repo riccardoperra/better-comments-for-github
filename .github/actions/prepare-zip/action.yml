@@ -33,7 +33,7 @@ runs:
     - name: Upload zip
       uses: actions/upload-artifact@v4
       with:
-        name: zip-chrome
+        name: ${{ inputs.artifactName }}
         if-no-files-found: 'error'
         path: ${{ inputs.zipPath }}
         retention-days: 1
