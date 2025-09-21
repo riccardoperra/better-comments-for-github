@@ -49,7 +49,7 @@ export function IssueReferenceView(props: NodeViewContextProps) {
   const context = useNodeViewContext()
   const attrs = () => context().node.attrs as GitHubIssueReferenceAttrs
 
-  const link = createMemo(() => getLinkFromIssueReferenceAttrs(attrs()))
+  const link = createMemo(() => getLinkFromIssueReferenceAttrs(attrs(), true))
 
   const [hoverContent] = createResource(link, (link) => {
     if (cacheStorage.get.issueReferencesHtml[link]) {
