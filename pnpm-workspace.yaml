@@ -3,6 +3,7 @@ packages:
   - ./markdown-schema
   - ./markdown-transformer
   - ./extension
+  - ./landing
 
 catalog:
   '@prosemirror-processor/markdown': 0.0.1-alpha.4
@@ -26,7 +27,7 @@ catalog:
   remark-rehype: ^11.1.2
   remark-stringify: ^11.0.0
   solid-js: ^1.9.9
-  statebuilder: ^0.8.1
+  statebuilder: 0.8.1
   tsdown: ^0.15.2
   typescript: ^5.9.2
   unified: ^11.0.5

@@ -1,0 +1,177 @@
+/*
+  Josh's Custom CSS Reset
+  https://www.joshwcomeau.com/css/custom-css-reset/
+*/
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    interpolate-size: allow-keywords;
+  }
+}
+
+body {
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  overflow-wrap: break-word;
+}
+
+p {
+  text-wrap: pretty;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  text-wrap: balance;
+}
+
+#root,
+#__next {
+  isolation: isolate;
+}
+
+:root {
+  --neutral-1: #0d1117;
+}
+
+body {
+  background: var(--neutral-1);
+  font-family:
+    Gordita, Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue',
+    sans-serif;
+}
+
+.main {
+  width: 100%;
+  min-height: 100dvh;
+  padding-top: 32px;
+}
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  width: 100%;
+
+  .title {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    width: 100%;
+  }
+
+  h1 {
+    font-size: 48px;
+    color: white;
+    margin-bottom: 12px;
+  }
+
+  p {
+    max-width: 46ch;
+    color: #b7b7b7;
+    font-size: 26px;
+    font-style: italic;
+    line-height: 1.2;
+  }
+
+  @media screen and (max-width: 768px) {
+    justify-content: flex-start;
+    padding-inline: 12px;
+
+    h1 {
+      font-size: 36px;
+      line-height: 1.1;
+    }
+  }
+}
+
+.editor-try {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 68px;
+
+  h2 {
+    margin-bottom: 32px;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+  }
+
+  .editor {
+    min-width: 75vh;
+  }
+}
+
+.cta-list {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.cta {
+  padding: 8px 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 8px;
+  height: 44px;
+  outline: none;
+  border: 1px solid currentColor;
+  background: #fff;
+  color: #1a1a1a;
+  text-decoration: unset;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.github-button {
+  background-color: #2f3337;
+  color: #fff;
+  border: 1px solid rgb(47, 51, 55);
+  cursor: pointer;
+}
