@@ -68,11 +68,17 @@ h6 {
 }
 
 :root {
-  --neutral-1: #0d1117;
+  --body-bg: #0d1117;
+  --text-color: #000;
+  --text-color-secondary: #b7b7b7;
+  --primary: #4493f8;
+  --link-color: #4493f8;
+  --font-size: 16px;
 }
 
 body {
-  background: var(--neutral-1);
+  background: var(--body-bg);
+  font-size: 16px;
   font-family:
     Gordita, Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue',
     sans-serif;
@@ -81,16 +87,62 @@ body {
 .main {
   width: 100%;
   min-height: 100dvh;
+  position: relative;
   padding-top: 32px;
 }
 
+.glow {
+  z-index: -1;
+  position: absolute;
+  top: 10%;
+  left: 35%;
+  width: 60%;
+  padding: 30% 0;
+  transform: translate(0, -70%) rotate(65deg);
+  background: radial-gradient(
+    circle at left bottom,
+    #e6b7fe 20%,
+    #5049c2 40%,
+    rgba(58, 55, 255, 0) 50%
+  );
+  filter: blur(50px);
+}
+
+.particles {
+  position: absolute;
+  z-index: -1;
+  left: 30%;
+  width: 30%;
+  transform: translate(0%, -50%);
+}
+
+@media screen and (max-width: 549px) {
+  .glow {
+    left: 20%;
+    width: 60%;
+    padding: 60% 0;
+    background: radial-gradient(
+      circle at left bottom,
+      #e6b7fe 20%,
+      #5049c2 40%,
+      rgba(58, 55, 255, 0) 80%
+    );
+  }
+
+  .particles {
+    width: 70%;
+    left: 0;
+  }
+}
 .hero {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   justify-content: center;
   width: 100%;
+  margin-top: 2rem;
 
   .title {
     display: flex;
@@ -102,22 +154,28 @@ body {
   }
 
   h1 {
-    font-size: 48px;
+    font-size: 3rem;
     color: white;
-    margin-bottom: 12px;
+    margin-top: 1.5rem;
+    margin-bottom: 0.875rem;
   }
 
   p {
-    max-width: 46ch;
-    color: #b7b7b7;
-    font-size: 26px;
+    max-width: 70ch;
+    color: var(--text-color-secondary);
     font-style: italic;
+    font-size: 1.4rem;
     line-height: 1.2;
   }
 
-  @media screen and (max-width: 768px) {
+  @media screen and (max-width: 549px) {
     justify-content: flex-start;
     padding-inline: 12px;
+
+    img {
+      width: 100px;
+      height: 100px;
+    }
 
     h1 {
       font-size: 36px;
@@ -148,6 +206,10 @@ body {
   gap: 12px;
   justify-content: center;
   margin-top: 2rem;
+
+  @media screen and (max-width: 549px) {
+    flex-direction: column;
+  }
 }
 
 .cta {
@@ -158,14 +220,20 @@ body {
   gap: 8px;
   border-radius: 8px;
   height: 44px;
-  outline: none;
   border: 1px solid currentColor;
   background: #fff;
   color: #1a1a1a;
   text-decoration: unset;
+  outline: 2px solid transparent;
+  outline-offset: 0;
+  transition:
+    outline-color,
+    outline-offset 100ms ease-in-out;
 
   &:hover {
-    text-decoration: underline;
+    text-decoration: unset;
+    outline-offset: 2px;
+    outline-color: var(--primary);
   }
 }
 
@@ -174,4 +242,16 @@ body {
   color: #fff;
   border: 1px solid rgb(47, 51, 55);
   cursor: pointer;
+}
+
+.footer {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  color: white;
+
+  a {
+    color: var(--link-color);
+    font-weight: 500;
+  }
 }

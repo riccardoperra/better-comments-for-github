@@ -1,5 +1,4 @@
 import { Title } from '@solidjs/meta'
-import logo from '../../../brand/logo.png'
 
 function GitHubIcon(props) {
   return (
@@ -80,9 +79,13 @@ export default function Home() {
   return (
     <main class={'main'}>
       <Title>Better Comments for GitHub</Title>
+
+      <div class={'glow'}></div>
+      <img src={'/particles.png'} alt={''} class={'particles'} />
+
       <div class={'hero'}>
         <div class={'title'}>
-          <img alt={'logo'} src={logo} width={180} />
+          <img alt={'logo'} src={'/logo.png'} height={125} width={125} />
           <h1>Better Comments for GitHub</h1>
         </div>
 
@@ -113,38 +116,15 @@ export default function Home() {
           </a>
         </div>
       </div>
-      {/* <div class={'editor-try'}>*/}
-      {/*  <h2>TRY NOW!</h2>*/}
-      {/*  <div class={'editor'}>*/}
-      {/*    <Editor />*/}
-      {/*  </div>*/}
-      {/* </div>*/}
 
-      {/* <iframe*/}
-      {/*  ref={(iframe) => {*/}
-      {/*    import('comlink').then((Comlink) => {*/}
-      {/*      iframe.contentDocument!.addEventListener(*/}
-      {/*        'message',*/}
-      {/*        (message) => {*/}
-      {/*          const url = message.data*/}
-      {/*          const worker = new Worker(url)*/}
-      {/*          console.debug(*/}
-      {/*            '[GitHub Better Comments Extension] Init worker',*/}
-      {/*            worker,*/}
-      {/*          )*/}
-      {/*          const wrappedWorker = Comlink.wrap(worker)*/}
-      {/*          Comlink.expose(*/}
-      {/*            wrappedWorker,*/}
-      {/*            Comlink.windowEndpoint(self.parent),*/}
-      {/*          )*/}
-      {/*        },*/}
-      {/*        { once: true },*/}
-      {/*      )*/}
-      {/*    })*/}
-      {/*  }}*/}
-      {/*  id={'codemirror-ata'}*/}
-      {/*  style={{ display: 'none' }}*/}
-      {/* ></iframe>*/}
+      <div class={'footer'}>
+        <span>
+          Made by{' '}
+          <a href={'https://x.com/riccardoperra0'} target={'_blank'}>
+            riccardoperra
+          </a>
+        </span>
+      </div>
     </main>
   )
 }
