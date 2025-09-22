@@ -32,7 +32,7 @@ to a new <strong>block-based</strong> editor and a seamless real-time preview ex
 
 ## 🚀 Features
 
-- ✅ **WYSIWYG Markdown Editor**: Replace GitHub's native comment box with a visual Markdown editor powered by ProseMirror, providing a rich editing experience while writing Markdown.  
+- ✅ **WYSIWYG Markdown Editor**: Replace all GitHub's native comment box with a visual Markdown editor powered by ProseMirror, providing a rich editing experience while writing Markdown.  
 - ✅ **GitHub Node Support**: Full support for GitHub-specific nodes like alerts, tables, lists, and more.  
 - ✅ **Slash Commands & Toolbar**: Quickly insert elements and formatting with slash commands and a customizable toolbar.  
 - ✅ **Code Blocks with Syntax Highlighting**: Write code blocks in any language with proper syntax highlighting for improved readability.  
@@ -40,6 +40,13 @@ to a new <strong>block-based</strong> editor and a seamless real-time preview ex
 - ✅ **GitHub References**: Reference issues, pull requests, discussions, and users directly within your comments.
 - ✅ **Advanced Table Handling**: Intuitive table creation, editing, and navigation.  
 - ✅ **Native GitHub Styling**: Uses GitHub’s own css variables and styles, integrating smoothly with the GitHub interface.
+- and more...
+
+> [!CAUTION]
+>
+> Work in progress
+
+[List of all supported features discussion](https://github.com/riccardoperra/better-comments-for-github/discussions/50)
 
 ## Install
 
@@ -70,14 +77,6 @@ Install (or update) manually:
       select the zip file.
     - In **firefox**, go to `about:debugging#/runtime/this-firefox`, then click on "Load Temporary Add-on" and select the
       firefox zip file.
-
-## List of all supported features
-
-> [!CAUTION]
->
-> Work in progress
-
-[List of all supported features discussion](https://github.com/riccardoperra/better-comments-for-github/discussions/50)
 
 ## Project structure
 
