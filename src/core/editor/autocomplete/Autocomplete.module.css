@@ -68,6 +68,7 @@
 
   &[data-state='closed'] {
     opacity: 0;
+    transition: unset;
   }
 
   &[data-state='open'] {

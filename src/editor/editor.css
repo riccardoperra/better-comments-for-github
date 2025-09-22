@@ -372,10 +372,10 @@
 
 @supports (counter-set: prosemirror-flat-list-counter 1) {
   [data-list-order]:is(
-      .prosemirror-flat-list[data-list-kind='ordered']:first-child,
-      :not(.prosemirror-flat-list[data-list-kind='ordered'])
-        + .prosemirror-flat-list[data-list-kind='ordered']
-    ) {
+    .prosemirror-flat-list[data-list-kind='ordered']:first-child,
+    :not(.prosemirror-flat-list[data-list-kind='ordered'])
+      + .prosemirror-flat-list[data-list-kind='ordered']
+  ) {
     counter-set: prosemirror-flat-list-counter
       var(--prosemirror-flat-list-order);
   }
@@ -383,10 +383,10 @@
 
 @supports not (counter-set: prosemirror-flat-list-counter 1) {
   [data-list-order]:is(
-      .prosemirror-flat-list[data-list-kind='ordered']:first-child,
-      :not(.prosemirror-flat-list[data-list-kind='ordered'])
-        + .prosemirror-flat-list[data-list-kind='ordered']
-    ) {
+    .prosemirror-flat-list[data-list-kind='ordered']:first-child,
+    :not(.prosemirror-flat-list[data-list-kind='ordered'])
+      + .prosemirror-flat-list[data-list-kind='ordered']
+  ) {
     counter-increment: prosemirror-flat-list-counter
       var(--prosemirror-flat-list-order);
   }
@@ -499,4 +499,9 @@ div.ProseMirror .prosemirror-flat-list {
 :is(div.ProseMirror .prosemirror-flat-list):has(> div.list-content > h6)
   > .list-marker {
   top: -0.1em;
+}
+
+table td,
+table th {
+  min-width: 50px;
 }

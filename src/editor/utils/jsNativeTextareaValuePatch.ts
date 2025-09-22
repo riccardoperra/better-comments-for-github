@@ -79,7 +79,6 @@ export function patchJsNativeTextareaValue(
     set(newValue) {
       setter.call(this, newValue)
       if (enableEvent) {
-        console.log('run stter')
         this.dispatchEvent(
           new CustomEvent('gh-better-comments-textarea-set-value', {
             detail: newValue,

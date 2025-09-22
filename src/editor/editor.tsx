@@ -113,17 +113,6 @@ export function Editor(props: EditorProps) {
     const abortController = new AbortController()
     const textarea = context.textarea()
 
-    const observer = new MutationObserver((entries) => {
-      console.log('mutation observer of entries', entries)
-    })
-
-    observer.observe(textarea, {
-      attributes: true,
-      subtree: true,
-      childList: true,
-      characterData: true,
-    })
-
     // TODO: should we always enable auto-focus?
     editor.focus()
 
@@ -157,7 +146,6 @@ export function Editor(props: EditorProps) {
       log('Destroy editor', { id: context.id })
       abortController.abort('I hope a new reference of textarea')
       editor.setContent('')
-      observer.disconnect()
     })
 
     textarea.addEventListener(

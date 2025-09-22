@@ -17,6 +17,7 @@
 import { ProseKit } from 'prosekit/solid'
 import { UserMentionMenu } from '../custom/user-mention/UserMentionMenu'
 import { IssueReferenceMenu } from '../custom/issue-reference/IssueReferenceMenu/IssueReferenceMenu'
+import { TableInsertDropdown } from '../custom/table/table-insert-dropdown'
 import { Toolbar } from './toolbar/toolbar'
 import styles from './editor.module.css'
 import { EditorBlockHandler } from './block-handle/block-handle'
@@ -49,6 +50,7 @@ export function ProsekitEditor(props: ProsekitEditor) {
 
           <SlashMenu />
           <TableHandle />
+          <TableInsertDropdown />
           <EmojiMenu emojis={props.emojis} />
           <UserMentionMenu users={props.mentions} />
           <IssueReferenceMenu issues={props.issues} />
