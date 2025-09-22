@@ -14,19 +14,33 @@
  * limitations under the License.
  */
 
-import { defineNodeSpec, union } from 'prosekit/core'
-import { defineTable } from 'prosekit/extensions/table'
+import { defineNodeSpec, definePlugin, union } from 'prosekit/core'
+import {
+  defineTableCellSpec,
+  defineTableCommands,
+  defineTableDropIndicator,
+  defineTableHeaderCellSpec,
+  defineTableRowSpec,
+  defineTableSpec,
+} from 'prosekit/extensions/table'
 import { createProseMirrorNode } from 'prosemirror-transformer-markdown/prosemirror'
 import {
   fromProseMirrorNode,
   toProseMirrorNode,
 } from '@prosemirror-processor/unist/mdast'
 import { pmNode } from '@prosemirror-processor/unist'
+import { tableEditing } from 'prosemirror-tables'
 import type { Parent } from 'mdast'
 
 export function defineTableMarkdown() {
   return union(
-    defineTable(),
+    defineTableSpec(),
+    defineTableRowSpec(),
+    defineTableCellSpec(),
+    defineTableHeaderCellSpec(),
+    definePlugin([tableEditing()]),
+    defineTableCommands(),
+    defineTableDropIndicator(),
     defineNodeSpec({
       name: 'tableCell',
       __fromUnist: (node, parent, context) => {

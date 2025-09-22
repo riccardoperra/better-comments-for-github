@@ -24,6 +24,7 @@ import InlineMenu from './inline-menu/InlineMenu'
 import EmojiMenu from './emoji-menu/emoji-menu'
 import SlashMenu from './slash-menu/slash-menu'
 import { DropIndicator } from './drop-indicator/DropIndicator'
+import { TableHandle } from './table-handle/table-handle'
 import type { Editor } from 'prosekit/core'
 import type { SuggestionData } from '../../editor/utils/loadSuggestionData'
 
@@ -47,6 +48,7 @@ export function ProsekitEditor(props: ProsekitEditor) {
           />
 
           <SlashMenu />
+          <TableHandle />
           <EmojiMenu emojis={props.emojis} />
           <UserMentionMenu users={props.mentions} />
           <IssueReferenceMenu issues={props.issues} />

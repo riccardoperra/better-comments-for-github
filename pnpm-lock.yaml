@@ -394,6 +394,9 @@ importers:
       prosemirror-inputrules:
         specifier: 'catalog:'
         version: 1.5.0
+      prosemirror-tables:
+        specifier: ^1.8.1
+        version: 1.8.1
       prosemirror-transformer-markdown:
         specifier: workspace:*
         version: link:../markdown-transformer
