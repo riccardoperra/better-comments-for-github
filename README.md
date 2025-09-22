@@ -45,6 +45,10 @@ version is released.
 [<img src="https://raw.githubusercontent.com/alrra/browser-logos/90fdf03c/src/chrome/chrome.svg" width="48" alt="Chrome" valign="middle">][link-chrome] [<img valign="middle" src="https://img.shields.io/chrome-web-store/v/hkpjbleacapfcfeneimhmcipjkfbgdpg.svg?label=%20">][link-chrome]
 and other Chromium browsers
 
+> [!IMPORTANT]
+> 
+> [Firefox support coming soon](https://github.com/riccardoperra/better-comments-for-github/issues/69).
+
 Install (or update) manually:
 
 - Download the [latest release](https://github.com/riccardoperra/better-comments-for-github/releases/latest) or
