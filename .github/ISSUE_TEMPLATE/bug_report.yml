@@ -1,0 +1,43 @@
+name: '🐞 - Bug Report'
+title: '[BUG]'
+description: Report a bug in Codeimage
+labels: [ 'bug', 'state: need triage' ]
+
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      placeholder: |
+        Please provide the exception or issue you saw. 
+        Since GitHub textarea differs between pages, please also tell us the page you
+        noticed the issue.
+    validations:
+      required: true
+      
+  - type: input
+    id: reproduction-url
+    attributes:
+      label: Please provide a screenshot or a video to a minimal reproduction of the bug
+      placeholder: "Enter an url or attach a file after submitting your issue"
+
+  - type: checkboxes
+    id: browser-specific
+    attributes:
+      label: Which browsers have you used?
+      description: You may select more than one.
+      options:
+        - label: Chrome
+        - label: Firefox
+        - label: Safari
+        - label: Edge
+
+  - type: checkboxes
+    id: operating-systems
+    attributes:
+      label: Which operating systems have you used?
+      description: You may select more than one.
+      options:
+        - label: macOS
+        - label: Windows
+        - label: Linux
