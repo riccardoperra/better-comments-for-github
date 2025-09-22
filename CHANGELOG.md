@@ -1,5 +1,13 @@
 # @better-comments-for-github/core
 
+## 0.0.10
+
+### Patch Changes
+
+- 1ffd74c: Add table handlers
+- Updated dependencies [1ffd74c]
+  - @prosedoc/markdown-schema@1.0.1
+
 ## 0.0.9
 
 ### Patch Changes
