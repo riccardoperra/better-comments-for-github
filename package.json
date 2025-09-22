@@ -80,6 +80,7 @@
     "remark-rehype": "catalog:",
     "remark-stringify": "catalog:",
     "solid-codemirror": "^2.3.1",
+    "solid-confetti-explosion": "^1.1.8",
     "solid-js": "catalog:",
     "statebuilder": "catalog:",
     "unified": "catalog:",

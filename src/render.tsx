@@ -16,8 +16,9 @@
 
 import { ErrorBoundary, mergeProps, render } from 'solid-js/web'
 import { StateProvider } from 'statebuilder'
-import { Show, onMount } from 'solid-js'
+import { Show, createSignal, onMount } from 'solid-js'
 import { clsx } from 'clsx'
+import { ConfettiExplosion } from 'solid-confetti-explosion'
 import { Editor, EditorRootContext } from './editor/editor'
 import { OcticonCaution } from './core/custom/githubAlert/icons'
 import { ConfigStore } from './config.store'
@@ -48,30 +49,47 @@ export function SwitchButton(props: {
   variant?: 'invisible' | 'secondary'
 }) {
   const mergedProps = mergeProps({ size: 'small', variant: 'invisible' }, props)
+  const [showConfetti, setShowConfetti] = createSignal(false)
+  const confettiDuration = 3000
+  let timerId: number | undefined
 
   const label = () =>
-    props.open ? 'Back to default editor' : 'Switch to a better editor'
+    props.open ? '😔 Back to default editor' : '🚀 Enhance editor'
 
   return (
-    <button
-      type={'button'}
-      class={clsx('Button mr-2', {
-        'Button--small': mergedProps.size === 'small',
-        'Button--medium': mergedProps.size === 'medium',
-        'Button--secondary': mergedProps.variant === 'secondary',
-        'Button--invisible': mergedProps.variant === 'invisible',
-      })}
-      // NOTE: For some reason delegated events it doesn't work in some pages
-      // (https://github.com/riccardoperra/better-comments-for-github/issues/39)
-      // so for now we will use native event
-      on:click={() => mergedProps.onOpenChange(!mergedProps.open)}
-    >
-      <span
-        class={clsx({ 'fgColor-muted': mergedProps.variant === 'invisible' })}
+    <>
+      <Show when={showConfetti()}>
+        <ConfettiExplosion duration={confettiDuration} particleCount={50} />
+      </Show>
+
+      <button
+        type={'button'}
+        class={clsx('Button mr-2', {
+          'Button--small': mergedProps.size === 'small',
+          'Button--medium': mergedProps.size === 'medium',
+          'Button--secondary': mergedProps.variant === 'secondary',
+          'Button--invisible': mergedProps.variant === 'invisible',
+        })}
+        // NOTE: For some reason delegated events it doesn't work in some pages
+        // (https://github.com/riccardoperra/better-comments-for-github/issues/39)
+        // so for now we will use native event
+        on:click={() => {
+          const open = !mergedProps.open
+          mergedProps.onOpenChange(open)
+          setShowConfetti(open)
+          clearTimeout(timerId)
+          timerId = window.setTimeout(() => {
+            setShowConfetti(false)
+          }, confettiDuration * 2)
+        }}
       >
-        {label()}
-      </span>
-    </button>
+        <span
+          class={clsx({ 'fgColor-muted': mergedProps.variant === 'invisible' })}
+        >
+          {label()}
+        </span>
+      </button>
+    </>
   )
 }
 
