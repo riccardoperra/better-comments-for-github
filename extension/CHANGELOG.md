@@ -1,5 +1,11 @@
 # @better-comments-for-github/extension
 
+## 0.0.14
+
+### Patch Changes
+
+- 589cfc3: Add table handlers, add table insert plugin
+
 ## 0.0.13
 
 ### Patch Changes
