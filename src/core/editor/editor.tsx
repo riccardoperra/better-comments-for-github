@@ -17,6 +17,7 @@
 import { ProseKit } from 'prosekit/solid'
 import { UserMentionMenu } from '../custom/user-mention/UserMentionMenu'
 import { IssueReferenceMenu } from '../custom/issue-reference/IssueReferenceMenu/IssueReferenceMenu'
+import { TableInsertDropdown } from '../custom/table/table-insert-dropdown'
 import { Toolbar } from './toolbar/toolbar'
 import styles from './editor.module.css'
 import { EditorBlockHandler } from './block-handle/block-handle'
@@ -24,6 +25,7 @@ import InlineMenu from './inline-menu/InlineMenu'
 import EmojiMenu from './emoji-menu/emoji-menu'
 import SlashMenu from './slash-menu/slash-menu'
 import { DropIndicator } from './drop-indicator/DropIndicator'
+import { TableHandle } from './table-handle/table-handle'
 import type { Editor } from 'prosekit/core'
 import type { SuggestionData } from '../../editor/utils/loadSuggestionData'
 
@@ -47,6 +49,8 @@ export function ProsekitEditor(props: ProsekitEditor) {
           />
 
           <SlashMenu />
+          <TableHandle />
+          <TableInsertDropdown />
           <EmojiMenu emojis={props.emojis} />
           <UserMentionMenu users={props.mentions} />
           <IssueReferenceMenu issues={props.issues} />

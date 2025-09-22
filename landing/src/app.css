@@ -87,6 +87,7 @@ body {
 .main {
   width: 100%;
   min-height: 100dvh;
+  overflow: hidden;
   position: relative;
   padding-top: 32px;
 }
@@ -115,7 +116,7 @@ body {
   position: absolute;
   z-index: -1;
   left: 50%;
-  width: 50%;
+  width: 35%;
   top: 25%;
   transform: translate(-50%, -50%);
   opacity: 0;

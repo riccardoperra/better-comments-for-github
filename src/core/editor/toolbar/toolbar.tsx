@@ -244,6 +244,31 @@ export function Toolbar() {
       <ToolbarAction
         label={
           <>
+            Table
+            <EditorTextShortcut
+              wrappedInParenthesis
+              type={'keyboard'}
+              element={'table'}
+            />
+          </>
+        }
+        isPressed={
+          editor().nodes.table.isActive() ||
+          editor().nodes.tableCell.isActive() ||
+          editor().nodes.tableHeaderCell.isActive() ||
+          editor().nodes.tableRow.isActive()
+        }
+        disabled={!editor().commands.insertTable.canExec({ row: 1, col: 1 })}
+        onClick={() => {
+          editor().commands.openTableInsertDropdown()
+        }}
+      >
+        <EditorActionIcon actionId={'table'} size={16} />
+      </ToolbarAction>
+
+      <ToolbarAction
+        label={
+          <>
             Code{' '}
             <EditorTextShortcut
               wrappedInParenthesis

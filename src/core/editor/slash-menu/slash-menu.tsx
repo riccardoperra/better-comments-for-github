@@ -28,7 +28,6 @@ import {
 import { githubAlertTypeMap } from '../../custom/githubAlert/config'
 import { EditorTextShortcut } from '../../ui/kbd/kbd'
 import { EditorActionIcon } from '../../ui/action-icon/ActionIcon'
-import { DynamicSizedContainer } from '../../ui/dynamic-sized-container'
 import styles from './slash-menu.module.css'
 import type { Editor } from 'prosekit/core'
 import type { JSX } from 'solid-js'
@@ -117,6 +116,17 @@ const SlashMenuItems: Array<SlashMenuItem> = [
     canExec: (editor) => editor.commands.insertDetails.canExec(),
     actionId: 'details',
   },
+  {
+    label: 'Table',
+    canExec: (editor) =>
+      editor.commands.insertTable.canExec({
+        col: 1,
+        row: 1,
+        header: true,
+      }),
+    command: (editor) => editor.commands.openTableInsertDropdown(),
+    actionId: 'table',
+  },
 ]
 
 type SlashMenuSection = {
@@ -204,65 +214,60 @@ export default function SlashMenu() {
       autoUpdate={true}
     >
       <AutocompleteList>
-        <DynamicSizedContainer>
-          <div class={styles.slashMenuSectionGroup}>
-            <Index each={filteredMenuItems()}>
-              {(group) => (
-                <div class={styles.slashMenuSection}>
-                  <h5 class={styles.slashMenuSectionTitle}>
-                    {group().section.title}
-                  </h5>
+        <div class={styles.slashMenuSectionGroup}>
+          <Index each={filteredMenuItems()}>
+            {(group) => (
+              <div class={styles.slashMenuSection}>
+                <h5 class={styles.slashMenuSectionTitle}>
+                  {group().section.title}
+                </h5>
 
-                  <For each={group().children}>
-                    {(item) => (
-                      <Show when={item.canExec(editor())}>
-                        <AutocompleteItem
-                          class={styles.slashMenuItem}
-                          value={item.label}
-                          onSelect={() => {
-                            item.command(editor())
-                          }}
+                <For each={group().children}>
+                  {(item) => (
+                    <Show when={item.canExec(editor())}>
+                      <AutocompleteItem
+                        class={styles.slashMenuItem}
+                        value={item.label}
+                        onSelect={() => {
+                          item.command(editor())
+                        }}
+                      >
+                        <Show
+                          fallback={
+                            <>
+                              <Show when={item.icon}>
+                                {(icon) => {
+                                  const Icon = icon()
+                                  return <Icon size={17} strokeWidth={2} />
+                                }}
+                              </Show>
+                            </>
+                          }
+                          when={item.actionId}
                         >
-                          <Show
-                            fallback={
-                              <>
-                                <Show when={item.icon}>
-                                  {(icon) => {
-                                    const Icon = icon()
-                                    return <Icon size={17} strokeWidth={2} />
-                                  }}
-                                </Show>
-                              </>
-                            }
-                            when={item.actionId}
-                          >
-                            {(actionId) => (
-                              <EditorActionIcon
-                                actionId={actionId()}
-                                size={17}
-                              />
-                            )}
-                          </Show>
+                          {(actionId) => (
+                            <EditorActionIcon actionId={actionId()} size={17} />
+                          )}
+                        </Show>
 
-                          {item.label}
+                        {item.label}
 
-                          <Show when={item.actionId}>
-                            <span class={styles.slashMenuItemShortcut}>
-                              <EditorTextShortcut
-                                element={item.actionId!}
-                                type={'inputRule'}
-                              />
-                            </span>
-                          </Show>
-                        </AutocompleteItem>
-                      </Show>
-                    )}
-                  </For>
-                </div>
-              )}
-            </Index>
-          </div>
-        </DynamicSizedContainer>
+                        <Show when={item.actionId}>
+                          <span class={styles.slashMenuItemShortcut}>
+                            <EditorTextShortcut
+                              element={item.actionId!}
+                              type={'inputRule'}
+                            />
+                          </span>
+                        </Show>
+                      </AutocompleteItem>
+                    </Show>
+                  )}
+                </For>
+              </div>
+            )}
+          </Index>
+        </div>
       </AutocompleteList>
     </AutocompletePopover>
   )
