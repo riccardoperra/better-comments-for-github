@@ -1,5 +1,11 @@
 # @better-comments-for-github/core
 
+## 0.0.11
+
+### Patch Changes
+
+- 592f8cf: fix codemirror editor worker loading after comment
+
 ## 0.0.10
 
 ### Patch Changes
