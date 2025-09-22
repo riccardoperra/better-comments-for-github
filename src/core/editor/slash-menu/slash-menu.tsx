@@ -55,12 +55,6 @@ const SlashMenuItems: Array<SlashMenuItem> = [
         actionId: `heading>${level}`,
       }) as SlashMenuItem,
   ),
-  {
-    label: 'Horizontal divider',
-    canExec: (editor) => editor.commands.insertHorizontalRule.canExec(),
-    command: (editor) => editor.commands.insertHorizontalRule(),
-    actionId: 'horizontalRule',
-  },
   ...[
     {
       label: 'Task',
@@ -109,6 +103,12 @@ const SlashMenuItems: Array<SlashMenuItem> = [
     command: (editor) => editor.commands.toggleCodeBlock(),
     canExec: (editor) => editor.commands.toggleCodeBlock.canExec(),
     actionId: 'codeBlock',
+  },
+  {
+    label: 'Horizontal divider',
+    canExec: (editor) => editor.commands.insertHorizontalRule.canExec(),
+    command: (editor) => editor.commands.insertHorizontalRule(),
+    actionId: 'horizontalRule',
   },
   {
     label: 'Details',

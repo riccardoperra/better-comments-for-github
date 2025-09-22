@@ -58,8 +58,8 @@ export class GitHubReactTextareaHandler {
         )
         if (wrapper) {
           show
-            ? wrapper.classList.add('sr-only')
-            : wrapper.classList.remove('sr-only')
+            ? wrapper.style.setProperty('display', 'none')
+            : wrapper.style.removeProperty('display')
         }
       })
 

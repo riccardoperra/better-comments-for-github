@@ -24,6 +24,7 @@ import {
   createEffect,
   createSignal,
   onCleanup,
+  untrack,
   useContext,
 } from 'solid-js'
 import { defineNodeViewComponent } from 'prosekit/core'
@@ -101,7 +102,7 @@ export function defineCodeBlockCustomView(options: SolidNodeViewOptions) {
     },
     ignoreMutation: () => true,
     update: (node) => {
-      const cmView = cm()
+      const cmView = untrack(cm)
       if (!cmView) return false
       if (_node() && node.type != _node()!.type) return false
       setNode(node)
@@ -164,10 +165,9 @@ export function CodemirrorEditor(props: CodemirrorEditorProps) {
   const { ref, createExtension, editorView } = createCodeMirror({
     value: context().node.textContent,
   })
-  setCm(editorView())
 
   const forwardUpdate = (update: ViewUpdate) => {
-    if (updating() || !cm()?.hasFocus) return
+    if (untrack(updating) || !cm()?.hasFocus) return
     let offset = context().getPos()! + 1
     const { main } = update.state.selection
     const selFrom = offset + main.from,
@@ -252,7 +252,7 @@ export function CodemirrorEditor(props: CodemirrorEditorProps) {
     keymap.of([...defaultKeymap, indentWithTab, ...codeMirrorKeymap()]),
     ...cmTheme,
     CodeMirror.updateListener.of((update) => {
-      forwardUpdate(update)
+      untrack(() => forwardUpdate(update))
     }),
   ])
 

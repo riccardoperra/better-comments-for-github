@@ -54,16 +54,18 @@ export const typescriptPlugins = (
   tsTwoslash(),
 ]
 
+let worker: WorkerShape | null = null
+
 export async function initTsAutocompleteWorker(): Promise<{
   iframe: HTMLIFrameElement
   worker: WorkerShape
   path: string
 }> {
   const iframe = document.querySelector<HTMLIFrameElement>('#codemirror-ata')!
-  const worker: WorkerShape = Comlink.wrap(
-    Comlink.windowEndpoint(iframe.contentWindow!),
-  )
-  await worker.initialize()
+  if (!worker) {
+    worker = Comlink.wrap(Comlink.windowEndpoint(iframe.contentWindow!))
+    await worker.initialize()
+  }
   return {
     iframe,
     worker,
