@@ -28,6 +28,18 @@ to a new <strong>block-based</strong> editor and a seamless real-time preview ex
 >
 > This project is not affiliated with GitHub, Inc. in any way. It is an independent project that I initially created for
 > myself that aims to enhance the GitHub user experience by providing a better comment editor.
+>
+
+## 🚀 Features
+
+- ✅ **WYSIWYG Markdown Editor**: Replace GitHub's native comment box with a visual Markdown editor powered by ProseMirror, providing a rich editing experience while writing Markdown.  
+- ✅ **GitHub Node Support**: Full support for GitHub-specific nodes like alerts, tables, lists, and more.  
+- ✅ **Slash Commands & Toolbar**: Quickly insert elements and formatting with slash commands and a customizable toolbar.  
+- ✅ **Code Blocks with Syntax Highlighting**: Write code blocks in any language with proper syntax highlighting for improved readability.  
+- ✅ **TypeScript Autocomplete & IntelliSense**: For TypeScript code blocks, the editor integrates CodeMirror with the TypeScript Language Server, providing intelligent autocompletion, inline npm package suggestions, and real-time type checking.  
+- ✅ **GitHub References**: Reference issues, pull requests, discussions, and users directly within your comments.
+- ✅ **Advanced Table Handling**: Intuitive table creation, editing, and navigation.  
+- ✅ **Native GitHub Styling**: Uses GitHub’s own css variables and styles, integrating smoothly with the GitHub interface.
 
 ## Install
 
