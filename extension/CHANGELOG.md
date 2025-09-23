@@ -1,5 +1,11 @@
 # @better-comments-for-github/extension
 
+## 0.0.16
+
+### Patch Changes
+
+- a0d740b: Fix infinite loop when opening textarea in draft mode with ts code block
+
 ## 0.0.15
 
 ### Patch Changes
