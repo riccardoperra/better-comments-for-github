@@ -43,6 +43,7 @@ import {
 import { GapCursor } from 'prosemirror-gapcursor'
 import { cmTheme } from './theme'
 import { initTsAutocompleteWorker, typescriptPlugins } from './tsPlugins'
+import CmCodeBlockView from './cm-code-block-view'
 import type { KeyBinding, ViewUpdate } from '@codemirror/view'
 import type { Accessor, Component, Setter } from 'solid-js'
 import type { ProseMirrorNode } from 'prosemirror-transformer-markdown/prosemirror'
@@ -75,17 +76,20 @@ function withNodeViewProps(
   }
 }
 
-export function defineCodeBlockCustomView(options: SolidNodeViewOptions) {
-  const { name, component, ...userOptions } = options
+export function defineCodeBlockCustomView(
+  options: Omit<SolidNodeViewOptions, 'component'>,
+) {
+  const { name, ...userOptions } = options
 
   const [updating, setUpdating] = createSignal(false)
   const [cm, setCm] = createSignal<CodeMirror | null>(null)
-  const [_node, setNode] = createSignal<ProseMirrorNode>()
+
+  let internalNode: ProseMirrorNode
 
   const args: SolidNodeViewUserOptions = {
     ...userOptions,
     setSelection(anchor, head) {
-      const codemirror = cm()
+      const codemirror = untrack(cm)
       if (!codemirror) return
       codemirror.focus()
       setUpdating(true)
@@ -93,8 +97,8 @@ export function defineCodeBlockCustomView(options: SolidNodeViewOptions) {
       setUpdating(false)
     },
     selectNode() {
-      if (cm()) {
-        cm()!.focus()
+      if (untrack(cm)) {
+        untrack(cm)!.focus()
       }
     },
     stopEvent() {
@@ -104,8 +108,8 @@ export function defineCodeBlockCustomView(options: SolidNodeViewOptions) {
     update: (node) => {
       const cmView = untrack(cm)
       if (!cmView) return false
-      if (_node() && node.type != _node()!.type) return false
-      setNode(node)
+      if (internalNode && internalNode.type != node.type) return false
+      internalNode = node
       if (updating()) return true
       const newText = node.textContent,
         curText = cmView.state.doc.toString()
@@ -139,12 +143,22 @@ export function defineCodeBlockCustomView(options: SolidNodeViewOptions) {
       }
       return true
     },
-    component: withNodeViewProps(component, {
-      cm,
-      setCm,
-      updating,
-      setUpdating,
-    }),
+    component: function NodeViewPropsWrapper() {
+      const props: Accessor<SolidNodeViewProps> = useNodeViewContext()
+
+      return (
+        <CodeMirrorContext.Provider
+          value={{
+            cm,
+            setCm,
+            updating,
+            setUpdating,
+          }}
+        >
+          <CmCodeBlockView {...props()} />
+        </CodeMirrorContext.Provider>
+      )
+    },
   }
 
   return defineNodeViewComponent<SolidNodeViewUserOptions>({
@@ -167,49 +181,56 @@ export function CodemirrorEditor(props: CodemirrorEditorProps) {
   })
 
   const forwardUpdate = (update: ViewUpdate) => {
-    if (untrack(updating) || !cm()?.hasFocus) return
-    let offset = context().getPos()! + 1
-    const { main } = update.state.selection
-    const selFrom = offset + main.from,
-      selTo = offset + main.to
-    const pmSel = context().view.state.selection
-    if (update.docChanged || pmSel.from != selFrom || pmSel.to != selTo) {
-      const tr = context().view.state.tr
-      update.changes.iterChanges((fromA, toA, fromB, toB, text) => {
-        if (text.length)
-          tr.replaceWith(
-            offset + fromA,
-            offset + toA,
-            context().view.state.schema.text(text.toString()),
-          )
-        else tr.delete(offset + fromA, offset + toA)
-        offset += toB - fromB - (toA - fromA)
-      })
-      tr.setSelection(TextSelection.create(tr.doc, selFrom, selTo))
-      context().view.dispatch(tr)
-    }
+    untrack(() => {
+      if (untrack(updating) || !cm()?.hasFocus) return
+      let offset = context().getPos()! + 1
+      const { main } = update.state.selection
+      const selFrom = offset + main.from,
+        selTo = offset + main.to
+      const pmSel = context().view.state.selection
+      if (update.docChanged || pmSel.from != selFrom || pmSel.to != selTo) {
+        const tr = context().view.state.tr
+        update.changes.iterChanges((fromA, toA, fromB, toB, text) => {
+          if (text.length)
+            tr.replaceWith(
+              offset + fromA,
+              offset + toA,
+              context().view.state.schema.text(text.toString()),
+            )
+          else tr.delete(offset + fromA, offset + toA)
+          offset += toB - fromB - (toA - fromA)
+        })
+        tr.setSelection(TextSelection.create(tr.doc, selFrom, selTo))
+        context().view.dispatch(tr)
+      }
+    })
   }
 
   const maybeEscape = (unit: 'char' | 'line', dir: number) => {
-    const codemirror = cm()
-    if (!codemirror) return
-    const sel = codemirror.state.selection
-    let main = sel.main
-    if (!main.empty) return false
-    if (unit == 'line') main = codemirror.state.doc.lineAt(main.head) as any
-    if (dir < 0 ? main.from > 0 : main.to < codemirror.state.doc.length) {
-      return false
-    }
-    const targetPos =
-      context().getPos()! + (dir < 0 ? 0 : context().node.nodeSize)
-    const $from = context().view.state.doc.resolve(targetPos)
-    let selection = Selection.near($from, dir)
-    if ($from.parentOffset === 0 && $from.depth === 0)
-      selection = new GapCursor($from)
-    if ($from.nodeAfter === null) selection = new GapCursor($from)
-    const tr = context().view.state.tr.setSelection(selection).scrollIntoView()
-    context().view.dispatch(tr)
-    context().view.focus()
+    untrack(() => {
+      const codemirror = cm()
+      if (!codemirror) return
+      const sel = codemirror.state.selection
+      let main = sel.main
+      if (!main.empty) return false
+      if (unit == 'line') main = codemirror.state.doc.lineAt(main.head) as any
+      if (dir < 0 ? main.from > 0 : main.to < codemirror.state.doc.length) {
+        return false
+      }
+
+      const targetPos =
+        context().getPos()! + (dir < 0 ? 0 : context().node.nodeSize)
+      const $from = context().view.state.doc.resolve(targetPos)
+      let selection = Selection.near($from, dir)
+      if ($from.parentOffset === 0 && $from.depth === 0)
+        selection = new GapCursor($from)
+      if ($from.nodeAfter === null) selection = new GapCursor($from)
+      const tr = context()
+        .view.state.tr.setSelection(selection)
+        .scrollIntoView()
+      context().view.dispatch(tr)
+      context().view.focus()
+    })
   }
 
   const codeMirrorKeymap = () => {
@@ -274,8 +295,8 @@ export function CodemirrorEditor(props: CodemirrorEditorProps) {
   createEffect(() => {
     const view = editorView()
     setCm(view)
+    onCleanup(() => setCm(null))
   })
-  onCleanup(() => setCm(null))
 
   return <pre ref={ref} />
 }

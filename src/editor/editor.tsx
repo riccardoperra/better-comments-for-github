@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import type { Accessor } from 'solid-js'
 import {
   Show,
   createContext,
@@ -21,9 +22,7 @@ import {
   onCleanup,
   useContext,
 } from 'solid-js'
-import type { Accessor } from 'solid-js'
 import { createEditor } from 'prosekit/core'
-import { useDocChange, useStateUpdate } from 'prosekit/solid'
 import { markdownFromUnistNode } from 'prosemirror-transformer-markdown/unified'
 import {
   convertPmSchemaToUnist,
@@ -33,22 +32,23 @@ import {
 import './editor.css'
 
 import { unistMergeAdjacentList } from '@prosedoc/markdown-schema'
-import { ExtensionEditorStore } from '../editor.store'
-import { ConfigStore } from '../config.store'
-import { defineExtension } from '../core/editor/extension'
-import { ProsekitEditor } from '../core/editor/editor'
-import { remarkGitHubIssueReferenceSupport } from '../core/custom/issue-reference/remarkGitHubIssueReference'
+import { useDocChange, useStateUpdate } from 'prosekit/solid'
 import { unknownNodeHandler } from '../core/custom/unknown-node/unknown-node-handler'
+import { remarkGitHubIssueReferenceSupport } from '../core/custom/issue-reference/remarkGitHubIssueReference'
+import { ProsekitEditor } from '../core/editor/editor'
+import { defineExtension } from '../core/editor/extension'
+import { ConfigStore } from '../config.store'
+import { ExtensionEditorStore } from '../editor.store'
+import { log } from './utils/logger'
+import { patchJsNativeTextareaValue } from './utils/jsNativeTextareaValuePatch'
+import { unistNodeFromMarkdown } from './utils/unistNodeFromMarkdown'
+import { DebugNode } from './DebugNode'
 import { setEditorContent } from './utils/setContent'
 import { forceGithubTextAreaSync } from './utils/forceGithubTextAreaSync'
-import { DebugNode } from './DebugNode'
-import { unistNodeFromMarkdown } from './utils/unistNodeFromMarkdown'
-import { patchJsNativeTextareaValue } from './utils/jsNativeTextareaValuePatch'
-import { log } from './utils/logger'
-import type { Schema } from 'prosemirror-model'
-import type { SuggestionData } from './utils/loadSuggestionData'
-import type { GitHubUploaderHandler } from '../core/custom/image/github-file-uploader'
 import type { Root } from 'mdast'
+import type { GitHubUploaderHandler } from '../core/custom/image/github-file-uploader'
+import type { SuggestionData } from './utils/loadSuggestionData'
+import type { Schema } from 'prosemirror-model'
 
 export interface EditorProps {
   suggestions: SuggestionData

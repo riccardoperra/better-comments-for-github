@@ -34,11 +34,11 @@ import { ConfigStore } from '../../../config.store'
 import styles from './code-block-view.module.css'
 import type { ShikiBundledLanguageInfo } from 'prosekit/extensions/code-block'
 
-export function CodeBlockClipboard(props: { content: string }) {
+export function CodeBlockClipboard(props: { content: () => string }) {
   const [copied, setCopied] = createSignal(false)
 
   const copyContent = () => {
-    const content = props.content
+    const content = props.content()
     navigator.clipboard.writeText(content).then(() => {
       setCopied(true)
       setTimeout(() => {

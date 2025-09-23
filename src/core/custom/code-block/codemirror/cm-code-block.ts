@@ -29,7 +29,6 @@ import {
 import { pmNode } from '@prosemirror-processor/unist'
 import { NodeSelection, Selection } from 'prosemirror-state'
 import { defineCodeBlockCustomView } from './codemirror-editor'
-import CmCodeBlockView from './cm-code-block-view'
 import { codeMirrorLanguages } from './supported-languages'
 import type { Command } from 'prosemirror-state'
 import type { CodeBlockAttrs } from 'prosekit/extensions/code-block'
@@ -70,6 +69,7 @@ export function defineCmCodeBlock() {
       parseDOM: [
         {
           tag: 'pre',
+          priority: 1000,
           preserveWhitespace: 'full',
           getAttrs: (node): CodeBlockAttrs | null => {
             const language =
@@ -115,7 +115,6 @@ export function defineCmCodeBlock() {
     defineCodeBlockCustomView({
       name: 'cmCodeBlock',
       contentAs: 'div',
-      component: CmCodeBlockView,
     }),
     defineKeymap({
       Backspace: (state, dispatch, view) => {

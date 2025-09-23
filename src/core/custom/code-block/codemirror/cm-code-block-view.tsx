@@ -35,18 +35,6 @@ export default function CmCodeBlockView(props: NodeViewContextProps) {
   const editorStore = ExtensionEditorStore.provide()
   const attrLanguage = createMemo(() => context().node.attrs.language)
 
-  const language = () => {
-    const lang = attrLanguage()
-    switch (lang) {
-      case 'js':
-        return 'javascript'
-      case 'ts':
-        return 'typescript'
-      default:
-        return lang
-    }
-  }
-
   const [isActive, setIsActive] = createSignal<boolean>()
   const [ready, setReady] = createSignal<boolean>()
   const [diagnostic, setDiagnostic] = createSignal<Array<unknown>>([])
@@ -57,7 +45,6 @@ export default function CmCodeBlockView(props: NodeViewContextProps) {
   }
 
   const options = shikiBundledLanguagesInfo
-
   const currentValue = createMemo(() => {
     return options.find((info) => info.id === attrLanguage()) ?? null
   })
@@ -96,7 +83,7 @@ export default function CmCodeBlockView(props: NodeViewContextProps) {
             </div>
           </Show>
 
-          <CodeBlockClipboard content={context().node.textContent} />
+          <CodeBlockClipboard content={() => context().node.textContent} />
 
           <CodeBlockLanguageSelector
             value={currentValue()}
