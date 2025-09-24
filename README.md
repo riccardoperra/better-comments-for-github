@@ -19,6 +19,10 @@ to a new <strong>block-based</strong> editor and a seamless real-time preview ex
 <img src="./brand/github_image.png" width="500" alt="Promotional image">
 </p>
 
+<a align="center" href="https://www.producthunt.com/products/better-comments-for-github?embed=true&utm_source=badge-featured&utm_medium=badge&utm_source=badge-better&#0045;comments&#0045;for&#0045;github&#0045;2" target="_blank">
+ <img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1019364&theme=dark&t=1758697313946" alt="Better&#0032;Comments&#0032;for&#0032;GitHub - The&#0032;browser&#0032;extension&#0032;that&#0032;supercharges&#0032;GitHub&#0032;comment&#0032;box | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" />
+</a>
+
 > [!IMPORTANT]
 >
 > This extension is still in development. As always, feedback in this phase is very important, so please open an issue
@@ -28,7 +32,6 @@ to a new <strong>block-based</strong> editor and a seamless real-time preview ex
 >
 > This project is not affiliated with GitHub, Inc. in any way. It is an independent project that I initially created for
 > myself that aims to enhance the GitHub user experience by providing a better comment editor.
->
 
 ## 🚀 Features
 
