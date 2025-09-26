@@ -113,8 +113,18 @@ export function Editor(props: EditorProps) {
     const abortController = new AbortController()
     const textarea = context.textarea()
 
-    // TODO: should we always enable auto-focus?
-    editor.focus()
+    function focusEditorWhileTextareaIsFocused() {
+      if (document.activeElement === textarea) editor.focus()
+    }
+    focusEditorWhileTextareaIsFocused()
+    const observer = new MutationObserver(([entry]) => {
+      focusEditorWhileTextareaIsFocused()
+    })
+    observer.observe(textarea, {
+      attributes: true,
+      attributeFilter: ['data-focus-visible-added'],
+    })
+    onCleanup(() => observer.disconnect())
 
     if (props.type === 'native') {
       const unpatchSetValueEvent = patchJsNativeTextareaValue(textarea)
