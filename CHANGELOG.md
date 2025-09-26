@@ -1,5 +1,12 @@
 # @better-comments-for-github/core
 
+## 0.0.13
+
+### Patch Changes
+
+- f46da87: Task lists preceded by a slash were not parsed correctly
+- 45b1e6c: fix editor autofocus issues while opening a preloaded editor (mostly pr pages)
+
 ## 0.0.12
 
 ### Patch Changes
