@@ -62,7 +62,6 @@ import { defineComment } from '../custom/comment/comment'
 import { defineDetails } from '../custom/details/details'
 import { defineExitable } from '../custom/exitable/exitable'
 import { defineTableInsert } from '../custom/table/table-insert-plugin'
-import { defineMarkdownPastePlugin } from '../custom/markdown-paste/markdown-paste-plugin'
 import type { HeadingAttrs } from 'prosekit/extensions/heading'
 
 function defineCode() {
@@ -106,7 +105,6 @@ export function defineMarkdownExtension() {
     defineModClickPrevention(),
     defineTableMarkdown(),
     defineUnknownNodeSpec(),
-    defineMarkdownPastePlugin(),
   )
 }
 
