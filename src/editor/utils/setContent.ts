@@ -17,7 +17,12 @@
 import { convertUnistToProsemirror } from 'prosemirror-transformer-markdown/prosemirror'
 import { unknownNodeHandler } from '../../core/custom/unknown-node/unknown-node-handler'
 import { unistNodeFromMarkdown } from './unistNodeFromMarkdown'
+import { contentFixHandlers } from './content-fix-handlers'
 import type { EditorView } from 'prosemirror-view'
+
+export function fixRawContent(content: string) {
+  return contentFixHandlers.reduce((acc, handler) => handler(acc), content)
+}
 
 export function setEditorContent(
   content: string,
@@ -36,6 +41,7 @@ export function setEditorContent(
     owner,
   } = options
   const schema = view.state.schema
+  content = fixRawContent(content)
 
   const unistNode = unistNodeFromMarkdown(content, { repository, owner })
   const result = convertUnistToProsemirror(

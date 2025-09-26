@@ -16,15 +16,12 @@
 
 import { getFiberProps } from '../../react-hacks/fiber'
 
-// This is a trick that automatically encode characters and sanitize the `value`
 const fakeTextarea = document.createElement('textarea')
 
 export function forceGithubTextAreaSync(
   textarea: HTMLTextAreaElement,
   value: string,
-  options: {
-    behavior: 'native' | 'react'
-  },
+  options: { behavior: 'native' | 'react' },
 ) {
   // This is a trick that automatically encode characters and sanitize the `value`
   fakeTextarea.innerHTML = value

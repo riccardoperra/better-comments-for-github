@@ -208,6 +208,7 @@ export function Editor(props: EditorProps) {
         remarkGitHubIssueReferenceSupport()(node)
       },
     })
+
     return sanitizeMarkdownValue(markdownFromUnistNode(unistNode as Root))
   }
 
