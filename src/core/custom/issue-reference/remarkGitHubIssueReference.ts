@@ -106,6 +106,16 @@ export function remarkParseLinkToGitHubIssueReference(options: {
       return false
     }
 
+    if (options.references().length) {
+      if (
+        !options
+          .references()
+          .find((reference) => reference.id === String(value.replace('#', '')))
+      ) {
+        return false
+      }
+    }
+
     const url = ['https://github.com', owner, repository, 'issues', no].join(
       '/',
     )
@@ -143,6 +153,7 @@ export function remarkParseLinkToGitHubIssueReference(options: {
             return
           }
         }
+
         const { owner, repository, issue, commentId, type } = match
 
         const issueType = reference ? reference.candidateType || type : type
@@ -169,15 +180,18 @@ export function remarkGitHubIssueReferenceSupport(
 ) {
   return function transformer(tree: Root) {
     visit(tree, githubIssueReferenceType, (_issue, index, parent) => {
-      const isReferenced = references().find(
-        (reference) => reference.id === String(_issue.issue),
-      )
+      const reference =
+        references().length > 0 &&
+        !!references().find(
+          (reference) => reference.id === String(_issue.issue),
+        )
 
       const result: Text = {
         type: 'text',
-        value: isReferenced
+        value: reference
           ? `#${_issue.issue}`
-          : getLinkFromIssueReferenceAttrs({
+          : _issue.fallbackText ||
+            getLinkFromIssueReferenceAttrs({
               issue: _issue.issue,
               type: _issue.referenceType,
               owner: _issue.owner,

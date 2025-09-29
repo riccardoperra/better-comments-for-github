@@ -41,10 +41,8 @@ import {
 } from '../../../../github/data'
 import { EditorRootContext } from '../../../../editor/editor'
 import styles from './IssueReferenceView.module.css'
-import type { GitHubIssueReferenceAttrs } from '../issue'
 import type { NodeViewContextProps } from '@prosemirror-adapter/solid'
-
-const NOT_FOUND = Symbol()
+import type { GitHubIssueReferenceAttrs } from '../issue'
 
 export function IssueReferenceView(props: NodeViewContextProps) {
   const cacheStorage = CacheStore.provide()
@@ -112,9 +110,34 @@ export function IssueReferenceView(props: NodeViewContextProps) {
     },
   )
 
+  const fallbackTitle = createMemo(() => {
+    return attrs().fallbackText || String(attrs().issue)
+  })
+
+  return (
+    <Show
+      fallback={<span>{fallbackTitle()}</span>}
+      when={hoverContent.state !== 'errored'}
+    >
+      <IssueReferenceLink
+        loading={hoverContent.loading}
+        attrs={attrs()}
+        hoverContent={hoverContent() || ''}
+        link={data().link}
+      />
+    </Show>
+  )
+}
+
+interface IssueReferenceLinkProps {
+  hoverContent: string
+  attrs: GitHubIssueReferenceAttrs
+  loading: boolean
+  link: string
+}
+function IssueReferenceLink(props: IssueReferenceLinkProps) {
   const serializedHoverContent = createMemo(() => {
-    if (hoverContent.state === 'errored') return null
-    const content = hoverContent()
+    const content = props.hoverContent
     if (!content) return null
     return new DOMParser().parseFromString(content, 'text/html')
   })
@@ -128,72 +151,61 @@ export function IssueReferenceView(props: NodeViewContextProps) {
   })
 
   const issueTitle = createMemo(() => {
-    if (hoverContent.state === 'errored') {
-      return attrs().fallbackText || String(attrs().issue)
-    }
     const content = serializedHoverContent()
-    const commentId = attrs().commentId
+    const commentId = props.attrs.commentId
     if (!content) return null
     const title =
       content.querySelector('.markdown-title')?.textContent ||
       content.querySelector('.dashboard-break-word')?.textContent ||
-      attrs().fallbackText ||
-      String(attrs().issue)
+      props.attrs.fallbackText ||
+      String(props.attrs.issue)
     if (commentId) {
-      return `#${attrs().issue} (comment)`
+      return `#${props.attrs.issue} (comment)`
     }
     return title
   })
 
   const label = createMemo(() => {
-    const { issue, owner, repository } = attrs()
+    const { issue, owner, repository } = props.attrs
     return `${owner}/${repository}#${issue}`
   })
 
   return (
-    <Show
-      fallback={<span>{issueTitle()}</span>}
-      when={hoverContent.state !== 'errored'}
-    >
-      <HoverCard>
-        <HoverCardTrigger
-          href={data().link}
-          target={'_blank'}
-          class={styles.trigger}
-        >
-          <Show when={hoverContent.loading}>
-            <LucideLoaderCircle size={15} class={styles.loader} />
-          </Show>
-          <Show when={issueIcon()}>
-            {(icon) => <span class={styles.iconWrapper}>{icon()}</span>}
-          </Show>
-          <Show fallback={label()} when={issueTitle()}>
-            {(title) => (
-              <span
-                class={clsx(styles.title, {
-                  [styles.emptyIcon]: !issueIcon(),
-                })}
-              >
-                {title()}
-              </span>
-            )}
-          </Show>
-        </HoverCardTrigger>
-        <HoverCardContent>
-          <HoverCardArrow />
-          <Switch>
-            <Match when={hoverContent.state === 'errored'}>
-              Cannot retrieve content
-            </Match>
-            <Match when={hoverContent.loading}>Loading...</Match>
-            <Match when={hoverContent.state === 'ready'}>
-              <Show when={hoverContent()}>
-                {(hoverContent) => <div innerHTML={hoverContent()} />}
-              </Show>
-            </Match>
-          </Switch>
-        </HoverCardContent>
-      </HoverCard>
-    </Show>
+    <HoverCard>
+      <HoverCardTrigger
+        href={props.link}
+        target={'_blank'}
+        class={styles.trigger}
+      >
+        <Show when={props.loading}>
+          <LucideLoaderCircle size={15} class={styles.loader} />
+        </Show>
+        <Show when={issueIcon()}>
+          {(icon) => <span class={styles.iconWrapper}>{icon()}</span>}
+        </Show>
+        <Show fallback={label()} when={issueTitle()}>
+          {(title) => (
+            <span
+              class={clsx(styles.title, {
+                [styles.emptyIcon]: !issueIcon(),
+              })}
+            >
+              {title()}
+            </span>
+          )}
+        </Show>
+      </HoverCardTrigger>
+      <HoverCardContent>
+        <HoverCardArrow />
+        <Switch>
+          <Match when={props.loading}>Loading...</Match>
+          <Match when={!props.loading}>
+            <Show when={props.hoverContent}>
+              {(hoverContent) => <div innerHTML={hoverContent()} />}
+            </Show>
+          </Match>
+        </Switch>
+      </HoverCardContent>
+    </HoverCard>
   )
 }
