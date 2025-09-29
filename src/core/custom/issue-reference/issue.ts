@@ -41,6 +41,7 @@ export interface GitHubIssueReferenceAttrs {
   type: 'pull' | 'issue' | 'discussion'
   href: string
   commentId?: string
+  fallbackText?: string
 }
 
 /**
@@ -61,6 +62,9 @@ export function defineIssueReferenceSpec() {
       commentId: {
         default: undefined,
       },
+      fallbackText: {
+        default: undefined,
+      },
     },
     inline: true,
     leafText: (node) => {
@@ -78,6 +82,7 @@ export function defineIssueReferenceSpec() {
         href: attrs.href,
         referenceType: attrs.type,
         commentId: attrs.commentId,
+        fallbackText: attrs.fallbackText,
       } satisfies GitHubIssueReference
     },
     __fromUnist: toProseMirrorNode<GitHubIssueReference>(
@@ -90,6 +95,7 @@ export function defineIssueReferenceSpec() {
           type: node.referenceType,
           href: node.href,
           commentId: node.commentId,
+          fallbackText: node.fallbackText,
         } satisfies GitHubIssueReferenceAttrs
       },
     ) as any,

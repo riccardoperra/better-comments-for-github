@@ -38,6 +38,10 @@
   .title {
     /* this is svg size + margin-right. this is needed to vertically align the content in a easier way. I hate fonts. */
     margin-left: calc(var(--svg-size) + var(--base-size-4));
+
+    .emptyIcon {
+      margin-left: 0;
+    }
   }
 }
 

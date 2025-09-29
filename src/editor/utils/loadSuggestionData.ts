@@ -41,6 +41,7 @@ export interface ReferenceSuggestion {
   id: string
   titleHtml: string
   titleText: string
+  candidateType: 'pull' | 'issue' | 'discussion' | null
 }
 
 export interface SavedReplySuggestion {
@@ -61,6 +62,16 @@ export interface SuggestionData {
   emojis: Array<EmojiSuggestion>
 }
 
+export function determineReferenceTypeByIcon(iconHtml: string) {
+  return iconHtml.includes('pull-request')
+    ? 'pull'
+    : iconHtml.includes('issue')
+      ? 'issue'
+      : iconHtml.includes('comment-discussion')
+        ? 'discussion'
+        : null
+}
+
 export function createSuggestionData(element: HTMLElement) {
   const [data, setData] = createSignal<SuggestionData>({
     mentions: [],
@@ -79,7 +90,10 @@ export function createSuggestionData(element: HTMLElement) {
         setData(() => ({
           emojis: suggestionData.emojis,
           mentions: suggestionData.mentions,
-          references: suggestionData.references,
+          references: suggestionData.references.map((reference) => ({
+            ...reference,
+            candidateType: determineReferenceTypeByIcon(reference.iconHtml),
+          })),
           savedReplies: suggestionData.savedReplies,
         }))
       })

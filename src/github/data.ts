@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { determineReferenceTypeByIcon } from '../editor/utils/loadSuggestionData'
 import type { SuggestionData } from '../editor/utils/loadSuggestionData'
 
 export function fetchEmojis(url: string) {
@@ -74,6 +75,7 @@ export async function tryGetReferences(
       titleText: reference.title,
       titleHtml: reference.title,
       iconHtml: iconMap[reference.type],
+      candidateType: determineReferenceTypeByIcon(reference.title),
     }))
   } catch {
     return []
@@ -140,7 +142,12 @@ export function getPullRequestHoverCardContent(
     headers: {
       'X-Requested-With': 'XMLHttpRequest',
     },
-  }).then((res) => res.text())
+  }).then(async (res) => {
+    if (!res.ok) {
+      throw new Error(await res.text())
+    }
+    return res.text()
+  })
 }
 
 export function getDiscussionHoverCardContent(
@@ -156,7 +163,12 @@ export function getDiscussionHoverCardContent(
     headers: {
       'X-Requested-With': 'XMLHttpRequest',
     },
-  }).then((res) => res.text())
+  }).then(async (res) => {
+    if (!res.ok) {
+      throw new Error(await res.text())
+    }
+    return res.text()
+  })
 }
 
 export function getIssueHoverCardContent(
@@ -172,5 +184,10 @@ export function getIssueHoverCardContent(
     headers: {
       'X-Requested-With': 'XMLHttpRequest',
     },
-  }).then((res) => res.text())
+  }).then(async (res) => {
+    if (!res.ok) {
+      throw new Error(await res.text())
+    }
+    return res.text()
+  })
 }

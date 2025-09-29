@@ -19,6 +19,7 @@ import { unknownNodeHandler } from '../../core/custom/unknown-node/unknown-node-
 import { unistNodeFromMarkdown } from './unistNodeFromMarkdown'
 import { contentFixHandlers } from './content-fix-handlers'
 import type { EditorView } from 'prosemirror-view'
+import type { SuggestionData } from './loadSuggestionData'
 
 export function fixRawContent(content: string) {
   return contentFixHandlers.reduce((acc, handler) => handler(acc), content)
@@ -32,6 +33,7 @@ export function setEditorContent(
     isFromTextarea?: boolean
     repository: string
     owner: string
+    suggestionData: () => SuggestionData
   },
 ) {
   const {
@@ -39,11 +41,16 @@ export function setEditorContent(
     isFromTextarea = false,
     repository,
     owner,
+    suggestionData,
   } = options
   const schema = view.state.schema
   content = fixRawContent(content)
 
-  const unistNode = unistNodeFromMarkdown(content, { repository, owner })
+  const unistNode = unistNodeFromMarkdown(content, {
+    repository,
+    owner,
+    references: () => suggestionData().references,
+  })
   const result = convertUnistToProsemirror(
     unistNode,
     schema,

@@ -58,7 +58,7 @@ export interface EditorProps {
 export type EditorType = 'native' | 'react'
 export type EditorRootContextProps = {
   id: string
-  data: Accessor<SuggestionData>
+  suggestionData: Accessor<SuggestionData>
   textarea: Accessor<HTMLTextAreaElement>
   initialValue: string
   uploadHandler: GitHubUploaderHandler
@@ -80,6 +80,8 @@ function sanitizeMarkdownValue(value: string) {
       .replaceAll('> \\[!', '> [!')
       // Handle github links: https:\//github.com
       .replaceAll('https\\://github', 'https://github')
+      // Handle \ in issue references when plain text
+      .replaceAll('\\#', '#')
   )
 }
 
@@ -87,6 +89,7 @@ function textAreaValueToPmNode(
   value: string,
   context: EditorRootContextProps,
   schema: Schema,
+  suggestion: () => SuggestionData,
 ) {
   if (value === '') {
     return schema.nodes.doc.createAndFill()!
@@ -95,6 +98,7 @@ function textAreaValueToPmNode(
   const unistNode = unistNodeFromMarkdown(value, {
     owner: context.owner() ?? '',
     repository: context.repository() ?? '',
+    references: () => suggestion().references,
   })
   return convertUnistToProsemirror(unistNode, schema, unknownNodeHandler(value))
 }
@@ -131,7 +135,12 @@ export function Editor(props: EditorProps) {
       textarea.addEventListener(
         'gh-better-comments-textarea-set-value',
         (e) => {
-          const pmNode = textAreaValueToPmNode(e.detail, context, editor.schema)
+          const pmNode = textAreaValueToPmNode(
+            e.detail,
+            context,
+            editor.schema,
+            () => props.suggestions,
+          )
           editor.setContent(pmNode)
         },
         { signal: abortController.signal },
@@ -166,6 +175,7 @@ export function Editor(props: EditorProps) {
             textarea.value,
             context,
             editor.schema,
+            () => props.suggestions,
           )
           editor.setContent(pmNode)
         }
@@ -183,6 +193,7 @@ export function Editor(props: EditorProps) {
           textarea.value,
           context,
           editor.schema,
+          () => props.suggestions,
         )
         editor.setContent(pmNode)
       },
@@ -196,6 +207,7 @@ export function Editor(props: EditorProps) {
       isInitialValue: true,
       owner: context.owner() ?? '',
       repository: context.repository() ?? '',
+      suggestionData: () => props.suggestions,
     })
     const markdown = toMarkdown()
     editorStore.set('markdown', markdown)
@@ -205,7 +217,9 @@ export function Editor(props: EditorProps) {
     const unistNode = convertPmSchemaToUnist(editor.state.doc, editor.schema, {
       postProcess: (node) => {
         unistMergeAdjacentList(node)
-        remarkGitHubIssueReferenceSupport()(node)
+        remarkGitHubIssueReferenceSupport(() => props.suggestions.references)(
+          node,
+        )
       },
     })
 

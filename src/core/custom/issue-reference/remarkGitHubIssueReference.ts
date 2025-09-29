@@ -22,6 +22,7 @@ import {
 } from './issue-reference-utils'
 import type { ReplaceFunction } from 'mdast-util-find-and-replace'
 import type { Node, Parent, Root, Text } from 'mdast'
+import type { ReferenceSuggestion } from '../../../editor/utils/loadSuggestionData'
 
 export const githubIssueRegex =
   /(?:https?:\/\/)?github\.com\/(?<owner>[^/]+)\/(?<repo>[^/]+)\/(?<type>issues|pull|discussions)\/(?<number>\d+)(?:#(?:issuecomment|discussioncomment)-(?<commentId>\d+))?/i
@@ -57,6 +58,10 @@ export interface GitHubIssueReference extends Node {
    * Link to the comment reply if present.
    */
   commentId?: string
+  /**
+   * Phrasing content for unmatched issue reference.
+   */
+  fallbackText?: string
 }
 
 declare module 'mdast' {
@@ -90,6 +95,7 @@ export function matchGitHubIssueLinkReference(text: string) {
 export function remarkParseLinkToGitHubIssueReference(options: {
   repository: string
   owner: string
+  references: () => Array<ReferenceSuggestion>
 }) {
   const { repository, owner } = options
   const replaceIssue: ReplaceFunction = (value, no, match) => {
@@ -109,19 +115,29 @@ export function remarkParseLinkToGitHubIssueReference(options: {
       : false
   }
 
+  const referenceLinkRegExp = /(?:#|\bgh-)([1-9]\d*)/gi
+
   return function transformer(tree: Root) {
     // First, we convert every # or GH- to a possible link
-    findAndReplace(tree, [[/(?:#|\bgh-)([1-9]\d*)/gi, replaceIssue]])
+    findAndReplace(tree, [[referenceLinkRegExp, replaceIssue]])
     // TODO? Prefetch data?
     // Then we parse link into a reference node
     visit(tree, 'link', (link, index, parent) => {
       const href = link.url
       const match = matchGitHubIssueLinkReference(href)
       if (match) {
-        const titleAsUrl = link.children.some(
-          (child) => child.type === 'text' && child.value === link.url,
-        )
-        if (!titleAsUrl) return
+        console.log(options.references(), 'references in remark')
+        const phrasingContent = link.children.at(0)
+        let phrasingContentText: string | null = null
+        if (phrasingContent && phrasingContent.type === 'text') {
+          phrasingContentText = phrasingContent.value
+          if (
+            phrasingContent.value !== link.url &&
+            !referenceLinkRegExp.test(phrasingContent.value)
+          ) {
+            return
+          }
+        }
         const { owner, repository, issue, commentId, type } = match
         if (typeof index === 'number' && parent) {
           parent.children[index] = {
@@ -132,6 +148,7 @@ export function remarkParseLinkToGitHubIssueReference(options: {
             referenceType: type,
             href,
             commentId: commentId || undefined,
+            fallbackText: phrasingContentText || undefined,
           } satisfies GitHubIssueReference
         }
       }
@@ -139,18 +156,26 @@ export function remarkParseLinkToGitHubIssueReference(options: {
   }
 }
 
-export function remarkGitHubIssueReferenceSupport() {
+export function remarkGitHubIssueReferenceSupport(
+  references: () => Array<ReferenceSuggestion>,
+) {
   return function transformer(tree: Root) {
     visit(tree, githubIssueReferenceType, (_issue, index, parent) => {
+      const isReferenced = references().find(
+        (reference) => reference.id === String(_issue.issue),
+      )
+
       const result: Text = {
         type: 'text',
-        value: getLinkFromIssueReferenceAttrs({
-          issue: _issue.issue,
-          type: _issue.referenceType,
-          owner: _issue.owner,
-          repository: _issue.repository,
-          commentId: _issue.commentId,
-        }),
+        value: isReferenced
+          ? `#${_issue.issue}`
+          : getLinkFromIssueReferenceAttrs({
+              issue: _issue.issue,
+              type: _issue.referenceType,
+              owner: _issue.owner,
+              repository: _issue.repository,
+              commentId: _issue.commentId,
+            }),
       }
       if (typeof index === 'number' && parent) {
         ;(parent as Parent).children[index] = result
