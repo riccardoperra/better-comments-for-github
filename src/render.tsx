@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ErrorBoundary, mergeProps, render } from 'solid-js/web'
+import { ErrorBoundary, delegateEvents, mergeProps, render } from 'solid-js/web'
 import { StateProvider } from 'statebuilder'
 import { Show, createSignal, onMount } from 'solid-js'
 import { clsx } from 'clsx'
@@ -136,6 +136,8 @@ export function EditorErrorBoundary(props: EditorErrorBoundaryProps) {
 }
 
 export function mountEditor(root: HTMLElement, props: RenderEditorProps) {
+  delegateEvents(['click'], root as unknown as Document)
+
   return render(() => {
     return (
       <StateProvider>
@@ -159,7 +161,7 @@ export function mountEditor(root: HTMLElement, props: RenderEditorProps) {
                 value={{
                   id: props.id,
                   currentUsername: props.currentUsername,
-                  data: props.suggestionData,
+                  suggestionData: props.suggestionData,
                   uploadHandler: props.uploadHandler,
                   get hovercardSubjectTag() {
                     return props.hovercardSubjectTag
