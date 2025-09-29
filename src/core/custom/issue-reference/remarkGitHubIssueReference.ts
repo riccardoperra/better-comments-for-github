@@ -126,7 +126,6 @@ export function remarkParseLinkToGitHubIssueReference(options: {
       const href = link.url
       const match = matchGitHubIssueLinkReference(href)
       if (match) {
-        console.log(options.references(), 'references in remark')
         const phrasingContent = link.children.at(0)
         let phrasingContentText: string | null = null
         if (phrasingContent && phrasingContent.type === 'text') {
