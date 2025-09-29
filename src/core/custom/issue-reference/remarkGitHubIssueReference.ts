@@ -125,26 +125,35 @@ export function remarkParseLinkToGitHubIssueReference(options: {
     visit(tree, 'link', (link, index, parent) => {
       const href = link.url
       const match = matchGitHubIssueLinkReference(href)
+
       if (match) {
+        const reference = options
+          .references()
+          .find((reference) => reference.id === String(match.issue))
+
         const phrasingContent = link.children.at(0)
         let phrasingContentText: string | null = null
         if (phrasingContent && phrasingContent.type === 'text') {
           phrasingContentText = phrasingContent.value
           if (
             phrasingContent.value !== link.url &&
-            !referenceLinkRegExp.test(phrasingContent.value)
+            !referenceLinkRegExp.test(phrasingContent.value) &&
+            !reference
           ) {
             return
           }
         }
         const { owner, repository, issue, commentId, type } = match
+
+        const issueType = reference ? reference.candidateType || type : type
+
         if (typeof index === 'number' && parent) {
           parent.children[index] = {
             type: githubIssueReferenceType,
             issue: Number(issue),
             owner,
             repository,
-            referenceType: type,
+            referenceType: issueType,
             href,
             commentId: commentId || undefined,
             fallbackText: phrasingContentText || undefined,
