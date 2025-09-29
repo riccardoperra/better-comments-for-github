@@ -25,6 +25,7 @@ import {
 } from 'solid-js'
 
 import LucideLoaderCircle from 'lucide-solid/icons/loader-circle'
+import { clsx } from 'clsx'
 import { CacheStore } from '../../../../cache.store'
 import {
   HoverCard,
@@ -40,46 +41,103 @@ import {
 } from '../../../../github/data'
 import { EditorRootContext } from '../../../../editor/editor'
 import styles from './IssueReferenceView.module.css'
-import type { GitHubIssueReferenceAttrs } from '../issue'
 import type { NodeViewContextProps } from '@prosemirror-adapter/solid'
+import type { GitHubIssueReferenceAttrs } from '../issue'
 
 export function IssueReferenceView(props: NodeViewContextProps) {
   const cacheStorage = CacheStore.provide()
   const editorContext = useContext(EditorRootContext)!
   const context = useNodeViewContext()
-  const attrs = () => context().node.attrs as GitHubIssueReferenceAttrs
+  const suggestionData = editorContext.suggestionData
 
-  const link = createMemo(() => getLinkFromIssueReferenceAttrs(attrs(), true))
-
-  const [hoverContent] = createResource(link, (link) => {
-    if (cacheStorage.get.issueReferencesHtml[link]) {
-      return cacheStorage.get.issueReferencesHtml[link]
-    }
-
-    const fetchCall =
-      attrs().type === 'pull'
-        ? getPullRequestHoverCardContent
-        : attrs().type === 'discussion'
-          ? getDiscussionHoverCardContent
-          : getIssueHoverCardContent
-
-    return fetchCall(
-      link,
-      editorContext.hovercardSubjectTag()!,
-      attrs().commentId || null,
+  const isReferenced = createMemo(() => {
+    const issue = context().node.attrs.issue
+    return suggestionData().references.find(
+      (reference) => reference.id === String(issue),
     )
-      .then((res) => {
-        cacheStorage.set('issueReferencesHtml', link, res)
-        return res
-      })
-      .catch((error) => {
-        cacheStorage.set('issueReferencesHtml', link, undefined)
-        throw error
-      })
   })
 
+  const attrs = (): GitHubIssueReferenceAttrs => {
+    const attrs = context().node.attrs as GitHubIssueReferenceAttrs
+    const reference = isReferenced()
+    if (reference && reference.candidateType) {
+      return {
+        ...attrs,
+        type: reference.candidateType,
+      }
+    }
+    return attrs
+  }
+
+  const data = createMemo(() => {
+    const link = getLinkFromIssueReferenceAttrs(attrs(), true)
+    return {
+      link,
+      suggestionData: editorContext.suggestionData(),
+    }
+  })
+
+  const [hoverContent] = createResource(
+    data,
+    async ({ link, suggestionData }) => {
+      const reference = isReferenced()
+      if (suggestionData.references.length > 0 && !reference) {
+        throw new Error('Not Found')
+      }
+      if (cacheStorage.get.issueReferencesHtml[link]) {
+        return cacheStorage.get.issueReferencesHtml[link]
+      }
+
+      const fetchCall =
+        attrs().type === 'pull'
+          ? getPullRequestHoverCardContent
+          : attrs().type === 'discussion'
+            ? getDiscussionHoverCardContent
+            : getIssueHoverCardContent
+
+      return fetchCall(
+        link,
+        editorContext.hovercardSubjectTag()!,
+        attrs().commentId || null,
+      )
+        .then((res) => {
+          cacheStorage.set('issueReferencesHtml', link, res)
+          return res
+        })
+        .catch((error) => {
+          throw error
+        })
+    },
+  )
+
+  const fallbackTitle = createMemo(() => {
+    return attrs().fallbackText || String(attrs().issue)
+  })
+
+  return (
+    <Show
+      fallback={<span>{fallbackTitle()}</span>}
+      when={hoverContent.state !== 'errored'}
+    >
+      <IssueReferenceLink
+        loading={hoverContent.loading}
+        attrs={attrs()}
+        hoverContent={hoverContent() || ''}
+        link={data().link}
+      />
+    </Show>
+  )
+}
+
+interface IssueReferenceLinkProps {
+  hoverContent: string
+  attrs: GitHubIssueReferenceAttrs
+  loading: boolean
+  link: string
+}
+function IssueReferenceLink(props: IssueReferenceLinkProps) {
   const serializedHoverContent = createMemo(() => {
-    const content = hoverContent()
+    const content = props.hoverContent
     if (!content) return null
     return new DOMParser().parseFromString(content, 'text/html')
   })
@@ -94,45 +152,55 @@ export function IssueReferenceView(props: NodeViewContextProps) {
 
   const issueTitle = createMemo(() => {
     const content = serializedHoverContent()
-    const commentId = attrs().commentId
+    const commentId = props.attrs.commentId
     if (!content) return null
     const title =
       content.querySelector('.markdown-title')?.textContent ||
       content.querySelector('.dashboard-break-word')?.textContent ||
-      String(attrs().issue)
+      props.attrs.fallbackText ||
+      String(props.attrs.issue)
     if (commentId) {
-      return `#${attrs().issue} (comment)`
+      return `#${props.attrs.issue} (comment)`
     }
     return title
   })
 
   const label = createMemo(() => {
-    const { issue, owner, repository } = attrs()
+    const { issue, owner, repository } = props.attrs
     return `${owner}/${repository}#${issue}`
   })
 
   return (
     <HoverCard>
-      <HoverCardTrigger href={link()} target={'_blank'} class={styles.trigger}>
-        <Show when={hoverContent.loading}>
+      <HoverCardTrigger
+        href={props.link}
+        target={'_blank'}
+        class={styles.trigger}
+      >
+        <Show when={props.loading}>
           <LucideLoaderCircle size={15} class={styles.loader} />
         </Show>
         <Show when={issueIcon()}>
           {(icon) => <span class={styles.iconWrapper}>{icon()}</span>}
         </Show>
         <Show fallback={label()} when={issueTitle()}>
-          {(title) => <span class={styles.title}>{title()}</span>}
+          {(title) => (
+            <span
+              class={clsx(styles.title, {
+                [styles.emptyIcon]: !issueIcon(),
+              })}
+            >
+              {title()}
+            </span>
+          )}
         </Show>
       </HoverCardTrigger>
       <HoverCardContent>
         <HoverCardArrow />
         <Switch>
-          <Match when={hoverContent.state === 'errored'}>
-            Cannot retrieve content
-          </Match>
-          <Match when={hoverContent.loading}>Loading...</Match>
-          <Match when={hoverContent.state === 'ready'}>
-            <Show when={hoverContent()}>
+          <Match when={props.loading}>Loading...</Match>
+          <Match when={!props.loading}>
+            <Show when={props.hoverContent}>
               {(hoverContent) => <div innerHTML={hoverContent()} />}
             </Show>
           </Match>

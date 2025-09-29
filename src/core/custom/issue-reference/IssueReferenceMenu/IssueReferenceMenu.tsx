@@ -22,22 +22,13 @@ import {
   AutocompleteList,
   AutocompletePopover,
 } from '../../../editor/autocomplete/Autocomplete'
+import { determineReferenceTypeByIcon } from '../../../../editor/utils/loadSuggestionData'
 import styles from './IssueReferenceMenu.module.css'
-import type { EditorExtension } from '../../../editor/extension'
 import type { SuggestionData } from '../../../../editor/utils/loadSuggestionData'
+import type { EditorExtension } from '../../../editor/extension'
 
 export interface UserMentionMenuProps {
   issues: SuggestionData['references']
-}
-
-function getIssueTypeByIconHtml(iconHtml: string) {
-  if (iconHtml.includes('pull-request')) {
-    return 'pull'
-  }
-  if (iconHtml.includes('comment-discussion')) {
-    return 'discussion'
-  }
-  return 'issue'
 }
 
 export function IssueReferenceMenu(props: UserMentionMenuProps) {
@@ -47,7 +38,7 @@ export function IssueReferenceMenu(props: UserMentionMenuProps) {
   const handleIssueReferenceInsert = (
     ref: SuggestionData['references'][number],
   ) => {
-    const type = getIssueTypeByIconHtml(ref.iconHtml)
+    const type = determineReferenceTypeByIcon(ref.iconHtml)!
     const [, owner, repository] = window.location.pathname.split('/')
     if (owner && repository) {
       queueMicrotask(() => {

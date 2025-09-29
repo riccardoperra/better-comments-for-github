@@ -159,7 +159,7 @@ export function mountEditor(root: HTMLElement, props: RenderEditorProps) {
                 value={{
                   id: props.id,
                   currentUsername: props.currentUsername,
-                  data: props.suggestionData,
+                  suggestionData: props.suggestionData,
                   uploadHandler: props.uploadHandler,
                   get hovercardSubjectTag() {
                     return props.hovercardSubjectTag

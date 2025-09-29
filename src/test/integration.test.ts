@@ -101,7 +101,7 @@ export function runInTestRoot(content: string, fn: () => any) {
     owner.context = {
       ...owner.context,
       [EditorRootContext.id]: {
-        data,
+        suggestionData: data,
         currentUsername: () => 'riccardoperra',
         owner: 'riccardoperra',
         repository: 'test-repository',
