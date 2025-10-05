@@ -361,7 +361,7 @@ export function Toolbar() {
           </TooltipTrigger>
           <TooltipContent>Issues & Feedback</TooltipContent>
         </Tooltip>
-        <Popover placement={'bottom-end'}>
+        <Popover placement={'bottom-end'} modal={true}>
           <PopoverTrigger class={styles.ToolbarAction}>
             <LucideCog size={16} />
           </PopoverTrigger>

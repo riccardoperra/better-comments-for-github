@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ErrorBoundary, delegateEvents, mergeProps, render } from 'solid-js/web'
+import { ErrorBoundary, mergeProps, render } from 'solid-js/web'
 import { StateProvider } from 'statebuilder'
 import { Show, createSignal, onMount } from 'solid-js'
 import { clsx } from 'clsx'
@@ -22,6 +22,7 @@ import { ConfettiExplosion } from 'solid-confetti-explosion'
 import { Editor, EditorRootContext } from './editor/editor'
 import { OcticonCaution } from './core/custom/githubAlert/icons'
 import { ConfigStore } from './config.store'
+import { delegateEditorEvents } from './editor/utils/eventDelegation'
 import type { EditorType } from './editor/editor'
 import type { Accessor } from 'solid-js'
 import type { GitHubUploaderHandler } from './core/custom/image/github-file-uploader'
@@ -136,7 +137,7 @@ export function EditorErrorBoundary(props: EditorErrorBoundaryProps) {
 }
 
 export function mountEditor(root: HTMLElement, props: RenderEditorProps) {
-  delegateEvents(['click'], root as unknown as Document)
+  delegateEditorEvents(root)
 
   return render(() => {
     return (
