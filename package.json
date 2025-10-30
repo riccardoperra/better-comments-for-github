@@ -62,6 +62,7 @@
     "clsx": "^2.1.1",
     "codemirror": "^6.0.1",
     "comlink": "^4.4.2",
+    "linkifyjs": "^4.3.2",
     "lucide-solid": "^0.544.0",
     "mdast-util-find-and-replace": "^3.0.2",
     "mdast-util-to-markdown": "^2.1.2",
