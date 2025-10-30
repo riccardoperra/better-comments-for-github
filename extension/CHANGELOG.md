@@ -1,5 +1,11 @@
 # @better-comments-for-github/extension
 
+## 0.0.18
+
+### Patch Changes
+
+- 2f28915: Add support for auto-linking while pasting an html link into a text selection
+
 ## 0.0.17
 
 ### Patch Changes
