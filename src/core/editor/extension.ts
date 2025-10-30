@@ -39,7 +39,6 @@ import {
   defineHorizontalRuleMarkdown,
   defineImageMarkdown,
   defineItalicMarkdown,
-  defineLinkMarkdown,
   defineListMarkdown,
   defineParagraphMarkdown,
   defineStrikethroughMarkdown,
@@ -62,6 +61,7 @@ import { defineComment } from '../custom/comment/comment'
 import { defineDetails } from '../custom/details/details'
 import { defineExitable } from '../custom/exitable/exitable'
 import { defineTableInsert } from '../custom/table/table-insert-plugin'
+import { defineLink } from '../custom/link/link'
 import type { HeadingAttrs } from 'prosekit/extensions/heading'
 
 function defineCode() {
@@ -92,7 +92,7 @@ export function defineMarkdownExtension() {
     defineSubscriptMarkdown(),
     defineUnderlineMarkdown(),
     defineGitHubIssueReference(), // to define before to allow copy-paste from link issue
-    defineLinkMarkdown(),
+    defineLink(),
     defineImageMarkdown(),
     defineParagraphMarkdown(),
     defineHardbreakMarkdown(),
