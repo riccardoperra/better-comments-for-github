@@ -1,5 +1,14 @@
 # @better-comments-for-github/core
 
+## 0.0.15
+
+### Patch Changes
+
+- 21bc98f: Improve table cell with line breaks support and fix rendering on markdown
+- Updated dependencies [21bc98f]
+  - prosemirror-transformer-markdown@1.0.1
+  - @prosedoc/markdown-schema@1.0.2
+
 ## 0.0.14
 
 ### Patch Changes

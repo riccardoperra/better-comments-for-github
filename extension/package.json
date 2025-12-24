@@ -2,7 +2,7 @@
   "name": "@better-comments-for-github/extension",
   "description": "manifest.json description",
   "private": true,
-  "version": "0.0.18",
+  "version": "0.0.19",
   "type": "module",
   "scripts": {
     "dev": "wxt",

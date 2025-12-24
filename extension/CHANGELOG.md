@@ -1,5 +1,11 @@
 # @better-comments-for-github/extension
 
+## 0.0.19
+
+### Patch Changes
+
+- 21bc98f: Improve table cell with line breaks support and fix rendering on markdown
+
 ## 0.0.18
 
 ### Patch Changes
