@@ -1,7 +1,7 @@
 import { defineConfig } from "tsdown";
-import type { Options } from "tsdown";
+import type { UserConfig } from "tsdown";
 
-const config: Options[] = defineConfig([
+const options: UserConfig[] = [
   {
     name: "Transformer/Unified",
     clean: true,
@@ -18,6 +18,8 @@ const config: Options[] = defineConfig([
     dts: true,
     format: "esm",
   },
-]) as Options[];
+];
+
+const config: UserConfig[] = defineConfig(options);
 
 export default config;

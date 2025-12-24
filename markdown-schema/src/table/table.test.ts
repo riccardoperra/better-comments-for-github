@@ -167,4 +167,12 @@ test('parse content with line breaks', () => {
       ),
     ),
   )
+
+  sameMarkdown(
+    convertPmSchemaToUnist(result, editor.schema),
+    `| Column 1                            | Column 2                                                         |
+| ----------------------------------- | ---------------------------------------------------------------- |
+| This cell has a<br>line break in it | This cell does not                                               |
+| Still nothing in this cell          | 1. This cell uses line breaks<br>2. to appear as a numbered list |`,
+  )
 })

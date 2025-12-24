@@ -8,13 +8,13 @@
   "exports": {
     "./unified": {
       "source": "./src/unified/index.ts",
-      "types": "./dist/unified/index.d.ts",
-      "import": "./dist/unified/index.js"
+      "types": "./dist/unified/index.d.mts",
+      "import": "./dist/unified/index.mjs"
     },
     "./prosemirror": {
       "source": "./src/prosemirror/index.ts",
-      "types": "./dist/prosemirror/index.d.ts",
-      "import": "./dist/prosemirror/index.js"
+      "types": "./dist/prosemirror/index.d.mts",
+      "import": "./dist/prosemirror/index.mjs"
     }
   },
   "scripts": {
