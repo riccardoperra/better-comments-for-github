@@ -28,7 +28,7 @@ catalog:
   remark-stringify: ^11.0.0
   solid-js: ^1.9.9
   statebuilder: 0.8.1
-  tsdown: ^0.15.2
+  tsdown: ^0.18.2
   typescript: ^5.9.2
   unified: ^11.0.5
   unist-util-visit: ^5.0.0

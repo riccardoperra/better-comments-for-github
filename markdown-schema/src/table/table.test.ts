@@ -28,20 +28,30 @@ import {
   sameNode,
   testUnknownHandler,
 } from '../test-utils'
+import {
+  defineHardbreakMarkdown,
+  remarkHtmlHardbreak,
+} from '../hardbreak/hardbreak'
+import { defineListMarkdown, unistMergeAdjacentList } from '../list/list'
 import { defineTableMarkdown } from './table'
+import { remarkTableToHtmlOnComplexContent } from './remarkTableOutputHtml'
 
-const extension = getMarksBaseExtensions([defineTableMarkdown()])
+const extension = getMarksBaseExtensions([
+  defineTableMarkdown(),
+  defineHardbreakMarkdown(),
+  defineListMarkdown(),
+])
 
-const { doc, p, table, tableHeaderCell, tableRow, tableCell } = builders(
-  extension.schema!,
-  {
+const { doc, p, table, tableHeaderCell, tableRow, tableCell, br, list } =
+  builders(extension.schema!, {
     p: { nodeType: 'paragraph' },
+    br: { nodeType: 'hardBreak' },
     table: { markType: 'table' },
     tableHeaderCell: { markType: 'tableHeaderCell' },
     tableRow: { markType: 'tableRow' },
     tableCell: { markType: 'tableCell' },
-  },
-)
+    list: { nodeType: 'list' },
+  })
 
 test('markdown -> prosemirror', () => {
   const editor = getEditorInstance(extension)
@@ -108,5 +118,118 @@ test('prosemirror -> markdown', () => {
 | -------------- | -------------- |
 | Content Cell 1 | Content Cell 2 |
 | Content Cell 3 | Content Cell 4 |`,
+  )
+})
+
+// https://github.com/riccardoperra/better-comments-for-github/issues/86
+test('parse content with line breaks', () => {
+  const editor = getEditorInstance(extension)
+
+  const unist = markdownToUnist(
+    `| Column 1 | Column 2 |
+|--------|--------|
+| This cell has a<br>line break in it | This cell does not |
+| Still nothing in this cell | 1. This cell uses line breaks<br>2. to appear as a numbered list |
+  `,
+    {
+      transformers: [remarkHtmlHardbreak],
+    },
+  )
+
+  const result = convertUnistToProsemirror(
+    unist,
+    editor.schema,
+    testUnknownHandler,
+  )
+
+  sameNode(
+    result,
+    doc(
+      table(
+        tableRow(
+          tableHeaderCell(p('Column 1')),
+          tableHeaderCell(p('Column 2')),
+        ),
+        tableRow(
+          tableCell(p('This cell has a', br(), 'line break in it')),
+          tableCell(p('This cell does not')),
+        ),
+        tableRow(
+          tableCell(p('Still nothing in this cell')),
+          tableCell(
+            p(
+              '1. This cell uses line breaks',
+              br(),
+              '2. to appear as a numbered list',
+            ),
+          ),
+        ),
+      ),
+    ),
+  )
+
+  sameMarkdown(
+    convertPmSchemaToUnist(result, editor.schema),
+    `| Column 1                            | Column 2                                                         |
+| ----------------------------------- | ---------------------------------------------------------------- |
+| This cell has a<br>line break in it | This cell does not                                               |
+| Still nothing in this cell          | 1. This cell uses line breaks<br>2. to appear as a numbered list |`,
+  )
+})
+
+test('render as html tag when includes non-phrasing content', () => {
+  const editor = getEditorInstance(
+    extension,
+    doc(
+      table(
+        tableRow(
+          tableHeaderCell(p('First Header')),
+          tableHeaderCell(p('Second Header')),
+        ),
+        tableRow(
+          tableCell(p('Content Cell 1')),
+          tableCell(
+            list({ kind: 'bullet' }, p('First item')),
+            list({ kind: 'bullet' }, p('Second item')),
+          ),
+        ),
+        tableRow(
+          tableCell(p('Content Cell 3')),
+          tableCell(p('Content Cell 4')),
+        ),
+      ),
+    ),
+  )
+
+  const result = convertPmSchemaToUnist(editor.state.doc, editor.schema, {
+    postProcess: (node) => {
+      unistMergeAdjacentList(node)
+      remarkTableToHtmlOnComplexContent()(node)
+    },
+  })
+
+  sameMarkdown(
+    result,
+    `<table>
+<thead>
+<tr>
+<th><p>First Header</p></th>
+<th><p>Second Header</p></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Content Cell 1</td>
+<td><ul>
+<li>First item</li>
+<li>Second item</li>
+</ul></td>
+</tr>
+<tr>
+<td>Content Cell 3</td>
+<td>Content Cell 4</td>
+</tr>
+</tbody>
+</table>`,
   )
 })

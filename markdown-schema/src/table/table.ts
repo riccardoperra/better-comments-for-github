@@ -23,14 +23,17 @@ import {
   defineTableRowSpec,
   defineTableSpec,
 } from 'prosekit/extensions/table'
-import { createProseMirrorNode } from 'prosemirror-transformer-markdown/prosemirror'
 import {
   fromProseMirrorNode,
   toProseMirrorNode,
 } from '@prosemirror-processor/unist/mdast'
 import { pmNode } from '@prosemirror-processor/unist'
 import { tableEditing } from 'prosemirror-tables'
-import type { Parent } from 'mdast'
+import { Fragment, Slice } from 'prosemirror-model'
+import { Transform } from 'prosekit/pm/transform'
+import type { Parent, PhrasingContent } from 'mdast'
+
+export { remarkTableToHtmlOnComplexContent } from './remarkTableOutputHtml'
 
 export function defineTableMarkdown() {
   return union(
@@ -47,24 +50,46 @@ export function defineTableMarkdown() {
         const isHead =
           !!parent &&
           parent.type === 'tableRow' &&
+          node.type === 'tableCell' &&
           // TODO: should access to the parent of table row in my opinion
           parent.position?.start.line === 1 &&
           node.position?.start.line === 1
         const children = context.handleAll(node as Parent)
-        const mappedChildren = children.map((child) => {
-          if (child.isText) {
-            return createProseMirrorNode('paragraph', context.schema, [
-              child,
-            ])[0]
-          }
-          return child
-        })
+        const fragment = Fragment.from(children)
+
         const nodeType = isHead
           ? context.schema.nodes.tableHeaderCell
           : context.schema.nodes.tableCell
-        return pmNode(nodeType, mappedChildren, null)
+
+        if (nodeType.validContent(fragment)) {
+          return pmNode(nodeType, fragment, null, { mode: 'fill' })
+        }
+
+        const cellNode = pmNode(nodeType, [], null, { mode: 'fill' })!
+        // Fix https://github.com/riccardoperra/better-comments-for-github/issues/86
+        // When the given fragment is not valid, instead of writing our-self the logic to match
+        // the required content using contentMatch, we instead use pm transform with `fitter` logic
+        // to automatically wrap the content into something that can be accepted by the cell content.
+        // In most of the cases, this should create a paragraph that wraps the parsed children.
+        const tr = new Transform(cellNode)
+        tr.replace(1, 1, new Slice(fragment, 0, 0))
+        return tr.doc
       },
       __toUnist: (node, parent, context) => {
+        const { content } = node
+
+        if (
+          content.childCount === 1 &&
+          content.child(0).type.name === 'paragraph'
+        ) {
+          const p = content.child(0)
+          const childNodes = context.handleAll(p)
+          return {
+            type: 'tableCell',
+            children: childNodes as unknown as Array<PhrasingContent>,
+          } as const
+        }
+
         return fromProseMirrorNode('tableCell')(node, parent, context as any)
       },
       unistName: 'tableCell',
