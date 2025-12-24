@@ -40,6 +40,7 @@
     "prosekit": "catalog:",
     "prosemirror-inputrules": "catalog:",
     "prosemirror-tables": "^1.8.1",
+    "prosemirror-model": "catalog:",
     "prosemirror-transformer-markdown": "workspace:*",
     "remark-comment-config": "^8.0.0",
     "remark-gfm": "catalog:"

@@ -28,14 +28,24 @@ import {
   sameNode,
   testUnknownHandler,
 } from '../test-utils'
+import {
+  defineHardbreakMarkdown,
+  remarkHtmlHardbreak,
+} from '../hardbreak/hardbreak'
+import { defineListMarkdown } from '../list/list'
 import { defineTableMarkdown } from './table'
 
-const extension = getMarksBaseExtensions([defineTableMarkdown()])
+const extension = getMarksBaseExtensions([
+  defineTableMarkdown(),
+  defineHardbreakMarkdown(),
+  defineListMarkdown(),
+])
 
-const { doc, p, table, tableHeaderCell, tableRow, tableCell } = builders(
+const { doc, p, table, tableHeaderCell, tableRow, tableCell, br } = builders(
   extension.schema!,
   {
     p: { nodeType: 'paragraph' },
+    br: { nodeType: 'hardBreak' },
     table: { markType: 'table' },
     tableHeaderCell: { markType: 'tableHeaderCell' },
     tableRow: { markType: 'tableRow' },
@@ -108,5 +118,53 @@ test('prosemirror -> markdown', () => {
 | -------------- | -------------- |
 | Content Cell 1 | Content Cell 2 |
 | Content Cell 3 | Content Cell 4 |`,
+  )
+})
+
+// https://github.com/riccardoperra/better-comments-for-github/issues/86
+test('parse content with line breaks', () => {
+  const editor = getEditorInstance(extension)
+
+  const unist = markdownToUnist(
+    `| Column 1 | Column 2 |
+|--------|--------|
+| This cell has a<br>line break in it | This cell does not |
+| Still nothing in this cell | 1. This cell uses line breaks<br>2. to appear as a numbered list |
+  `,
+    {
+      transformers: [remarkHtmlHardbreak],
+    },
+  )
+
+  const result = convertUnistToProsemirror(
+    unist,
+    editor.schema,
+    testUnknownHandler,
+  )
+
+  sameNode(
+    result,
+    doc(
+      table(
+        tableRow(
+          tableHeaderCell(p('Column 1')),
+          tableHeaderCell(p('Column 2')),
+        ),
+        tableRow(
+          tableCell(p('This cell has a', br(), 'line break in it')),
+          tableCell(p('This cell does not')),
+        ),
+        tableRow(
+          tableCell(p('Still nothing in this cell')),
+          tableCell(
+            p(
+              '1. This cell uses line breaks',
+              br(),
+              '2. to appear as a numbered list',
+            ),
+          ),
+        ),
+      ),
+    ),
   )
 })
