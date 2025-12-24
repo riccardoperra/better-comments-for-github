@@ -31,7 +31,9 @@ import { pmNode } from '@prosemirror-processor/unist'
 import { tableEditing } from 'prosemirror-tables'
 import { Fragment, Slice } from 'prosemirror-model'
 import { Transform } from 'prosekit/pm/transform'
-import type { Parent } from 'mdast'
+import type { Parent, PhrasingContent } from 'mdast'
+
+export { remarkTableToHtmlOnComplexContent } from './remarkTableOutputHtml'
 
 export function defineTableMarkdown() {
   return union(
@@ -74,6 +76,20 @@ export function defineTableMarkdown() {
         return tr.doc
       },
       __toUnist: (node, parent, context) => {
+        const { content } = node
+
+        if (
+          content.childCount === 1 &&
+          content.child(0).type.name === 'paragraph'
+        ) {
+          const p = content.child(0)
+          const childNodes = context.handleAll(p)
+          return {
+            type: 'tableCell',
+            children: childNodes as unknown as Array<PhrasingContent>,
+          } as const
+        }
+
         return fromProseMirrorNode('tableCell')(node, parent, context as any)
       },
       unistName: 'tableCell',
