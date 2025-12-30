@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { createMemo } from 'solid-js'
+import { Show, createMemo } from 'solid-js'
 import { useNodeViewContext } from '@prosemirror-adapter/solid'
 import { shikiBundledLanguagesInfo } from 'prosekit/extensions/code-block'
 
@@ -44,20 +44,54 @@ export default function ShikiCodeBlockView(props: NodeViewContextProps) {
 
   return (
     <NodeViewWrapper>
-      <div class={`highlight ${styles.CodeBlock}`}>
-        <div class={styles.codeBlockActions} contenteditable={false}>
-          <CodeBlockLanguageSelector
-            value={currentValue()}
-            setLanguage={setLanguage}
-          />
-          <CodeBlockClipboard content={context().node.textContent} />
-        </div>
+      <Show
+        fallback={
+          <>
+            <div class={`highlight ${styles.CodeBlock}`}>
+              <div class={styles.codeBlockActions} contenteditable={false}>
+                <CodeBlockLanguageSelector
+                  value={currentValue()}
+                  setLanguage={setLanguage}
+                />
+                <CodeBlockClipboard content={context().node.textContent} />
+              </div>
 
-        <pre
-          ref={props.contentRef}
-          data-language={context().node.attrs.language}
-        ></pre>
-      </div>
+              <pre
+                ref={props.contentRef}
+                data-language={context().node.attrs.language}
+              ></pre>
+            </div>
+          </>
+        }
+        when={context().node.attrs.isSuggestion}
+      >
+        <div class={styles.suggestChangeContainer}>
+          <div class={styles.suggestChangeTitle}>Suggest changes</div>
+
+          <div class={styles.codeBlockActions} contenteditable={false}>
+            <CodeBlockLanguageSelector
+              value={currentValue()}
+              setLanguage={setLanguage}
+            />
+            <CodeBlockClipboard content={context().node.textContent} />
+          </div>
+
+          <div class={`highlight ${styles.CodeBlock} ${styles.diffOriginal}`}>
+            <pre data-language={context().node.attrs.language}>
+              {
+                context().node.attrs.suggestChangeConfig
+                  ?.sourceContentFromDiffLines
+              }
+            </pre>
+          </div>
+          <div class={`highlight ${styles.CodeBlock} ${styles.diffAdd}`}>
+            <pre
+              ref={props.contentRef}
+              data-language={context().node.attrs.language}
+            ></pre>
+          </div>
+        </div>
+      </Show>
     </NodeViewWrapper>
   )
 }

@@ -22,16 +22,19 @@ import { ConfettiExplosion } from 'solid-confetti-explosion'
 import { Editor, EditorRootContext } from './editor/editor'
 import { OcticonCaution } from './core/custom/githubAlert/icons'
 import { ConfigStore } from './config.store'
+import { delegateEditorEvents } from './editor/utils/eventDelegation'
 import type { EditorType } from './editor/editor'
 import type { Accessor } from 'solid-js'
 import type { GitHubUploaderHandler } from './core/custom/image/github-file-uploader'
 import type { SuggestionData } from './editor/utils/loadSuggestionData'
+import type { SuggestedChangeConfig } from './editor/utils/loadCodeSuggestionChangesConfig'
 
 export interface RenderEditorProps {
   id: string
   open: Accessor<boolean>
   openChange: (open: boolean) => void
   currentUsername: Accessor<string | null>
+  suggestedChangesConfig: Accessor<SuggestedChangeConfig | undefined>
   suggestionData: Accessor<SuggestionData>
   initialValue: string
   uploadHandler: GitHubUploaderHandler
@@ -70,9 +73,9 @@ export function SwitchButton(props: {
           'Button--secondary': mergedProps.variant === 'secondary',
           'Button--invisible': mergedProps.variant === 'invisible',
         })}
-        // NOTE: For some reason delegated events it doesn't work in some pages
-        // (https://github.com/riccardoperra/better-comments-for-github/issues/39)
-        // so for now we will use native event
+        //  NOTE: For some reason delegated events it doesn't work in some pages
+        //  (https://github.com/riccardoperra/better-comments-for-github/issues/39)
+        //  so for now we will use native event
         on:click={() => {
           const open = !mergedProps.open
           mergedProps.onOpenChange(open)
@@ -136,6 +139,8 @@ export function EditorErrorBoundary(props: EditorErrorBoundaryProps) {
 }
 
 export function mountEditor(root: HTMLElement, props: RenderEditorProps) {
+  delegateEditorEvents(root)
+
   return render(() => {
     return (
       <StateProvider>
@@ -160,6 +165,7 @@ export function mountEditor(root: HTMLElement, props: RenderEditorProps) {
                   id: props.id,
                   currentUsername: props.currentUsername,
                   data: props.suggestionData,
+                  suggestedChangesConfig: props.suggestedChangesConfig,
                   uploadHandler: props.uploadHandler,
                   get hovercardSubjectTag() {
                     return props.hovercardSubjectTag

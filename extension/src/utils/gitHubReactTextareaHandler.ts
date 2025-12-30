@@ -17,6 +17,9 @@
 import { effect } from 'solid-js/web'
 import { createSuggestionData } from '@better-comments-for-github/core/editor/utils/loadSuggestionData'
 import { createGitHubUploaderReactHandler } from '@better-comments-for-github/core/editor/utils/reactFileUploader'
+import { createSuggestedChangeConfigData } from '@better-comments-for-github/core/editor/utils/loadCodeSuggestionChangesConfig'
+import { createEffect } from 'solid-js'
+import type { SuggestedChangeConfig } from '@better-comments-for-github/core/editor/utils/loadCodeSuggestionChangesConfig'
 import type { SuggestionData } from '@better-comments-for-github/core/editor/utils/loadSuggestionData'
 
 export class GitHubReactTextareaHandler {
@@ -43,6 +46,10 @@ export class GitHubReactTextareaHandler {
     return this.root.querySelector(
       '[class*="MarkdownEditor-module__container"]',
     )
+  }
+
+  findCommentBoxModule() {
+    return this.root.closest<HTMLElement>('[class*="CommentBox-module"]')
   }
 
   getUploadHandler() {
@@ -86,6 +93,19 @@ export class GitHubReactTextareaHandler {
         '[github-better-comments] No mount point found for the switch button',
       )
     }
+  }
+
+  loadSuggestionChangesConfig(
+    load: (data: SuggestedChangeConfig | undefined) => void,
+  ) {
+    const commentBox = this.findCommentBoxModule()
+    if (!commentBox) {
+      return
+    }
+    const data = createSuggestedChangeConfigData(commentBox)
+    createEffect(() => {
+      load(data())
+    })
   }
 
   loadSuggestionDataAsync(

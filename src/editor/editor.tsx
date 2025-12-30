@@ -49,6 +49,7 @@ import type { Schema } from 'prosemirror-model'
 import type { SuggestionData } from './utils/loadSuggestionData'
 import type { GitHubUploaderHandler } from '../core/custom/image/github-file-uploader'
 import type { Root } from 'mdast'
+import type { SuggestedChangeConfig } from './utils/loadCodeSuggestionChangesConfig'
 
 export interface EditorProps {
   suggestions: SuggestionData
@@ -59,6 +60,7 @@ export type EditorType = 'native' | 'react'
 export type EditorRootContextProps = {
   id: string
   data: Accessor<SuggestionData>
+  suggestedChangesConfig: Accessor<SuggestedChangeConfig | undefined>
   textarea: Accessor<HTMLTextAreaElement>
   initialValue: string
   uploadHandler: GitHubUploaderHandler
@@ -95,6 +97,7 @@ function textAreaValueToPmNode(
   const unistNode = unistNodeFromMarkdown(value, {
     owner: context.owner() ?? '',
     repository: context.repository() ?? '',
+    suggestedChangesConfig: context.suggestedChangesConfig(),
   })
   return convertUnistToProsemirror(unistNode, schema, unknownNodeHandler(value))
 }
@@ -196,6 +199,7 @@ export function Editor(props: EditorProps) {
       isInitialValue: true,
       owner: context.owner() ?? '',
       repository: context.repository() ?? '',
+      suggestedChangesConfig: context.suggestedChangesConfig(),
     })
     const markdown = toMarkdown()
     editorStore.set('markdown', markdown)

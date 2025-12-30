@@ -16,7 +16,7 @@
 
 import { useEditor } from 'prosekit/solid'
 import LucideCog from 'lucide-solid/icons/cog'
-import { For, createMemo } from 'solid-js'
+import { For, Show, createMemo, useContext } from 'solid-js'
 import { Dynamic } from 'solid-js/web'
 import LucideChevronDown from 'lucide-solid/icons/chevron-down'
 import LucideMessageCircleQuestionMark from 'lucide-solid/icons/message-circle-question-mark'
@@ -41,6 +41,7 @@ import { Settings } from '../settings/settings'
 import { EditorTextShortcut } from '../../ui/kbd/kbd'
 import { EditorActionIcon } from '../../ui/action-icon/ActionIcon'
 import { EditorActionConfig } from '../../../actions'
+import { EditorRootContext } from '../../../editor/editor'
 import styles from './toolbar.module.css'
 import type { FlowProps, JSX } from 'solid-js'
 import type { GithubAlertType } from '../../custom/githubAlert/config'
@@ -48,6 +49,7 @@ import type { NodeAction } from 'prosekit/core'
 import type { EditorExtension } from '../extension'
 
 export function Toolbar() {
+  const { suggestedChangesConfig } = useContext(EditorRootContext)!
   const editor = useEditor<EditorExtension>({ update: true })
 
   const isTextAlignActive = (value: string) => {
@@ -85,6 +87,31 @@ export function Toolbar() {
 
   return (
     <div class={styles.Toolbar}>
+      <Show when={suggestedChangesConfig()}>
+        {(suggestedChangesConfig) => (
+          <Show when={suggestedChangesConfig().showSuggestChangesButton}>
+            <ToolbarAction
+              label={<>Add a suggestion</>}
+              isPressed={editor().nodes.codeBlock.isActive({
+                isSuggestion: true,
+              })}
+              disabled={
+                !editor().commands.insertCodeBlockSuggestion.canExec({
+                  suggestChange: suggestedChangesConfig(),
+                })
+              }
+              onClick={() =>
+                editor().commands.insertCodeBlockSuggestion({
+                  suggestChange: suggestedChangesConfig(),
+                })
+              }
+            >
+              <EditorActionIcon actionId={'suggestedChanges'} size={16} />
+            </ToolbarAction>
+          </Show>
+        )}
+      </Show>
+
       <ToolbarAction
         label={
           <>
@@ -223,7 +250,7 @@ export function Toolbar() {
           </>
         }
         isPressed={
-          editor().nodes.codeBlock.isActive() ||
+          editor().nodes.codeBlock.isActive({ isSuggestion: false }) ||
           editor().nodes.cmCodeBlock.isActive()
         }
         disabled={
@@ -361,7 +388,7 @@ export function Toolbar() {
           </TooltipTrigger>
           <TooltipContent>Issues & Feedback</TooltipContent>
         </Tooltip>
-        <Popover placement={'bottom-end'}>
+        <Popover placement={'bottom-end'} modal={true}>
           <PopoverTrigger class={styles.ToolbarAction}>
             <LucideCog size={16} />
           </PopoverTrigger>

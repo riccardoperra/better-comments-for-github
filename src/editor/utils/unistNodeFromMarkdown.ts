@@ -29,18 +29,27 @@ import { markdownToUnist } from '@prosemirror-processor/markdown'
 import { remarkGitHubAlert } from '../../core/custom/githubAlert/remarkGitHubAlert'
 import { remarkParseLinkToGitHubIssueReference } from '../../core/custom/issue-reference/remarkGitHubIssueReference'
 import { remarkGitHubUserReferences } from '../../core/custom/user-mention/remarkGitHubUserReferences'
+import { remarkCodeblockSuggestion } from '../../core/custom/code-block/suggestion/remark-codeblock-suggestion'
+import type { Processor } from 'unified'
+import type { SuggestedChangeConfig } from './loadCodeSuggestionChangesConfig'
 
 export function unistNodeFromMarkdown(
   content: string,
   options: {
     repository: string
     owner: string
+    suggestedChangesConfig: SuggestedChangeConfig | undefined
   },
 ) {
-  const { repository, owner } = options
+  const { repository, owner, suggestedChangesConfig } = options
   return markdownToUnist(content, {
     transformers: [
+      function init(this: Processor) {
+        this.data('suggestedChangeConfig', suggestedChangesConfig)
+        return () => {}
+      },
       remarkGitHubUserReferences,
+      remarkCodeblockSuggestion,
       () => remarkParseLinkToGitHubIssueReference({ repository, owner }),
       remarkSubscript,
       remarkSuperscript,

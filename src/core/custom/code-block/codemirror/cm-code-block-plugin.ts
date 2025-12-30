@@ -35,6 +35,7 @@ export function defineCmCodeBlockPlugin() {
           newState.doc.descendants((node, pos) => {
             if (
               node.type.name === 'codeBlock' &&
+              !node.attrs.isSuggestion &&
               codeMirrorLanguages.includes(node.attrs.language)
             ) {
               modified = true
