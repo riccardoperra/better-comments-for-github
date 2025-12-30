@@ -17,6 +17,7 @@
 import { defineCommands, insertNode } from 'prosekit/core'
 import { detectLanguageFromFilename } from '../shiki-language-extensions'
 import type { SuggestedChangeConfig } from '../../../../editor/utils/loadCodeSuggestionChangesConfig'
+import type { CodeBlockAttrs } from 'prosekit/extensions/code-block'
 
 export function defineCodeBlockSuggestionCommand() {
   return defineCommands({
@@ -25,13 +26,14 @@ export function defineCodeBlockSuggestionCommand() {
     }) => {
       const lang = detectLanguageFromFilename(options.suggestChange.filePath!)
       return (state, dispatch, view) => {
+        const attrs = {
+          language: lang || '',
+          isSuggestion: true,
+          suggestChangeConfig: options.suggestChange,
+        } as CodeBlockAttrs
+
         const node = state.schema.nodes.codeBlock.create(
-          {
-            code: options.suggestChange.sourceContentFromDiffLines || '',
-            lang: lang || '',
-            isSuggestion: true,
-            suggestChangeConfig: options.suggestChange,
-          },
+          attrs,
           state.schema.text(
             options.suggestChange.sourceContentFromDiffLines || '',
           ),
@@ -39,12 +41,7 @@ export function defineCodeBlockSuggestionCommand() {
 
         return insertNode({
           node,
-          attrs: {
-            code: options.suggestChange.sourceContentFromDiffLines || '',
-            lang: lang || '',
-            isSuggestion: true,
-            suggestedChangeConfig: options.suggestChange,
-          },
+          attrs,
         })(state, dispatch, view)
       }
     },
