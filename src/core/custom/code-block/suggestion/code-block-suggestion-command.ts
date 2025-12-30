@@ -20,19 +20,33 @@ import type { SuggestedChangeConfig } from '../../../../editor/utils/loadCodeSug
 
 export function defineCodeBlockSuggestionCommand() {
   return defineCommands({
-    insertCodeBlockSuggestion: (attrs: {
+    insertCodeBlockSuggestion: (options: {
       suggestChange: SuggestedChangeConfig
     }) => {
-      const lang = detectLanguageFromFilename(attrs.suggestChange.filePath!)
-      return insertNode({
-        type: 'codeBlock',
-        attrs: {
-          code: attrs.suggestChange.sourceContentFromDiffLines || '',
-          lang: lang || '',
-          isSuggestion: true,
-          suggestedChangeConfig: attrs.suggestChange,
-        },
-      })
+      const lang = detectLanguageFromFilename(options.suggestChange.filePath!)
+      return (state, dispatch, view) => {
+        const node = state.schema.nodes.codeBlock.create(
+          {
+            code: options.suggestChange.sourceContentFromDiffLines || '',
+            lang: lang || '',
+            isSuggestion: true,
+            suggestChangeConfig: options.suggestChange,
+          },
+          state.schema.text(
+            options.suggestChange.sourceContentFromDiffLines || '',
+          ),
+        )
+
+        return insertNode({
+          node,
+          attrs: {
+            code: options.suggestChange.sourceContentFromDiffLines || '',
+            lang: lang || '',
+            isSuggestion: true,
+            suggestedChangeConfig: options.suggestChange,
+          },
+        })(state, dispatch, view)
+      }
     },
   })
 }
