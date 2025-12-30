@@ -80,6 +80,7 @@
     "remark-parse": "catalog:",
     "remark-rehype": "catalog:",
     "remark-stringify": "catalog:",
+    "shiki": "^3.20.0",
     "solid-codemirror": "^2.3.1",
     "solid-confetti-explosion": "^1.1.8",
     "solid-js": "catalog:",

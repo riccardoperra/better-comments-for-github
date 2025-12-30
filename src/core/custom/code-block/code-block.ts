@@ -21,6 +21,7 @@ import { defineCodeBlockCustomCommands } from './code-block-custom-commands'
 import { defineCmCodeBlockPlugin } from './codemirror/cm-code-block-plugin'
 import { defineCmCodeBlock } from './codemirror/cm-code-block'
 import { defineCodeBlockMarkdown } from './code-block-node'
+import { defineCodeBlockSuggestionCommand } from './suggestion/code-block-suggestion-command'
 
 export function defineCodeBlock() {
   return union(
@@ -34,5 +35,6 @@ export function defineCodeBlock() {
       component: ShikiCodeBlockView,
     }),
     defineCodeBlockCustomCommands(),
+    defineCodeBlockSuggestionCommand(),
   )
 }

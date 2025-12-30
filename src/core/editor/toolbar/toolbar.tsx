@@ -92,9 +92,19 @@ export function Toolbar() {
           <Show when={suggestedChangesConfig().showSuggestChangesButton}>
             <ToolbarAction
               label={<>Add a suggestion</>}
-              isPressed={editor().marks.bold.isActive()}
-              disabled={!editor().commands.toggleBold.canExec()}
-              onClick={() => editor().commands.toggleBold()}
+              isPressed={editor().nodes.codeBlock.isActive({
+                isSuggestion: true,
+              })}
+              disabled={
+                !editor().commands.insertCodeBlockSuggestion.canExec({
+                  suggestChange: suggestedChangesConfig(),
+                })
+              }
+              onClick={() =>
+                editor().commands.insertCodeBlockSuggestion({
+                  suggestChange: suggestedChangesConfig(),
+                })
+              }
             >
               <EditorActionIcon actionId={'suggestedChanges'} size={16} />
             </ToolbarAction>
@@ -240,7 +250,7 @@ export function Toolbar() {
           </>
         }
         isPressed={
-          editor().nodes.codeBlock.isActive() ||
+          editor().nodes.codeBlock.isActive({ isSuggestion: false }) ||
           editor().nodes.cmCodeBlock.isActive()
         }
         disabled={

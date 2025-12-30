@@ -49,7 +49,6 @@ export class GitHubReactTextareaHandler {
   }
 
   findCommentBoxModule() {
-    console.log('root')
     return this.root.closest<HTMLElement>('[class*="CommentBox-module"]')
   }
 

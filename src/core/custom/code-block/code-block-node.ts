@@ -32,7 +32,7 @@ export function defineCodeBlockMarkdown() {
         isSuggestion: {
           default: false,
         },
-        suggestionConfig: {
+        suggestChangeConfig: {
           default: null,
         },
       },

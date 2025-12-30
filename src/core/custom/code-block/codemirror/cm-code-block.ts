@@ -65,7 +65,15 @@ export function defineCmCodeBlock() {
       defining: true,
       isolating: true,
       marks: '',
-      attrs: { language: { default: '', validate: 'string' } },
+      attrs: {
+        language: { default: '', validate: 'string' },
+        isSuggestion: {
+          default: false,
+        },
+        suggestionConfig: {
+          default: null,
+        },
+      },
       parseDOM: [
         {
           tag: 'pre',
