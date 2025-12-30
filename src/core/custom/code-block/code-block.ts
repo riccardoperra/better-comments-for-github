@@ -15,12 +15,12 @@
  */
 
 import { union } from 'prosekit/core'
-import { defineCodeBlockMarkdown } from '@prosedoc/markdown-schema'
 import { defineSolidNodeView } from 'prosekit/solid'
 import ShikiCodeBlockView from './shiki-code-block-view'
 import { defineCodeBlockCustomCommands } from './code-block-custom-commands'
 import { defineCmCodeBlockPlugin } from './codemirror/cm-code-block-plugin'
 import { defineCmCodeBlock } from './codemirror/cm-code-block'
+import { defineCodeBlockMarkdown } from './code-block-node'
 
 export function defineCodeBlock() {
   return union(
