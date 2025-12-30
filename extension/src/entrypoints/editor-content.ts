@@ -99,6 +99,8 @@ export default defineUnlistedScript(() => {
                   editorElement,
                   suggestionData,
                   setSuggestionData,
+                  suggestedChangesConfig,
+                  setSuggestedChangesConfig,
                 } = editorInstance
 
                 let type: EditorType
@@ -164,6 +166,10 @@ export default defineUnlistedScript(() => {
                   type = 'react'
                   log(`${editorInstance.id} - GitHub textarea is react-based`)
 
+                  reactTextareaHandler.loadSuggestionChangesConfig((data) => {
+                    setSuggestedChangesConfig(data)
+                  })
+
                   reactTextareaHandler.loadSuggestionDataAsync(element, {
                     onSuggestionDataChange: (data) => setSuggestionData(data),
                   })
@@ -221,6 +227,7 @@ export default defineUnlistedScript(() => {
                     id: editorInstance.id,
                     currentUsername,
                     suggestionData,
+                    suggestedChangesConfig,
                     open: showOldEditor,
                     openChange: setShowOldEditor,
                     uploadHandler: editorInjector.uploadHandler!,

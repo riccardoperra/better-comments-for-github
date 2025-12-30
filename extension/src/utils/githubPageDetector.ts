@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-import { createComponent, createUniqueId } from 'solid-js'
+import { createComponent, createSignal, createUniqueId } from 'solid-js'
 import { log } from '@better-comments-for-github/core/editor/utils/logger'
 import { SwitchButton } from '../../../src/render'
 import type { Accessor, ComponentProps, Setter } from 'solid-js'
 import type { GitHubUrlParsedResult } from './githubUrlParser'
 import type { SuggestionData } from '../../../src/editor/utils/loadSuggestionData'
+import type { SuggestedChangeConfig } from '@better-comments-for-github/core/editor/utils/loadCodeSuggestionChangesConfig'
 
 export interface GithubPageInstanceResult {
   readonly currentUsername: Accessor<string | null>
@@ -39,6 +40,8 @@ export interface GitHubPageInstanceOptions {
 export interface GitHubEditorInstance {
   id: string
   rootElement: HTMLElement
+  suggestedChangesConfig: Accessor<SuggestedChangeConfig | undefined>
+  setSuggestedChangesConfig: Setter<SuggestedChangeConfig | undefined>
   suggestionData: Accessor<SuggestionData>
   setInjector: (injector: GitHubEditorInjector) => void
   setSuggestionData: Setter<SuggestionData>
@@ -115,6 +118,8 @@ export function createGitHubEditorInstance(
     references: [],
     savedReplies: [],
   })
+  const [suggestedChangesConfig, setSuggestedChangesConfig] =
+    createSignal<SuggestedChangeConfig>()
 
   let injector: GitHubEditorInjector | null = null
   let disposeSwitch: (() => void) | null = null
@@ -168,6 +173,8 @@ export function createGitHubEditorInstance(
     setShowOldEditor,
     suggestionData,
     setSuggestionData,
+    suggestedChangesConfig,
+    setSuggestedChangesConfig,
     textareaRef,
     setTextareaRef(updater) {
       setTextareaRef(updater)
