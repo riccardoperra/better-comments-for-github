@@ -22,6 +22,7 @@ import { ConfettiExplosion } from 'solid-confetti-explosion'
 import { Editor, EditorRootContext } from './editor/editor'
 import { OcticonCaution } from './core/custom/githubAlert/icons'
 import { ConfigStore } from './config.store'
+import { delegateEditorEvents } from './editor/utils/eventDelegation'
 import type { EditorType } from './editor/editor'
 import type { Accessor } from 'solid-js'
 import type { GitHubUploaderHandler } from './core/custom/image/github-file-uploader'
@@ -136,6 +137,8 @@ export function EditorErrorBoundary(props: EditorErrorBoundaryProps) {
 }
 
 export function mountEditor(root: HTMLElement, props: RenderEditorProps) {
+  delegateEditorEvents(root)
+
   return render(() => {
     return (
       <StateProvider>
@@ -159,7 +162,7 @@ export function mountEditor(root: HTMLElement, props: RenderEditorProps) {
                 value={{
                   id: props.id,
                   currentUsername: props.currentUsername,
-                  data: props.suggestionData,
+                  suggestionData: props.suggestionData,
                   uploadHandler: props.uploadHandler,
                   get hovercardSubjectTag() {
                     return props.hovercardSubjectTag
