@@ -26,6 +26,10 @@ export function defineCodeBlockSuggestionCommand() {
     }) => {
       const lang = detectLanguageFromFilename(options.suggestChange.filePath!)
       return (state, dispatch, view) => {
+        const code = options.suggestChange.sourceContentFromDiffLines
+
+        if (!code) return false
+
         const attrs = {
           language: lang || '',
           isSuggestion: true,
@@ -34,9 +38,7 @@ export function defineCodeBlockSuggestionCommand() {
 
         const node = state.schema.nodes.codeBlock.create(
           attrs,
-          state.schema.text(
-            options.suggestChange.sourceContentFromDiffLines || '',
-          ),
+          state.schema.text(code),
         )
 
         return insertNode({
