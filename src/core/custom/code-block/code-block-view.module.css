@@ -86,6 +86,7 @@
       background-color: var(--diffBlob-additionLine-bgColor) !important;
       border-top-left-radius: 0 !important;
       border-top-right-radius: 0 !important;
+      padding-block: var(--base-size-8) !important;
     }
   }
 }
