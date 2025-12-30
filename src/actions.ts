@@ -41,6 +41,7 @@ import LucideAlertOctagon from 'lucide-solid/icons/alert-octagon'
 import LucideTable from 'lucide-solid/icons/table-2'
 import LucideLink from 'lucide-solid/icons/link'
 import { githubAlertTypeMap } from './core/custom/githubAlert/config'
+import { SuggestedChangeIcon } from './core/ui/suggested-change-icon/SuggestedChangeIcon'
 import type { LucideProps } from 'lucide-solid'
 import type { JSXElement } from 'solid-js'
 
@@ -55,6 +56,11 @@ export interface EditorActionConfigData {
 }
 
 export const EditorActionConfig = {
+  // custom
+  suggestedChanges: {
+    icon: SuggestedChangeIcon,
+    shortcuts: [],
+  },
   // marks
   bold: {
     icon: LucideBold,
