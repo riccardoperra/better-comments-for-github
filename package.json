@@ -1,6 +1,6 @@
 {
   "name": "@better-comments-for-github/core",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "description": "",
   "type": "module",
   "scripts": {
