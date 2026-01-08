@@ -1,5 +1,11 @@
 # @better-comments-for-github/extension
 
+## 0.0.20
+
+### Patch Changes
+
+- e0a0d6d: Add support for code suggestion
+
 ## 0.0.19
 
 ### Patch Changes

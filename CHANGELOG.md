@@ -1,5 +1,11 @@
 # @better-comments-for-github/core
 
+## 0.0.16
+
+### Patch Changes
+
+- e0a0d6d: Add support for code suggestion
+
 ## 0.0.15
 
 ### Patch Changes
