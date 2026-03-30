@@ -1,5 +1,11 @@
 # @better-comments-for-github/core
 
+## 0.0.17
+
+### Patch Changes
+
+- 8f70214: hotfix: fix user mention search to handle null cases
+
 ## 0.0.16
 
 ### Patch Changes
