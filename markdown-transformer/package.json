@@ -32,6 +32,7 @@
     "@types/mdast": "catalog:",
     "@types/unist": "catalog:",
     "hastscript": "^9.0.1",
+    "mdast-util-math": "^3.0.0",
     "mdast-util-to-markdown": "^2.1.2",
     "prosemirror-model": "catalog:",
     "rehype-meta": "^4.0.1",

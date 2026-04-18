@@ -1,3 +1,5 @@
+@import 'katex/dist/katex.min.css';
+
 @layer prosemirror {
   /* ../../node_modules/.pnpm/prosemirror-view@1.37.1/node_modules/prosemirror-view/style/prosemirror.css */
   .ProseMirror {
@@ -500,6 +502,45 @@ div.ProseMirror .prosemirror-flat-list {
 :is(div.ProseMirror .prosemirror-flat-list):has(> div.list-content > h6)
   > .list-marker {
   top: -0.1em;
+}
+
+.ProseMirror .prosemirror-math-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.1rem;
+}
+
+.ProseMirror .prosemirror-math-inline .prosemirror-math-display {
+  display: inline-flex;
+  align-items: center;
+}
+
+.ProseMirror .prosemirror-math-inline .prosemirror-math-source {
+  font-family: ui-monospace, SFMono-Regular, SFMono-Regular, Menlo, Monaco,
+    Consolas, 'Liberation Mono', 'Courier New', monospace;
+}
+
+.ProseMirror .prosemirror-math-block {
+  border: 1px solid var(--color-border-default, #d0d7de);
+  background: var(--color-canvas-subtle, #f6f8fa);
+  border-radius: 6px;
+  padding: 12px;
+  margin: 12px 0;
+}
+
+.ProseMirror .prosemirror-math-block .prosemirror-math-source {
+  margin: 0;
+  font-family: ui-monospace, SFMono-Regular, SFMono-Regular, Menlo, Monaco,
+    Consolas, 'Liberation Mono', 'Courier New', monospace;
+}
+
+.ProseMirror .prosemirror-math-block .prosemirror-math-display {
+  display: block;
+}
+
+.ProseMirror .prosemirror-math-head-inside .prosemirror-math-display {
+  outline: 1px dashed var(--color-border-default, #d0d7de);
+  outline-offset: 2px;
 }
 
 table td,

@@ -62,6 +62,7 @@ import { defineDetails } from '../custom/details/details'
 import { defineExitable } from '../custom/exitable/exitable'
 import { defineTableInsert } from '../custom/table/table-insert-plugin'
 import { defineLink } from '../custom/link/link'
+import { defineMath } from '../custom/math/math'
 import type { HeadingAttrs } from 'prosekit/extensions/heading'
 
 function defineCode() {
@@ -87,6 +88,7 @@ export function defineMarkdownExtension() {
     defineBoldMarkdown(),
     defineStrikethroughMarkdown(),
     defineCode(),
+    defineMath(),
 
     defineSuperscriptMarkdown(),
     defineSubscriptMarkdown(),

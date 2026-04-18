@@ -21,6 +21,7 @@ import {
   remarkHtmlHardbreak,
   remarkHtmlImage,
   remarkInlineImage,
+  remarkMath,
   remarkSubscript,
   remarkSuperscript,
   remarkUnderline,
@@ -48,6 +49,7 @@ export function unistNodeFromMarkdown(
         this.data('suggestedChangeConfig', suggestedChangesConfig)
         return () => {}
       },
+      remarkMath,
       remarkGitHubUserReferences,
       remarkCodeblockSuggestion,
       () => remarkParseLinkToGitHubIssueReference({ repository, owner }),
