@@ -81,6 +81,7 @@
     vertical-align: top;
     box-sizing: border-box;
     position: relative;
+    min-width: 50px;
     border-width: 1px;
     padding-left: 0.75rem;
     padding-right: 0.75rem;
@@ -500,9 +501,4 @@ div.ProseMirror .prosemirror-flat-list {
 :is(div.ProseMirror .prosemirror-flat-list):has(> div.list-content > h6)
   > .list-marker {
   top: -0.1em;
-}
-
-table td,
-table th {
-  min-width: 50px;
 }
