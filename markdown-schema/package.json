@@ -35,6 +35,7 @@
     "happy-dom": "^18.0.1",
     "hast-util-to-html": "^9.0.5",
     "mdast-util-from-markdown": "^2.0.2",
+    "mdast-util-math": "^3.0.0",
     "mdast-util-to-hast": "^13.2.1",
     "mdast-util-to-markdown": "^2.1.2",
     "micromark-util-types": "^2.0.2",
@@ -44,6 +45,7 @@
     "prosemirror-tables": "^1.8.1",
     "prosemirror-transformer-markdown": "workspace:*",
     "remark-comment-config": "^8.0.0",
-    "remark-gfm": "catalog:"
+    "remark-gfm": "catalog:",
+    "remark-math": "^6.0.0"
   }
 }
