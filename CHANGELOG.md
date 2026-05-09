@@ -1,5 +1,11 @@
 # @better-comments-for-github/core
 
+## 0.0.18
+
+### Patch Changes
+
+- 48a725e: Fix profile contribution table styles when extension is injected
+
 ## 0.0.17
 
 ### Patch Changes
